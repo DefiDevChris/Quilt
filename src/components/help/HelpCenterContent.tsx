@@ -152,7 +152,7 @@ function VideoTutorialsSection() {
 
 function ContactSection() {
   return (
-    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-8">
+    <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-8">
       <h3 className="text-[24px] leading-[32px] font-normal text-[var(--color-text)] mb-2">
         Contact Support
       </h3>

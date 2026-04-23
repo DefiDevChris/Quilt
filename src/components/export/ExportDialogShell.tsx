@@ -45,7 +45,7 @@ export function ExportDialogShell({
         aria-modal="true"
         aria-labelledby={dialogId}
         tabIndex={-1}
-        className={`w-[${LAYOUT.dialogMd}] max-w-[90vw] rounded-lg bg-[var(--color-bg)] p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] outline-none`}
+        className={`w-[${LAYOUT.dialogMd}] max-w-[90vw] rounded-lg bg-[var(--color-bg)] p-6 shadow-[0_1px_2px_rgba(54,49,45,0.08)] border border-[var(--color-border)] outline-none`}
       >
         <h2 id={dialogId} className="mb-4 text-lg font-semibold text-[var(--color-text)]">
           {title}

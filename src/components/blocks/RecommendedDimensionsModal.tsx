@@ -177,7 +177,7 @@ export function RecommendedDimensionsModal({
         aria-modal="true"
         aria-labelledby="recommended-dimensions-title"
         tabIndex={-1}
-        className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] outline-none"
+        className="flex w-[600px] max-h-[85vh] flex-col rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-[0_1px_2px_rgba(54,49,45,0.08)] outline-none"
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--color-border)] p-4">
@@ -385,7 +385,7 @@ export function RecommendedDimensionsModal({
                 type="button"
                 onClick={handleCustomApply}
                 disabled={!customWidth || !customHeight}
-                className="h-[42px] border border-[var(--color-border)] bg-[var(--color-primary)] text-[var(--color-text)] px-6 text-[14px] leading-[20px] hover:bg-[var(--color-primary)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                className="h-[42px] border border-[var(--color-border)] bg-[var(--color-primary)] text-[var(--color-text)] px-6 text-[14px] leading-[20px] hover:bg-[var(--color-primary)] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed rounded-full shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
               >
                 Apply
               </button>

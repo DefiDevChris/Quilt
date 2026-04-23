@@ -131,7 +131,7 @@ export function BillingSection() {
       )}
 
       {/* Current plan status */}
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-8 space-y-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-8 space-y-6 shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-[14px] leading-[20px] text-[var(--color-text-dim)]">
@@ -206,7 +206,7 @@ export function BillingSection() {
 
       {/* Upgrade section (free only) */}
       {!isPro && (
-        <div className="rounded-lg bg-[var(--color-text)] text-[var(--color-surface)] p-10 space-y-8 shadow-[0_1px_2px_rgba(26,26,26,0.08)] relative overflow-hidden">
+        <div className="rounded-lg bg-[var(--color-text)] text-[var(--color-surface)] p-10 space-y-8 shadow-[0_1px_2px_rgba(54,49,45,0.08)] relative overflow-hidden">
           <div
             className="absolute top-0 left-0 right-0 h-1"
             style={{ backgroundColor: COLORS.primary }}

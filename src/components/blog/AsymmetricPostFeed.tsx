@@ -96,7 +96,7 @@ function PostCard({
       <Link href={`/blog/${post.slug}`} className="block h-full">
         <article className={`h-full flex flex-col ${layout.mobileH} ${layout.h}`}>
           {/* Image container */}
-          <div className="relative overflow-hidden flex-1 rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+          <div className="relative overflow-hidden flex-1 rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
             <img src={img} alt={post.title} loading="lazy" className="w-full h-full object-cover" />
           </div>
 
