@@ -44,7 +44,7 @@ export function ConfirmationDialog({
         aria-modal="true"
         aria-labelledby="confirmation-dialog-title"
         tabIndex={-1}
-        className={`bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)] w-[400px] max-w-[90vw] p-6 outline-none ${className}`}
+        className={`bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] border border-[var(--color-border)] w-[400px] max-w-[90vw] p-6 outline-none ${className}`}
       >
         <h3
           id="confirmation-dialog-title"
