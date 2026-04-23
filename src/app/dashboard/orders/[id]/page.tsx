@@ -19,7 +19,7 @@ export default function OrderDetailPage() {
         action={
           <Link
             href="/dashboard/orders"
-            className="text-[#f08060] hover:text-[#d97054] transition-colors duration-150 ease-out font-['Inter'] text-sm"
+            className="text-[#7CB9E8] hover:text-[#5AA0D5] transition-colors duration-150 ease-out font-['Montserrat'] text-sm"
           >
             Back to Orders
           </Link>

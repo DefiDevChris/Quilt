@@ -19,7 +19,10 @@ export function useTempProjectMigration() {
     const tempData = loadTempProject(projectId);
     if (!tempData) return;
 
-    // Migrate to server
+    // Migrate to server. Send EVERY persistable field from TempProjectData so that
+    // upgrading free users do not lose worktables they created in block-builder mode.
+    // Previously `worktables` and `activeWorktable` were omitted, silently dropping
+    // any non-primary worktables when the user converted to Pro.
     (async () => {
       try {
         const res = await fetch(`/api/projects/${projectId}`, {
@@ -32,12 +35,20 @@ export function useTempProjectMigration() {
             fabricPresets: tempData.fabricPresets,
             canvasWidth: tempData.canvasWidth,
             canvasHeight: tempData.canvasHeight,
+            worktables: tempData.worktables,
+            activeWorktable: tempData.activeWorktable,
           }),
         });
 
         if (res.ok) {
           // Migration successful, delete temp data
           deleteTempProject(projectId);
+        } else {
+          // Preserve the temp copy so the user can retry after fixing the cause
+          // (e.g., transient network failure, server-side validation error).
+          console.warn(
+            `[tempProjectMigration] Migration PUT failed with status ${res.status}; temp data preserved for retry.`,
+          );
         }
       } catch (error) {
         console.error('Failed to migrate temp project:', error);

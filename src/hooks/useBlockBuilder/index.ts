@@ -10,6 +10,7 @@ import { useRectangleTool } from './useRectangleTool';
 import { useCircleTool } from './useCircleTool';
 import { useTriangleTool } from './useTriangleTool';
 import { useBendTool } from './useBendTool';
+import { useSelectTool } from './useSelectTool';
 import { useBlockBuilderCanvas } from './useBlockBuilderCanvas';
 
 const SNAP_RADIUS_FRACTION = 0.3;
@@ -21,6 +22,13 @@ interface UseBlockBuilderOptions {
   gridRows: number;
   canvasSize: number;
   activeMode: BlockBuilderMode;
+  /**
+   * Optional callback fired by the pencil tool when the user closes a shape
+   * by clicking back on the initial point (>=2 segments committed). Callers
+   * typically use this to flip the active mode to 'select' so the newly-
+   * formed patch can be manipulated immediately.
+   */
+  onShapeClosed?: () => void;
 }
 
 interface UseBlockBuilderReturn {
@@ -28,6 +36,7 @@ interface UseBlockBuilderReturn {
   patches: readonly Patch[];
   patchFills: Readonly<Record<string, string>>;
   selectedPatchId: string | null;
+  setSelectedPatchId: (id: string | null) => void;
   clearSegments: () => void;
   undoSegment: () => void;
   setPatchFill: (patchId: string, fabricId: string) => void;
@@ -40,10 +49,10 @@ export function useBlockBuilder({
   gridRows,
   canvasSize,
   activeMode,
+  onShapeClosed,
 }: UseBlockBuilderOptions): UseBlockBuilderReturn {
   const gridSize = canvasSize / Math.max(gridCols, gridRows);
 
-  // ── Snap helpers ──────────────────────────────────────────────────────────
   const snapToGridPoint = useCallback(
     (x: number, y: number) => {
       const col = Math.round(x / gridSize);
@@ -75,13 +84,13 @@ export function useBlockBuilder({
 
   const snap = { gridSize, gridCols, gridRows, snapToGridPoint, snapToNearestGridPoint };
 
-  // ── Segment state ─────────────────────────────────────────────────────────
   const {
     segments,
     patches,
     setPatches,
     patchFills,
     selectedPatchId,
+    setSelectedPatchId,
     segmentsRef,
     addShapeSegments,
     setPatchFill,
@@ -90,7 +99,6 @@ export function useBlockBuilder({
     replaceSegmentAt,
   } = useSegments(gridCols, gridRows);
 
-  // ── Patch detection ───────────────────────────────────────────────────────
   useEffect(() => {
     const lineSegments = segments.filter((s): s is Segment => !('center' in s));
     const newPatches = detectPatches(lineSegments, gridCols, gridRows);
@@ -100,7 +108,6 @@ export function useBlockBuilder({
     });
   }, [segments, gridCols, gridRows, setPatches]);
 
-  // ── Nearest segment finder (for bend tool) ────────────────────────────────
   const findNearestSegment = useCallback(
     (x: number, y: number, segsArr: readonly Segment[], tolerance: number) => {
       let bestIdx = -1;
@@ -133,12 +140,12 @@ export function useBlockBuilder({
 
   const segHelpers = { segmentsRef, addShapeSegments, findNearestSegment, replaceSegmentAt };
 
-  // ── Tool hooks ────────────────────────────────────────────────────────────
-  const pencil = usePencilTool(snap, segHelpers);
+  const pencil = usePencilTool(snap, segHelpers, onShapeClosed);
   const rectangle = useRectangleTool(snap, segHelpers);
   const circle = useCircleTool(snap, segHelpers);
   const triangle = useTriangleTool(snap, segHelpers);
   const bend = useBendTool(snap, segHelpers);
+  const select = useSelectTool({ patches, gridSize, setSelectedPatchId });
 
   type AnyTool =
     | typeof pencil
@@ -146,9 +153,10 @@ export function useBlockBuilder({
     | typeof circle
     | typeof triangle
     | typeof bend
+    | typeof select
     | null;
   const tools: Record<BlockBuilderMode, AnyTool> = {
-    select: null,
+    select,
     pencil,
     rectangle,
     circle,
@@ -156,7 +164,6 @@ export function useBlockBuilder({
     bend,
   };
 
-  // ── Canvas rendering + event wiring ───────────────────────────────────────
   useBlockBuilderCanvas({
     draftCanvasRef,
     isOpen,
@@ -173,7 +180,6 @@ export function useBlockBuilder({
     tools,
   });
 
-  // ── Clear resets all tool state ───────────────────────────────────────────
   const clearSegments = useCallback(() => {
     baseClear();
     pencil.reset();
@@ -181,13 +187,15 @@ export function useBlockBuilder({
     circle.reset();
     triangle.reset();
     bend.reset();
-  }, [baseClear, pencil, rectangle, circle, triangle, bend]);
+    select.reset();
+  }, [baseClear, pencil, rectangle, circle, triangle, bend, select]);
 
   return {
     segments,
     patches,
     patchFills,
     selectedPatchId,
+    setSelectedPatchId,
     clearSegments,
     undoSegment,
     setPatchFill,

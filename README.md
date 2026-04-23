@@ -15,7 +15,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Layer     | Technology                                           |
 | --------- | ---------------------------------------------------- |
 | Framework | Next.js 16.2.2 (App Router) + TypeScript + React 19  |
-| Styling   | Tailwind CSS v4 (Material 3-inspired design system)  |
+| Styling   | Tailwind CSS v4                                      |
 | Canvas    | Fabric.js 7.2                                        |
 | State     | Zustand (17 stores)                                  |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
@@ -28,20 +28,26 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 ## Design System
 
-**Background**: Pure white (`#ffffff`) across all pages for consistency
+Full spec lives in `brand_config.json` (authoritative) → `src/lib/design-system.ts` (typed constants) → `src/app/globals.css` (CSS vars + utilities). Light mode only, no dark mode, no gradients.
 
-**Color Palette**: Unified warm cream system
+**Color Palette**: Easter-spring light-blue system
 
-- **Surface hierarchy**: `surface-container-lowest` → `surface-container-highest` (white to subtle cream tones)
-- **Primary**: Orange (`#f97316`) with dark variant (`#ea580c`)
-- **Primary container**: Light peach (`#ffedd5`)
-- **CTA gradient**: `linear-gradient(to right, #f97316, #fb7185)` (orange to rose)
-- **Text**: `on-surface` (`#4a3b32`), `secondary` (`#6b5a4d`)
-- **Glassmorphism**: 3 variants — `glass-card`, `glass-elevated`, `glass-panel`
+- **Primary**: Sky blue (`#7CB9E8`), hover (`#5AA0D5`) — buttons, key actions, active nav, corgi accents
+- **Secondary**: Pale sky (`#C5DFF3`) — dividers, inactive tabs, subtle supports
+- **Accent · Buttercup**: (`#FFE08A`) — rare highlights, featured/new, celebratory moments
+- **Accent · Blush**: (`#F6C6C8`) — even more sparing community/warmth moments
+- **Background**: (`#F7F9FC`) — nearly-white with a whisper of cool
+- **Surface**: Pure white (`#FFFFFF`) — cards, dialogs, elevated panels
+- **Text**: (`#1A1A1A`), dim (`#4A4A4A`), border (`#D4D4D4`)
+- **Functional**: Error (`#ed4956`), success (`#16a34a`)
 
-**Typography**: Outfit (display), Manrope (body), JetBrains Mono (measurements)
+**Typography**: Noto Serif (headings), Montserrat (body)
 
-**Shadows**: 4-level elevation system (`shadow-elevation-1` through `shadow-elevation-4`)
+**Shape**: `rounded-full` for buttons/CTAs/tabs/pills, `rounded-lg` (8px) for cards/containers/inputs/dialogs.
+
+**Shadow**: `0 1px 2px rgba(26, 26, 26, 0.08)` — single subtle shadow system-wide.
+
+**Motion**: 150ms ease-out on color/background only. No scale/translate/lift on hover.
 
 ## Product Tiers
 

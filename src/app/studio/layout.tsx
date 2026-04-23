@@ -1,10 +1,26 @@
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { verifySessionToken } from '@/lib/cognito-session';
+import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
 
+/**
+ * Studio route layout.
+ *
+ * Gates on session + wraps the studio tree in the shared ResponsiveShell so
+ * the design studio inherits the new global top-bar (logo / blog / Pro /
+ * account / user menu) instead of rendering the legacy chrome-only shell.
+ *
+ * `variant="studio"` hides the vertical rail and gives the studio canvas a
+ * full-bleed main area — the studio's internal `StudioTopBar`, `Toolbar`,
+ * `ContextPanel`, and `BottomBar` continue to own the interior layout.
+ *
+ * Auth flow is unchanged: DEV_AUTH_BYPASS short-circuits, otherwise we
+ * verify the id_token cookie and redirect unauthenticated users back to
+ * the marketing design-studio landing page.
+ */
 export default async function StudioLayout({ children }: { children: React.ReactNode }) {
   if (process.env.DEV_AUTH_BYPASS === 'true') {
-    return <>{children}</>;
+    return <ResponsiveShell variant="studio">{children}</ResponsiveShell>;
   }
 
   const cookieStore = await cookies();
@@ -15,5 +31,5 @@ export default async function StudioLayout({ children }: { children: React.React
     redirect('/design-studio');
   }
 
-  return <>{children}</>;
+  return <ResponsiveShell variant="studio">{children}</ResponsiveShell>;
 }

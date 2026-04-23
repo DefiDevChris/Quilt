@@ -12,7 +12,7 @@ import brandConfig from '../../brand_config.json';
 
 /**
  * Converts a hex color + alpha to an rgba string.
- * e.g. withAlpha('#f08060', 0.12) → 'rgba(255, 141, 73, 0.12)'
+ * e.g. withAlpha('#7CB9E8', 0.12) → 'rgba(124, 185, 232, 0.12)'
  */
 function withAlpha(hex: string, alpha: number): string {
   const h = hex.replace('#', '');
@@ -24,7 +24,7 @@ function withAlpha(hex: string, alpha: number): string {
 
 /**
  * Darkens a hex color by a given amount (0-1).
- * e.g. darkenHex('#f08060', 0.1) → darker orange
+ * e.g. darkenHex('#7CB9E8', 0.1) → darker sky blue
  */
 function darkenHex(hex: string, amount: number): string {
   const h = hex.replace('#', '');
@@ -52,6 +52,7 @@ export const COLORS = {
   primary: cp.primary,
   secondary: cp.secondary,
   accent: cp.accent,
+  accentBlush: cp.accent_blush,
   bg: cp.bg,
   surface: cp.surface,
   text: cp.text,
@@ -356,4 +357,3 @@ export const BREAKPOINTS = {
 // ─── Exports for external use ─────────────────────────────────────────
 
 export { withAlpha, darkenHex };
-
