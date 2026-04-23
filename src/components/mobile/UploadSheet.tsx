@@ -75,15 +75,15 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-default rounded-t-2xl pb-10 pt-3 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
-        <div className="w-10 h-1 rounded-lg bg-[#d8d1ca] mx-auto mb-6" />
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-default rounded-t-2xl pb-10 pt-3 shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
+        <div className="w-10 h-1 rounded-lg bg-[var(--color-border)] mx-auto mb-6" />
         <div className="px-6 space-y-3">
           {/* Upload Photo — primary action */}
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full flex items-center gap-4 p-4 rounded-lg bg-default border border-[#7CB9E8]/20 transition-colors text-left disabled:opacity-50"
+            className="w-full flex items-center gap-4 p-4 rounded-lg bg-default border border-[var(--color-primary)]/20 transition-colors text-left disabled:opacity-50"
           >
             <div
               className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0"
@@ -112,7 +112,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
                   height="22"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#7CB9E8"
+                  stroke="var(--color-primary)"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -134,13 +134,13 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
 
           {/* Success feedback */}
           {uploadSuccess && (
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#c6f0b7]/10 border border-[#c6f0b7]/20">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--color-success)]/10 border border-[var(--color-success)]/20">
               <svg
                 width="16"
                 height="16"
                 viewBox="0 0 20 20"
                 fill="none"
-                className="text-[#2d6b1e] shrink-0"
+                className="text-[var(--color-success)] shrink-0"
               >
                 <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" />
                 <path
@@ -151,7 +151,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
                   strokeLinejoin="round"
                 />
               </svg>
-              <p className="text-xs font-medium text-[#2d6b1e]">
+              <p className="text-xs font-medium text-[var(--color-success)]">
                 Uploaded! Open on desktop to assign and process.
               </p>
             </div>
@@ -168,7 +168,7 @@ export function UploadSheet({ isOpen, onClose }: UploadSheetProps) {
         {/* Upload error */}
         {uploadError && (
           <div className="px-6 mt-3">
-            <p className="text-xs text-[#FFE08A]">{uploadError}</p>
+            <p className="text-xs text-[var(--color-error)]">{uploadError}</p>
           </div>
         )}
 

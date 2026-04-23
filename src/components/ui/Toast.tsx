@@ -74,13 +74,13 @@ function ToastIcon({ type }: { type: ToastType }) {
 function getTypeColor(type: ToastType): string {
   switch (type) {
     case 'success':
-      return 'text-[#2d6b1e]';
+      return 'text-[var(--color-success)]';
     case 'error':
-      return 'text-accent';
+      return 'text-[var(--color-error)]';
     case 'warning':
-      return 'text-[#c77700]';
+      return 'text-[var(--color-warning)]';
     case 'info':
-      return 'text-primary';
+      return 'text-[var(--color-primary)]';
   }
 }
 

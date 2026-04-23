@@ -17,7 +17,7 @@ import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
 import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
 
-// ─── Types ─────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────
 
 type Step = 'landing' | 'layout' | 'size' | 'main';
 type LayoutType = 'grid' | 'sashing' | 'on-point';
@@ -60,7 +60,7 @@ interface Background {
   value: string;
 }
 
-// ─── Constants ────────────────────────────────────────────────────────
+// ─── Constants ─────────────────────────────────────────────────────────
 
 const MIN_SIZE = 2;
 const MAX_SIZE = 12;
@@ -68,7 +68,7 @@ const BLOCK_SIZE = 120;
 const SASHING_WIDTH = 16;
 const BORDER_WIDTH = 32;
 
-// ─── Helpers ──────────────────────────────────────────────────────────
+// ─── Helpers ───────────────────────────────────────────────────────────────
 
 function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
@@ -123,7 +123,7 @@ function cellCenter(
   };
 }
 
-// ─── Component ─────────────────────────────────────────────────────────
+// ─── Component ──────────────────────────────────────────────────────────────
 
 export function PictureMyBlocksApp() {
   // Step + layout state
@@ -324,7 +324,7 @@ export function PictureMyBlocksApp() {
     }
   }, [viewMode, background, blocks, placedBlocks, rows, cols, layout, hasBorders, hasSashing]);
 
-  // ─── Setup — combined layout + options + size ────────────────────
+  // ─── Setup — combined layout + options + size ────────────────
 
   if (step === 'landing') {
     return (
@@ -493,7 +493,7 @@ export function PictureMyBlocksApp() {
     );
   }
 
-  // ─── Main canvas ──────────────────────────────────────────────────────────
+  // ─── Main canvas ───────────────────────────────────────────────────────────────
 
   const dims = quiltDimensions(rows, cols, layout, hasBorders, hasSashing);
 
@@ -574,7 +574,7 @@ export function PictureMyBlocksApp() {
           {/* Download */}
           <button
             onClick={handleDownload}
-            className="flex items-center gap-2 bg-[var(--color-primary)] text-[var(--color-text)] px-4 py-2 rounded-full text-sm font-semibold hover:bg-[#5AA0D5] transition-colors duration-150"
+            className="flex items-center gap-2 bg-[var(--color-primary)] text-[var(--color-text-on-primary)] px-4 py-2 rounded-full text-sm font-semibold hover:bg-[var(--color-primary-hover)] transition-colors duration-150"
             style={{ boxShadow: SHADOW.brand }}
           >
             <Download size={18} /> Download
@@ -583,7 +583,7 @@ export function PictureMyBlocksApp() {
       </header>
 
       <div className="flex flex-1 overflow-hidden relative">
-        {/* ── Block tray (left) ───────────────────────────────────────── */}
+        {/* ── Block tray (left) ─────────────────────────────────── */}
         <div className="w-72 bg-[var(--color-surface)] border-r border-[var(--color-border)] flex flex-col z-10">
           <div className="p-4 border-b border-[var(--color-border)]">
             <label className="flex items-center justify-center gap-2 w-full bg-[var(--color-bg)] hover:bg-[var(--color-primary)]/10 text-[var(--color-text)] py-3 rounded-full cursor-pointer transition-colors duration-150 font-medium">
@@ -630,7 +630,7 @@ export function PictureMyBlocksApp() {
           </div>
         </div>
 
-        {/* ── Quilt canvas (center) ─────────────────────────────────── */}
+        {/* ── Quilt canvas (center) ─────────────────────────── */}
         <div
           className="flex-1 overflow-auto bg-[var(--color-bg)] flex"
           onClick={() => {
@@ -773,7 +773,7 @@ export function PictureMyBlocksApp() {
               {/* Swap hint */}
               {viewMode === 'edit' && swapSource && (
                 <div
-                  className="absolute top-4 left-1/2 -translate-x-1/2 bg-[var(--color-primary)] text-[var(--color-text)] px-6 py-3 rounded-full z-50 pointer-events-none font-medium"
+                  className="absolute top-4 left-1/2 -translate-x-1/2 bg-[var(--color-primary)] text-[var(--color-text-on-primary)] px-6 py-3 rounded-full z-50 pointer-events-none font-medium"
                   style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
                 >
                   Tap another block to swap
@@ -793,7 +793,7 @@ export function PictureMyBlocksApp() {
           </div>
         </div>
 
-        {/* ── Fabric picker (right panel) ──────────────────────────── */}
+        {/* ── Fabric picker (right panel) ───────────────────── */}
         {showFabricPicker && (
           <div className="w-[400px] flex-shrink-0 bg-[var(--color-surface)] border-l border-[var(--color-border)] flex flex-col z-10 relative">
             <FabricLibrary 
@@ -808,7 +808,7 @@ export function PictureMyBlocksApp() {
   );
 }
 
-// ─── Sub-components ──────────────────────────────────────────────────────
+// ─── Sub-components ─────────────────────────────────────────────────────────────
 
 /**
  * Large selectable card used during the layout-picker step.
@@ -845,7 +845,7 @@ function LayoutCard({
   );
 }
 
-// ─── Utilities ───────────────────────────────────────────────────────────
+// ─── Utilities ────────────────────────────────────────────────────────────────
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
