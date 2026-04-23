@@ -1,14 +1,15 @@
 'use client';
 
 import { COLORS } from '@/lib/design-system';
+import { SHOP_IMAGERY } from '@/lib/shop-imagery';
 
 const categories = [
-  { id: 1, name: 'Quilt Kits', href: '/shop/catalog?category=kits', image: '/images/shop/fabric-collection.jpg' },
-  { id: 2, name: 'Wide Backing', href: '/shop/catalog?category=by-the-yard', image: '/images/shop/fabric-by-yard.jpg' },
-  { id: 3, name: 'Fabric', href: '/shop/catalog', image: '/images/shop/featured-store.jpg' },
-  { id: 4, name: 'Precuts', href: '/shop/catalog?category=jelly-rolls', image: '/images/shop/charm-packs.jpg' },
-  { id: 5, name: 'Thread & Bobbins', href: '/shop/catalog?category=thread', image: '/images/shop/quilting-thread.jpg' },
-  { id: 6, name: 'Notions', href: '/shop/catalog?category=notions', image: '/images/shop/jelly-rolls.jpg' },
+  { id: 1, name: 'Quilt Kits', href: '/shop/catalog?category=kits', image: SHOP_IMAGERY.fabricCollection },
+  { id: 2, name: 'Wide Backing', href: '/shop/catalog?category=by-the-yard', image: SHOP_IMAGERY.fabricByYard },
+  { id: 3, name: 'Fabric', href: '/shop/catalog', image: SHOP_IMAGERY.featuredStore },
+  { id: 4, name: 'Precuts', href: '/shop/catalog?category=jelly-rolls', image: SHOP_IMAGERY.charmPacks },
+  { id: 5, name: 'Thread & Bobbins', href: '/shop/catalog?category=thread', image: SHOP_IMAGERY.quiltingThread },
+  { id: 6, name: 'Notions', href: '/shop/catalog?category=notions', image: SHOP_IMAGERY.jellyRolls },
 ];
 
 export default function Categories() {
