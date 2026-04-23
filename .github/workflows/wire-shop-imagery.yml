@@ -2,6 +2,9 @@ name: Wire shop imagery (one-time)
 
 on:
   workflow_dispatch:
+  push:
+    branches: [bright-shop-imagery]
+    paths: ['.github/workflows/wire-shop-imagery.yml']
 
 permissions:
   contents: write
