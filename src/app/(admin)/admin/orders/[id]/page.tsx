@@ -113,14 +113,14 @@ export default function AdminOrderDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-[#4a4a4a] font-['Montserrat'] animate-pulse">Loading order details...</div>
+        <div className="text-[var(--color-text-dim)] font-['Montserrat'] animate-pulse">Loading order details...</div>
       </div>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="bg-[#fee2e2] rounded-lg p-4 text-[#ef4444] font-['Montserrat']">
+      <div className="bg-[var(--color-accent-blush)] rounded-lg p-4 text-[var(--color-error)] font-['Montserrat']">
         Failed to load order details: {error || 'Order not found'}
       </div>
     );
@@ -151,14 +151,14 @@ export default function AdminOrderDetailPage() {
         <div>
           <button
             onClick={() => router.back()}
-            className="text-sm text-[#7CB9E8] font-['Montserrat'] hover:text-[#5AA0D5] transition-colors duration-150 ease-out mb-2"
+            className="text-sm text-[var(--color-primary)] font-['Montserrat'] hover:text-[var(--color-primary-hover)] transition-colors duration-150 ease-out mb-2"
           >
             Back to Orders
           </button>
-          <h1 className="text-2xl font-['Noto_Serif'] font-semibold text-[#1a1a1a]">
+          <h1 className="text-2xl font-['Noto_Sans'] font-semibold text-[var(--color-text)]">
             Order #{order.shopifyOrderId.slice(-6)}
           </h1>
-          <p className="text-sm text-[#4a4a4a] font-['Montserrat'] mt-1">
+          <p className="text-sm text-[var(--color-text-dim)] font-['Montserrat'] mt-1">
             Placed on {formatOrderDate(order.createdAt)}
           </p>
         </div>
@@ -166,15 +166,15 @@ export default function AdminOrderDetailPage() {
       </div>
 
       {/* Status Override */}
-      <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6">
-        <h2 className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mb-4">
+      <div className="bg-[var(--color-surface)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-6">
+        <h2 className="text-lg font-['Noto_Sans'] font-semibold text-[var(--color-text)] mb-4">
           Update Status
         </h2>
         <div className="flex gap-4 items-end">
           <div className="flex-1">
             <label
               htmlFor="order-status"
-              className="block text-sm text-[#4a4a4a] font-['Montserrat'] mb-2"
+              className="block text-sm text-[var(--color-text-dim)] font-['Montserrat'] mb-2"
             >
               Status
             </label>
@@ -182,7 +182,7 @@ export default function AdminOrderDetailPage() {
               id="order-status"
               value={newStatus}
               onChange={(e) => setNewStatus(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#d4d4d4] font-['Montserrat'] text-[#1a1a1a] bg-[#ffffff]"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] font-['Montserrat'] text-[var(--color-text)] bg-[var(--color-surface)]"
             >
               {STATUS_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -194,7 +194,7 @@ export default function AdminOrderDetailPage() {
           <div className="flex-[2]">
             <label
               htmlFor="status-reason"
-              className="block text-sm text-[#4a4a4a] font-['Montserrat'] mb-2"
+              className="block text-sm text-[var(--color-text-dim)] font-['Montserrat'] mb-2"
             >
               Reason (optional)
             </label>
@@ -204,13 +204,13 @@ export default function AdminOrderDetailPage() {
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Why is the status changing?"
-              className="w-full px-4 py-2 rounded-lg border border-[#d4d4d4] font-['Montserrat'] text-[#1a1a1a]"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--color-border)] font-['Montserrat'] text-[var(--color-text)]"
             />
           </div>
           <button
             onClick={handleStatusUpdate}
             disabled={updating || newStatus === order.status}
-            className="bg-[#7CB9E8] text-[#1a1a1a] px-6 py-2 rounded-full font-['Montserrat'] transition-colors duration-150 ease-out hover:bg-[#5AA0D5] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-[var(--color-primary)] text-[var(--color-text-on-primary)] px-6 py-2 rounded-full font-['Montserrat'] transition-colors duration-150 ease-out hover:bg-[var(--color-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {updating ? 'Updating...' : 'Update Status'}
           </button>
@@ -218,17 +218,17 @@ export default function AdminOrderDetailPage() {
       </div>
 
       {/* Line Items */}
-      <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6">
-        <h2 className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mb-4">
+      <div className="bg-[var(--color-surface)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-6">
+        <h2 className="text-lg font-['Noto_Sans'] font-semibold text-[var(--color-text)] mb-4">
           Fabrics Ordered
         </h2>
         <div className="space-y-4">
           {lineItems.map((item, index) => (
             <div
               key={index}
-              className="flex items-center gap-4 pb-4 border-b border-[#d4d4d4] last:border-0"
+              className="flex items-center gap-4 pb-4 border-b border-[var(--color-border)] last:border-0"
             >
-              <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#F7F9FC] flex-shrink-0">
+              <div className="w-16 h-16 rounded-lg overflow-hidden bg-[var(--color-bg)] flex-shrink-0">
                 {item.imageUrl ? (
                   <img
                     src={item.imageUrl}
@@ -237,17 +237,17 @@ export default function AdminOrderDetailPage() {
                     loading="lazy"
                   />
                 ) : (
-                  <div className="w-full h-full bg-[#d4d4d4]" />
+                  <div className="w-full h-full bg-[var(--color-border)]" />
                 )}
               </div>
               <div className="flex-1">
-                <p className="font-['Montserrat'] font-medium text-[#1a1a1a]">{item.fabricName}</p>
-                <p className="text-sm text-[#4a4a4a] font-['Montserrat']">
+                <p className="font-['Montserrat'] font-medium text-[var(--color-text)]">{item.fabricName}</p>
+                <p className="text-sm text-[var(--color-text-dim)] font-['Montserrat']">
                   {item.quantityInYards} yards @ {formatCents(item.pricePerYard, order.currency)}
                   /yard
                 </p>
               </div>
-              <p className="font-['Noto_Serif'] font-semibold text-[#1a1a1a]">
+              <p className="font-['Noto_Sans'] font-semibold text-[var(--color-text)]">
                 {formatCents(item.quantityInYards * item.pricePerYard, order.currency)}
               </p>
             </div>
@@ -258,18 +258,18 @@ export default function AdminOrderDetailPage() {
       {/* Order Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {shippingAddress && (
-          <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6">
-            <h2 className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mb-4">
+          <div className="bg-[var(--color-surface)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-6">
+            <h2 className="text-lg font-['Noto_Sans'] font-semibold text-[var(--color-text)] mb-4">
               Shipping Address
             </h2>
-            <pre className="text-sm text-[#4a4a4a] font-['Montserrat'] whitespace-pre-wrap">
+            <pre className="text-sm text-[var(--color-text-dim)] font-['Montserrat'] whitespace-pre-wrap">
               {formatAddress(shippingAddress)}
             </pre>
           </div>
         )}
 
-        <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6">
-          <h2 className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mb-4">
+        <div className="bg-[var(--color-surface)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-6">
+          <h2 className="text-lg font-['Noto_Sans'] font-semibold text-[var(--color-text)] mb-4">
             Order Timeline
           </h2>
           <OrderTimeline statusHistory={order.statusHistory || []} />
@@ -277,34 +277,34 @@ export default function AdminOrderDetailPage() {
       </div>
 
       {/* Order Summary */}
-      <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6">
-        <h2 className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mb-4">
+      <div className="bg-[var(--color-surface)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-6">
+        <h2 className="text-lg font-['Noto_Sans'] font-semibold text-[var(--color-text)] mb-4">
           Order Summary
         </h2>
         <div className="space-y-2 text-sm font-['Montserrat']">
           <div className="flex justify-between">
-            <span className="text-[#4a4a4a]">Subtotal</span>
-            <span className="text-[#1a1a1a]">
+            <span className="text-[var(--color-text-dim)]">Subtotal</span>
+            <span className="text-[var(--color-text)]">
               {formatCents(order.subtotalCents || order.totalCents, order.currency)}
             </span>
           </div>
           {order.taxCents && order.taxCents > 0 && (
             <div className="flex justify-between">
-              <span className="text-[#4a4a4a]">Tax</span>
-              <span className="text-[#1a1a1a]">{formatCents(order.taxCents, order.currency)}</span>
+              <span className="text-[var(--color-text-dim)]">Tax</span>
+              <span className="text-[var(--color-text)]">{formatCents(order.taxCents, order.currency)}</span>
             </div>
           )}
           {order.shippingCents && order.shippingCents > 0 && (
             <div className="flex justify-between">
-              <span className="text-[#4a4a4a]">Shipping</span>
-              <span className="text-[#1a1a1a]">
+              <span className="text-[var(--color-text-dim)]">Shipping</span>
+              <span className="text-[var(--color-text)]">
                 {formatCents(order.shippingCents, order.currency)}
               </span>
             </div>
           )}
-          <div className="flex justify-between pt-2 border-t border-[#d4d4d4] font-semibold">
-            <span className="text-[#1a1a1a]">Total</span>
-            <span className="text-[#1a1a1a]">{formatCents(order.totalCents, order.currency)}</span>
+          <div className="flex justify-between pt-2 border-t border-[var(--color-border)] font-semibold">
+            <span className="text-[var(--color-text)]">Total</span>
+            <span className="text-[var(--color-text)]">{formatCents(order.totalCents, order.currency)}</span>
           </div>
         </div>
       </div>
