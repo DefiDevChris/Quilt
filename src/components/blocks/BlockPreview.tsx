@@ -68,7 +68,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
         aria-modal="true"
         aria-labelledby="block-preview-title"
         tabIndex={-1}
-        className="relative w-80 rounded-lg bg-surface border border-default p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)] outline-none"
+        className="relative w-80 rounded-lg bg-surface border border-default p-6 shadow-[0_1px_2px_rgba(54,49,45,0.08)] outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -99,7 +99,7 @@ export function BlockPreview({ block, onClose }: BlockPreviewProps) {
                 type="button"
                 onClick={handleUpgrade}
                 disabled={isUpgrading}
-                className="mt-3 rounded-full bg-primary text-default px-4 py-1.5 text-[14px] leading-[20px] hover:bg-primary-dark transition-colors duration-150 disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                className="mt-3 rounded-full bg-primary text-default px-4 py-1.5 text-[14px] leading-[20px] hover:bg-primary-dark transition-colors duration-150 disabled:opacity-50 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
               >
                 {isUpgrading ? 'Loading...' : 'Upgrade to Pro'}
               </button>

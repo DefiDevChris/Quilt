@@ -41,7 +41,7 @@ export default function Categories() {
                 className="relative w-full aspect-square rounded-full overflow-hidden mb-4 transition-colors duration-150"
                 style={{
                   backgroundColor: COLORS.surface,
-                  boxShadow: '0 1px 2px rgba(26,26,26,0.08)',
+                  boxShadow: '0 1px 2px rgba(54,49,45,0.08)',
                 }}
               >
                 <img
