@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-> **IMPORTANT:** This file MUST stay identical to `QWEN.md` at all times.
-
 > **Context retrieval:** For detailed feature docs (Studio architecture, PDF export, Shop, Social, Mobile uploads, removed-features list), query **mempalace** (`mempalace_search` with wing `quilt`). Only coding conventions and daily-use commands live here.
 
 ## Project Overview
