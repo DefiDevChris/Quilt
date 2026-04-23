@@ -1,12 +1,10 @@
 # CLAUDE.md — Quilt Design Studio: AI Agent Guidelines
 
-<<<<<<< HEAD
-> **Context retrieval:** For detailed feature docs (Studio architecture, PDF export, Shop, Social, Mobile uploads, removed-features list), query **mempalace** (`mempalace_search` with wing `quilt`). Only coding conventions and daily-use commands live here.
-=======
 This file is the authoritative reference for **Claude** working inside this repository. Read it fully before touching any file.
 
+> **Context retrieval:** For detailed feature docs (Studio architecture, PDF export, Shop, Social, Mobile uploads, removed-features list), query **mempalace** (`mempalace_search` with wing `quilt`). Only coding conventions and daily-use commands live here.
+
 ---
->>>>>>> e6d5af1181590cfb3c5eb9cdfd7795a1d5cd6fff
 
 ## 1. Repository overview
 
@@ -20,7 +18,7 @@ Quilt is a Next.js 15 (App Router) web app for designing quilts. The stack is:
 | State | Zustand (one store per domain) |
 | Icons | `lucide-react` only |
 | Toasts | `sonner` only |
-| Fonts | `next/font/google` (Geist Sans / Geist Mono) |
+| Fonts | Google Fonts via `<link>` in `layout.tsx` — Montserrat (body) / Noto Sans (headings) |
 
 ---
 
@@ -28,25 +26,42 @@ Quilt is a Next.js 15 (App Router) web app for designing quilts. The stack is:
 
 ### Colors
 
-All color references **must** go through CSS variables:
+All color references **must** go through CSS variables (Easter-spring light-blue SSOT):
 
 ```
---color-surface          #FAFAF8   page / panel background
---color-surface-alt      #F4F3F0   secondary backgrounds, card fills
---color-text             #1A1A1A   primary text
---color-text-muted       #6B6B6B   secondary text, placeholders
---color-text-on-primary  #FFFFFF   text on primary-colored surfaces
---color-border           #E8E6E1   default borders
---color-border-strong    #C8C5BE   hover / focus borders
---color-primary          #4A90D5   brand blue (buttons, links, focus rings)
+--color-bg               #FEFDFB   page background (warm off-white)
+--color-surface          #ffffff   cards, dialogs, elevated panels
+--color-text             #36312D   primary text (warm near-black)
+--color-text-dim         #7A726C   secondary text, placeholders
+--color-text-on-primary  #ffffff   text on primary-colored surfaces
+--color-border           #E6E1DC   default borders
+--color-border-strong    #7A726C   hover / focus borders
+--color-primary          #7CB9E8   brand sky blue (buttons, links, focus rings)
 --color-primary-hover    #5AA0D5   primary hover state
---color-primary-light    #EBF4FF   tinted primary backgrounds
---color-primary-dark     #3A7BC8   (legacy alias — prefer --color-primary-hover)
---color-accent           #8B5E3C   warm brown accent
---color-accent-light     #F5EDE4   tinted accent backgrounds
+--color-secondary        #C5DFF3   pale sky — dividers, inactive tabs, tinted primary bg
+--color-accent           #FFE08A   buttercup — rare highlights, featured/new
+--color-accent-blush     #F6C6C8   blush — sparing community/warmth moments
+--color-success          #4CAF50
+--color-warning          #FFE08A   (aligned with accent/buttercup)
+--color-error            #EF5350
 ```
 
-Never use raw hex codes in `className` attributes. Never use `bg-white`, `text-black`, etc.
+**Removed legacy aliases** (do not use, previously aliased for migration):
+`--color-background` → `--color-bg`
+`--color-surface-alt` → `--color-bg`
+`--color-text-muted` → `--color-text-dim`
+`--color-primary-light` → `--color-secondary`
+`--color-primary-dark` → `--color-primary-hover`
+`--color-accent-light` → `--color-accent`
+
+Typography tokens:
+
+```
+--font-sans        'Montserrat', system-ui, sans-serif   (body)
+--font-heading     'Noto Sans', system-ui, sans-serif    (h1–h6)
+```
+
+Never use raw hex codes in `className` attributes. Never use `bg-white`, `text-black`, `font-['Noto_Serif']`, or `font-['Spline_Sans']`.
 
 ### Radius
 
