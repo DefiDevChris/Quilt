@@ -2,25 +2,53 @@
   "brand_identity": {
     "name": "Quilt",
     "tagline": "Design quilts, preserve stories",
-    "primary_color": "#4A90D5",
-    "secondary_color": "#8B5E3C",
-    "font_family": "Geist Sans",
-    "description": "A warm, artisan-inspired digital tool for quilters"
+    "primary_color": "#7CB9E8",
+    "secondary_color": "#C5DFF3",
+    "accent_color": "#FFE08A",
+    "accent_blush": "#F6C6C8",
+    "heading_font": "Noto Sans",
+    "body_font": "Montserrat",
+    "description": "A warm, artisan-inspired digital tool for quilters — Easter-spring light-blue palette."
+  },
+  "color_palette": {
+    "primary": "#7CB9E8",
+    "secondary": "#C5DFF3",
+    "accent": "#FFE08A",
+    "accent_blush": "#F6C6C8",
+    "bg": "#FEFDFB",
+    "surface": "#ffffff",
+    "text": "#36312D",
+    "text_dim": "#7A726C",
+    "border": "#E6E1DC"
   },
   "computed_colors": {
+    "primary": "#7CB9E8",
     "primary_hover": "#5AA0D5",
-    "primary_light": "#EBF4FF",
-    "primary_dark": "#3A7BC8",
-    "surface": "#FAFAF8",
-    "surface_alt": "#F4F3F0",
-    "text": "#1A1A1A",
-    "text_muted": "#6B6B6B",
-    "border": "#E8E6E1",
-    "border_strong": "#C8C5BE"
+    "primary_light": "#C5DFF3",
+    "primary_dark": "#5AA0D5",
+    "secondary": "#C5DFF3",
+    "accent": "#FFE08A",
+    "accent_blush": "#F6C6C8",
+    "bg": "#FEFDFB",
+    "surface": "#ffffff",
+    "surface_alt": "#FEFDFB",
+    "text": "#36312D",
+    "text_dim": "#7A726C",
+    "text_muted": "#7A726C",
+    "text_on_primary": "#ffffff",
+    "border": "#E6E1DC",
+    "border_strong": "#7A726C",
+    "success": "#4CAF50",
+    "warning": "#FFE08A",
+    "error": "#EF5350"
   },
   "design_system": {
     "typography": {
-      "font_family": "Geist Sans, system-ui, sans-serif",
+      "heading_font_family": "'Noto Sans', system-ui, sans-serif",
+      "body_font_family": "'Montserrat', system-ui, sans-serif",
+      "google_fonts_url": "https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700;800&display=swap",
+      "heading_weights": [400, 500, 600, 700, 800],
+      "body_weights": [400, 500, 600, 700],
       "scale": {
         "xs": "0.75rem",
         "sm": "0.875rem",
@@ -45,8 +73,8 @@
       }
     },
     "shadows": {
-      "elevated": "0 4px 16px rgba(26,26,26,0.08), 0 1px 4px rgba(26,26,26,0.04)",
-      "subtle": "0 1px 3px rgba(26,26,26,0.06)",
+      "elevated": "0 4px 16px rgba(54,49,45,0.08), 0 1px 4px rgba(54,49,45,0.04)",
+      "subtle": "0 1px 3px rgba(54,49,45,0.06)",
       "none": "none"
     },
     "transitions": {
@@ -57,21 +85,21 @@
       "primary": {
         "base": "btn-primary",
         "hover": "hover:bg-[var(--color-primary-hover)]",
-        "classes": "inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm bg-[var(--color-primary)] text-white transition-colors duration-150"
+        "classes": "inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm bg-[var(--color-primary)] text-[var(--color-text-on-primary)] transition-colors duration-150"
       },
       "secondary": {
         "base": "btn-secondary",
-        "classes": "inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm bg-[var(--color-surface-alt)] text-[var(--color-text)] border border-[var(--color-border)] transition-colors duration-150"
+        "classes": "inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm bg-[var(--color-secondary)] text-[var(--color-text)] border border-[var(--color-border)] transition-colors duration-150"
       },
       "ghost": {
         "base": "btn-ghost",
-        "classes": "inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-sm text-[var(--color-text-muted)] transition-colors duration-150"
+        "classes": "inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-sm text-[var(--color-text-dim)] transition-colors duration-150"
       }
     },
     "cards": {
-      "base": "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_4px_16px_rgba(26,26,26,0.08),_0_1px_4px_rgba(26,26,26,0.04)]",
+      "base": "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[0_4px_16px_rgba(54,49,45,0.08),_0_1px_4px_rgba(54,49,45,0.04)]",
       "hover": "transition-colors duration-150 hover:border-[var(--color-border-strong)]",
-      "selected": "border-[var(--color-primary)] bg-[var(--color-primary-light)]"
+      "selected": "border-[var(--color-primary)] bg-[var(--color-secondary)]"
     },
     "modals": {
       "panel": "rounded-lg bg-[var(--color-surface)] p-8 shadow-elevated",
@@ -80,7 +108,7 @@
     },
     "forms": {
       "input": "input",
-      "label": "block text-xs font-medium text-[var(--color-text-muted)] mb-1"
+      "label": "block text-xs font-medium text-[var(--color-text-dim)] mb-1"
     }
   },
   "banned_patterns": {
@@ -99,7 +127,8 @@
     ],
     "css_patterns": [
       "hardcoded hex colors in className (use CSS variables)",
-      "inline style color overrides"
+      "inline style color overrides",
+      "font-['Noto_Serif'] or font-['Spline_Sans'] (use var(--font-heading) or var(--font-sans))"
     ],
     "note": "rounded-xl was formerly in cards.base — corrected to rounded-lg in this config version."
   },

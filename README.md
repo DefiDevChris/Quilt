@@ -36,16 +36,16 @@ Full spec lives in `brand_config.json` (authoritative) → `src/lib/design-syste
 - **Secondary**: Pale sky (`#C5DFF3`) — dividers, inactive tabs, subtle supports
 - **Accent · Buttercup**: (`#FFE08A`) — rare highlights, featured/new, celebratory moments
 - **Accent · Blush**: (`#F6C6C8`) — even more sparing community/warmth moments
-- **Background**: (`#F7F9FC`) — nearly-white with a whisper of cool
-- **Surface**: Pure white (`#FFFFFF`) — cards, dialogs, elevated panels
-- **Text**: (`#1A1A1A`), dim (`#4A4A4A`), border (`#D4D4D4`)
-- **Functional**: Error (`#ed4956`), success (`#16a34a`)
+- **Background**: (`#FEFDFB`) — warm off-white, nearly imperceptible cream
+- **Surface**: Pure white (`#ffffff`) — cards, dialogs, elevated panels
+- **Text**: (`#36312D`), dim (`#7A726C`), border (`#E6E1DC`)
+- **Functional**: Error (`#EF5350`), success (`#4CAF50`)
 
-**Typography**: Noto Serif (headings), Montserrat (body)
+**Typography**: Noto Sans (headings), Montserrat (body)
 
 **Shape**: `rounded-full` for buttons/CTAs/tabs/pills, `rounded-lg` (8px) for cards/containers/inputs/dialogs.
 
-**Shadow**: `0 1px 2px rgba(26, 26, 26, 0.08)` — single subtle shadow system-wide.
+**Shadow**: `0 1px 2px rgba(54, 49, 45, 0.08)` — single subtle shadow system-wide.
 
 **Motion**: 150ms ease-out on color/background only. No scale/translate/lift on hover.
 

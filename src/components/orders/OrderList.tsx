@@ -17,14 +17,14 @@ export default function OrderList({ statusFilter }: OrderListProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-[#4a4a4a] font-['Inter'] animate-pulse">Loading orders...</div>
+        <div className="text-[var(--color-text-dim)] font-['Inter'] animate-pulse">Loading orders...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-[#fee2e2] rounded-lg p-4 text-[#ef4444] font-['Inter']">
+      <div className="bg-[var(--color-accent-blush)] rounded-lg p-4 text-[var(--color-error)] font-['Inter']">
         Failed to load orders: {error}
       </div>
     );
@@ -32,11 +32,11 @@ export default function OrderList({ statusFilter }: OrderListProps) {
 
   if (!orders || orders.length === 0) {
     return (
-      <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-12 text-center">
-        <p className="text-lg font-['Spline_Sans'] font-semibold text-[#1a1a1a] mb-2">
+      <div className="bg-[var(--color-surface)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-12 text-center">
+        <p className="text-lg font-['Montserrat'] font-semibold text-[var(--color-text)] mb-2">
           No orders yet
         </p>
-        <p className="text-[#4a4a4a] font-['Inter']">
+        <p className="text-[var(--color-text-dim)] font-['Inter']">
           Your order history will appear here after your first purchase.
         </p>
       </div>
@@ -53,7 +53,7 @@ export default function OrderList({ statusFilter }: OrderListProps) {
 
       {pagination && pagination.totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 mt-6">
-          <p className="text-sm text-[#4a4a4a] font-['Inter']">
+          <p className="text-sm text-[var(--color-text-dim)] font-['Inter']">
             Page {pagination.page} of {pagination.totalPages} ({pagination.total} orders)
           </p>
         </div>

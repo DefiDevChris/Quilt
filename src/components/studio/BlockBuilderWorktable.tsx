@@ -480,7 +480,7 @@ export function BlockBuilderWorktable() {
         <button
           type="button"
           onClick={handleBackToQuilt}
-          className="flex items-center gap-1.5 rounded-full h-10 px-4 text-[14px] font-semibold bg-[var(--color-primary)] text-[var(--color-text)] hover:bg-[#5AA0D5] transition-colors shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+          className="flex items-center gap-1.5 rounded-full h-10 px-4 text-[14px] font-semibold bg-[var(--color-primary)] text-[var(--color-text-on-primary)] hover:bg-[var(--color-primary-hover)] transition-colors shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
           aria-label="Return to quilt canvas"
         >
           <ArrowLeft size={16} strokeWidth={2.5} />
@@ -543,7 +543,7 @@ export function BlockBuilderWorktable() {
                 Draft a block here, then save it to your collection.
               </p>
             </div>
-            <div className="rounded-lg border border-[var(--color-border)]/20 bg-[var(--color-surface)] p-3 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+            <div className="rounded-lg border border-[var(--color-border)]/20 bg-[var(--color-surface)] p-3 shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
               <canvas ref={canvasRef} width={canvasSize} height={canvasSize} tabIndex={0} />
             </div>
           </div>
@@ -717,7 +717,7 @@ export function BlockBuilderWorktable() {
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 rounded-full bg-[var(--color-primary)] py-2.5 text-[14px] font-semibold text-[var(--color-text)] transition-colors duration-150 hover:bg-[#5AA0D5] disabled:cursor-not-allowed disabled:opacity-50 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                className="flex-1 rounded-full bg-[var(--color-primary)] py-2.5 text-[14px] font-semibold text-[var(--color-text)] transition-colors duration-150 hover:bg-[var(--color-primary-hover)] disabled:cursor-not-allowed disabled:opacity-50 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
               >
                 {saving ? 'Saving…' : isAdmin && publishToLibrary ? 'Publish Block' : 'Save Block'}
               </button>

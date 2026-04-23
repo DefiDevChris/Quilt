@@ -79,14 +79,14 @@ export default function AdminOrdersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-[#4a4a4a] font-['Montserrat'] animate-pulse">Loading orders...</div>
+        <div className="text-[var(--color-text-dim)] font-['Montserrat'] animate-pulse">Loading orders...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-[#fee2e2] rounded-lg p-4 text-[#ef4444] font-['Montserrat']">
+      <div className="bg-[var(--color-accent-blush)] rounded-lg p-4 text-[var(--color-error)] font-['Montserrat']">
         Failed to load orders: {error}
       </div>
     );
@@ -95,10 +95,10 @@ export default function AdminOrdersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-['Noto_Serif'] font-semibold text-[#1a1a1a]">
+        <h1 className="text-2xl font-['Noto_Sans'] font-semibold text-[var(--color-text)]">
           Order Management
         </h1>
-        <p className="text-sm text-[#4a4a4a] font-['Montserrat'] mt-1">
+        <p className="text-sm text-[var(--color-text-dim)] font-['Montserrat'] mt-1">
           View and manage all customer orders
         </p>
       </div>
@@ -114,8 +114,8 @@ export default function AdminOrdersPage() {
             }}
             className={`px-4 py-2 rounded-full font-['Montserrat'] text-sm whitespace-nowrap transition-colors duration-150 ease-out ${
               statusFilter === option.value
-                ? 'bg-[#7CB9E8] text-[#1a1a1a]'
-                : 'bg-[#ffffff] text-[#4a4a4a] border border-[#d4d4d4] hover:bg-[#F7F9FC]'
+                ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
+                : 'bg-[var(--color-surface)] text-[var(--color-text-dim)] border border-[var(--color-border)] hover:bg-[var(--color-bg)]'
             }`}
           >
             {option.label}
@@ -124,27 +124,27 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] overflow-hidden">
+      <div className="bg-[var(--color-surface)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#F7F9FC] border-b border-[#d4d4d4]">
+            <thead className="bg-[var(--color-bg)] border-b border-[var(--color-border)]">
               <tr>
-                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[#4a4a4a]">
+                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[var(--color-text-dim)]">
                   Order ID
                 </th>
-                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[#4a4a4a]">
+                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[var(--color-text-dim)]">
                   Customer
                 </th>
-                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[#4a4a4a]">
+                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[var(--color-text-dim)]">
                   Date
                 </th>
-                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[#4a4a4a]">
+                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[var(--color-text-dim)]">
                   Status
                 </th>
-                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[#4a4a4a]">
+                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[var(--color-text-dim)]">
                   Total
                 </th>
-                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[#4a4a4a]">
+                <th className="text-left py-3 px-4 font-['Montserrat'] font-medium text-[var(--color-text-dim)]">
                   Actions
                 </th>
               </tr>
@@ -153,27 +153,27 @@ export default function AdminOrdersPage() {
               {orders.map((order) => (
                 <tr
                   key={order.id}
-                  className="border-b border-[#d4d4d4] last:border-0 hover:bg-[#F7F9FC]/50 transition-colors duration-150 ease-out"
+                  className="border-b border-[var(--color-border)] last:border-0 hover:bg-[var(--color-bg)]/50 transition-colors duration-150 ease-out"
                 >
-                  <td className="py-3 px-4 font-['Montserrat'] text-[#1a1a1a]">
+                  <td className="py-3 px-4 font-['Montserrat'] text-[var(--color-text)]">
                     #{order.shopifyOrderId.slice(-6)}
                   </td>
-                  <td className="py-3 px-4 font-['Montserrat'] text-[#4a4a4a]">
+                  <td className="py-3 px-4 font-['Montserrat'] text-[var(--color-text-dim)]">
                     {order.userName || order.userEmail || 'Guest'}
                   </td>
-                  <td className="py-3 px-4 font-['Montserrat'] text-[#4a4a4a]">
+                  <td className="py-3 px-4 font-['Montserrat'] text-[var(--color-text-dim)]">
                     {formatOrderDate(order.createdAt)}
                   </td>
                   <td className="py-3 px-4">
                     <OrderStatusBadge status={order.status} />
                   </td>
-                  <td className="py-3 px-4 font-['Noto_Serif'] font-semibold text-[#1a1a1a]">
+                  <td className="py-3 px-4 font-['Noto_Sans'] font-semibold text-[var(--color-text)]">
                     {formatCents(order.totalCents, order.currency)}
                   </td>
                   <td className="py-3 px-4">
                     <Link
                       href={`/admin/orders/${order.id}`}
-                      className="text-[#7CB9E8] hover:text-[#5AA0D5] transition-colors duration-150 ease-out font-['Montserrat']"
+                      className="text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors duration-150 ease-out font-['Montserrat']"
                     >
                       View
                     </Link>
@@ -185,7 +185,7 @@ export default function AdminOrdersPage() {
         </div>
 
         {orders.length === 0 && (
-          <div className="py-12 text-center text-[#4a4a4a] font-['Montserrat']">No orders found</div>
+          <div className="py-12 text-center text-[var(--color-text-dim)] font-['Montserrat']">No orders found</div>
         )}
       </div>
 
@@ -195,17 +195,17 @@ export default function AdminOrdersPage() {
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 rounded-full bg-[#ffffff] border border-[#d4d4d4] text-[#4a4a4a] font-['Montserrat'] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#F7F9FC] transition-colors duration-150 ease-out"
+            className="px-4 py-2 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-dim)] font-['Montserrat'] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--color-bg)] transition-colors duration-150 ease-out"
           >
             Previous
           </button>
-          <span className="text-sm text-[#4a4a4a] font-['Montserrat']">
+          <span className="text-sm text-[var(--color-text-dim)] font-['Montserrat']">
             Page {page} of {pagination.totalPages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
             disabled={page === pagination.totalPages}
-            className="px-4 py-2 rounded-full bg-[#ffffff] border border-[#d4d4d4] text-[#4a4a4a] font-['Montserrat'] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#F7F9FC] transition-colors duration-150 ease-out"
+            className="px-4 py-2 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-dim)] font-['Montserrat'] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--color-bg)] transition-colors duration-150 ease-out"
           >
             Next
           </button>
