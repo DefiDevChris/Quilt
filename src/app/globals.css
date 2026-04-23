@@ -1,38 +1,44 @@
 @import 'tailwindcss';
 
-/* ─── Brand tokens ─────────────────────────────────────────────────────────── */
+/* ─── Brand tokens — SSOT for Quilt website ──────────────────────────────── */
 @theme {
-  /* Surface & background */
-  --color-surface:          #FAFAF8;
-  --color-surface-alt:      #F4F3F0;
-  --color-background:       #F4F3F0;
+  /* Surface & background (light, soft off-white system) */
+  --color-bg:               #FEFDFB;   /* page background */
+  --color-surface:          #ffffff;   /* cards, dialogs, elevated panels */
 
-  /* Text */
-  --color-text:             #1A1A1A;
-  --color-text-muted:       #6B6B6B;
-  --color-text-on-primary:  #FFFFFF;
+  /* Text (warm, near-black system) */
+  --color-text:             #36312D;   /* primary text */
+  --color-text-dim:         #7A726C;   /* secondary text, placeholders */
+  --color-text-on-primary:  #ffffff;   /* text on primary-colored surfaces */
 
-  /* Borders */
-  --color-border:           #E8E6E1;
-  --color-border-strong:    #C8C5BE;
+  /* Borders (warm light) */
+  --color-border:           #E6E1DC;   /* default borders */
+  --color-border-strong:    #7A726C;   /* hover / focus borders */
 
-  /* Primary (quilt blue) */
-  --color-primary:          #4A90D5;
-  --color-primary-hover:    #5AA0D5;
-  --color-primary-light:    #EBF4FF;
-  --color-primary-dark:     #3A7BC8;
+  /* Primary — Easter-spring sky blue */
+  --color-primary:          #7CB9E8;   /* brand sky blue (buttons, links, focus rings) */
+  --color-primary-hover:    #5AA0D5;   /* primary hover state */
 
-  /* Accent */
-  --color-accent:           #8B5E3C;
-  --color-accent-light:     #F5EDE4;
+  /* Secondary — pale sky */
+  --color-secondary:        #C5DFF3;   /* dividers, inactive tabs, subtle supports, tinted primary backgrounds */
+
+  /* Accent — buttercup */
+  --color-accent:           #FFE08A;   /* rare highlights, featured/new moments */
+
+  /* Accent — blush */
+  --color-accent-blush:     #F6C6C8;   /* sparing community/warmth moments */
 
   /* Semantic */
   --color-success:          #4CAF50;
-  --color-warning:          #FFC107;
+  --color-warning:          #FFE08A;   /* aligned with accent (buttercup) */
   --color-error:            #EF5350;
 
-  /* Brand shadows */
-  --shadow-elevated: 0 4px 16px rgba(26,26,26,0.08), 0 1px 4px rgba(26,26,26,0.04);
+  /* Typography */
+  --font-sans:              'Montserrat', system-ui, sans-serif;
+  --font-heading:           'Noto Sans', system-ui, sans-serif;
+
+  /* Brand shadows (warm, aligned with text color rgb 54,49,45) */
+  --shadow-elevated: 0 4px 16px rgba(54,49,45,0.08), 0 1px 4px rgba(54,49,45,0.04);
 }
 
 /* ─── Base ─────────────────────────────────────────────────────────────────── */
@@ -42,10 +48,14 @@
   }
 
   body {
-    background-color: var(--color-background);
+    background-color: var(--color-bg);
     color: var(--color-text);
-    font-family: var(--font-geist-sans, system-ui, sans-serif);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
   }
 
   /* Remove default list styles */
@@ -70,7 +80,7 @@
   .btn-primary {
     @apply inline-flex items-center justify-center px-4 py-2
            rounded-lg font-medium text-sm
-           bg-[var(--color-primary)] text-white
+           bg-[var(--color-primary)] text-[var(--color-text-on-primary)]
            transition-colors duration-150;
   }
   .btn-primary:hover {
@@ -80,7 +90,7 @@
   .btn-primary-sm {
     @apply inline-flex items-center justify-center px-3 py-1.5
            rounded-lg font-medium text-xs
-           bg-[var(--color-primary)] text-white
+           bg-[var(--color-primary)] text-[var(--color-text-on-primary)]
            transition-colors duration-150;
   }
   .btn-primary-sm:hover {
@@ -90,17 +100,17 @@
   .btn-secondary {
     @apply inline-flex items-center justify-center px-4 py-2
            rounded-lg font-medium text-sm
-           bg-[var(--color-surface-alt)] text-[var(--color-text)]
+           bg-[var(--color-secondary)] text-[var(--color-text)]
            border border-[var(--color-border)]
            transition-colors duration-150
-           hover:border-[var(--color-border-strong)] hover:bg-[var(--color-surface)];
+           hover:border-[var(--color-primary-hover)] hover:bg-[var(--color-surface)];
   }
 
   .btn-ghost {
     @apply inline-flex items-center justify-center px-3 py-1.5
-           rounded-lg text-sm text-[var(--color-text-muted)]
+           rounded-lg text-sm text-[var(--color-text-dim)]
            transition-colors duration-150
-           hover:bg-[var(--color-surface-alt)] hover:text-[var(--color-text)];
+           hover:bg-[var(--color-secondary)] hover:text-[var(--color-text)];
   }
 
   /* ── Hover utilities via primary-hover token ────────────────────────────── */
@@ -119,7 +129,7 @@
     @apply block w-full rounded-lg border border-[var(--color-border)]
            bg-[var(--color-surface)] px-3 py-2
            text-sm text-[var(--color-text)]
-           placeholder:text-[var(--color-text-muted)]
+           placeholder:text-[var(--color-text-dim)]
            transition-colors duration-150
            focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)];
   }
