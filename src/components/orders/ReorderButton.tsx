@@ -51,7 +51,7 @@ export default function ReorderButton({ lineItems, className }: ReorderButtonPro
     <button
       onClick={handleReorder}
       disabled={loading}
-      className={`bg-[#7CB9E8] text-[#1a1a1a] px-6 py-2 rounded-full font-['Montserrat'] transition-colors duration-150 ease-out hover:bg-[#5AA0D5] disabled:opacity-50 disabled:cursor-not-allowed ${className || ''}`}
+      className={`bg-[var(--color-primary)] text-[var(--color-text)] px-6 py-2 rounded-full font-['Montserrat'] transition-colors duration-150 ease-out hover:bg-[var(--color-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed ${className || ''}`}
     >
       {loading ? 'Adding to cart...' : 'Reorder'}
     </button>
