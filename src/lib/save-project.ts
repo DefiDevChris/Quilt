@@ -105,7 +105,7 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
 
   // Free users: save to localStorage only
   if (!isPro) {
-    saveTempProject(projectId, {
+    const result = saveTempProject(projectId, {
       canvasData,
       unitSystem,
       gridSettings: gridSettings as unknown as Record<string, unknown>,
@@ -116,6 +116,24 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
       worktables: updatedWorktables as unknown as Array<Record<string, unknown>>,
     });
     const store = useProjectStore.getState();
+    if (!result.ok) {
+      // Persist failed (most commonly QuotaExceededError). Previously we set
+      // 'saved' regardless, so users thought their work was captured when in
+      // fact nothing reached localStorage. Surface the real state and fire an
+      // error event the UI can render.
+      store.setSaveStatus('error');
+      if (typeof window !== 'undefined') {
+        const message = result.quotaExceeded
+          ? "Your browser's storage is full. Free up space (or upgrade to Pro) to save your work."
+          : 'Could not save to local storage. Upgrade to Pro to save your work to the cloud.';
+        window.dispatchEvent(
+          new CustomEvent('quiltcorgi:save-error', {
+            detail: { message, quotaExceeded: result.quotaExceeded ?? false },
+          }),
+        );
+      }
+      return;
+    }
     store.setSaveStatus('saved');
     store.setDirty(false);
     store.setLastSavedAt(new Date());

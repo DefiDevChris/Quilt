@@ -18,20 +18,20 @@ export function PreviewBanner() {
 
   return (
     <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-center bg-[#1a1a1a]/90 backdrop-blur-sm py-2 px-4">
-      <span className="text-[14px] text-[#faf9f7] font-medium mr-4">
+      <span className="text-[14px] text-[#F7F9FC] font-medium mr-4">
         Previewing &lsquo;{previewName}&rsquo;
       </span>
       <button
         type="button"
         onClick={applyPreview}
-        className="px-4 py-1.5 bg-[#f08060] text-[#1a1a1a] text-[14px] font-semibold rounded-full hover:bg-[#d97054] transition-colors mr-2"
+        className="px-4 py-1.5 bg-[#7CB9E8] text-[#1a1a1a] text-[14px] font-semibold rounded-full hover:bg-[#5AA0D5] transition-colors mr-2"
       >
         Apply
       </button>
       <button
         type="button"
         onClick={cancelPreview}
-        className="px-4 py-1.5 border-2 border-[#faf9f7]/30 text-[#faf9f7] text-[14px] font-medium rounded-full hover:bg-[#faf9f7]/10 transition-colors"
+        className="px-4 py-1.5 border-2 border-[#F7F9FC]/30 text-[#F7F9FC] text-[14px] font-medium rounded-full hover:bg-[#F7F9FC]/10 transition-colors"
       >
         Cancel
       </button>

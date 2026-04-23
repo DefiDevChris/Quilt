@@ -7,8 +7,26 @@ import type { GridPoint, SegmentHelpers, SnapHelpers, MinimalCanvas } from './ty
 
 const PENCIL_PREVIEW_COLOR = CANVAS.pencilPreview;
 
-export function usePencilTool(snap: SnapHelpers, segs: SegmentHelpers) {
+/**
+ * Pencil tool with click-click chaining, drag-to-commit, and close-to-start
+ * detection. When the user returns to the initial point with >=2 segments
+ * already committed, we commit the closing segment, clear preview state, and
+ * fire `onShapeClosed` so the caller can (for example) flip the active mode
+ * back to 'select' so the freshly-closed patch can be manipulated.
+ */
+export function usePencilTool(
+  snap: SnapHelpers,
+  segs: SegmentHelpers,
+  onShapeClosed?: () => void
+) {
   const startRef = useRef<GridPoint | null>(null);
+  // The grid point where the CURRENT shape was first anchored. We compare
+  // every subsequent click against this to detect close-to-start.
+  const initialPtRef = useRef<GridPoint | null>(null);
+  // Number of segments committed for the current shape so far. A close
+  // only triggers when we have >= 2 segments (so a back-and-forth line
+  // on a single-segment chain doesn't accidentally close the shape).
+  const segmentCountRef = useRef(0);
   const previewRef = useRef<unknown>(null);
   // Pixel-space origin of the current mouse-down, used to detect drag vs. click.
   const downPixelRef = useRef<{ x: number; y: number } | null>(null);
@@ -16,6 +34,8 @@ export function usePencilTool(snap: SnapHelpers, segs: SegmentHelpers) {
   const draggingRef = useRef(false);
 
   const DRAG_THRESHOLD_PX = 4;
+
+  const pointsEqual = (a: GridPoint, b: GridPoint) => a.row === b.row && a.col === b.col;
 
   // Constrain the target grid point to a 45° direction from a start grid point.
   const constrainTo45 = (from: GridPoint, to: GridPoint): GridPoint => {
@@ -61,6 +81,21 @@ export function usePencilTool(snap: SnapHelpers, segs: SegmentHelpers) {
     c.renderAll();
   }, [snap.gridSize]);
 
+  /**
+   * Reset all per-shape state after a shape is closed (or explicitly cancelled).
+   * This is what separates one pencil shape from the next — the next mouse-down
+   * will anchor a new initial point instead of chaining into the just-closed shape.
+   */
+  const resetShapeState = useCallback((c: MinimalCanvas) => {
+    startRef.current = null;
+    initialPtRef.current = null;
+    segmentCountRef.current = 0;
+    downPixelRef.current = null;
+    draggingRef.current = false;
+    clearPreview(c);
+    c.renderAll();
+  }, [clearPreview]);
+
   const onMouseDown = useCallback(
     async (pointer: { x: number; y: number }, c: MinimalCanvas) => {
       const gridPt = snap.snapToGridPoint(pointer.x, pointer.y);
@@ -70,19 +105,37 @@ export function usePencilTool(snap: SnapHelpers, segs: SegmentHelpers) {
       draggingRef.current = false;
 
       if (!startRef.current) {
-        // First click: anchor start.
+        // First click of a new shape: anchor start AND record the initial point
+        // so future clicks can detect a return-to-start close.
         startRef.current = gridPt;
+        initialPtRef.current = gridPt;
+        segmentCountRef.current = 0;
         await placeDot(gridPt, c);
-      } else {
-        const startPt = startRef.current;
-        if (startPt.row === gridPt.row && startPt.col === gridPt.col) return;
-        // Click-click chain: commit segment, move anchor to new point.
-        segs.addShapeSegments([{ from: startPt, to: gridPt }]);
-        startRef.current = gridPt;
-        await placeDot(gridPt, c);
+        return;
       }
+
+      const startPt = startRef.current;
+      if (pointsEqual(startPt, gridPt)) return;
+
+      // Close-to-start detection: if this click lands on the initial anchor
+      // AND we already have >= 2 segments, commit the closing segment and
+      // end the shape. Shapes closed this way release the pencil so the
+      // user can select/manipulate the new patch.
+      const initialPt = initialPtRef.current;
+      if (initialPt && pointsEqual(initialPt, gridPt) && segmentCountRef.current >= 2) {
+        segs.addShapeSegments([{ from: startPt, to: gridPt }]);
+        resetShapeState(c);
+        onShapeClosed?.();
+        return;
+      }
+
+      // Click-click chain: commit segment, move anchor to new point.
+      segs.addShapeSegments([{ from: startPt, to: gridPt }]);
+      segmentCountRef.current += 1;
+      startRef.current = gridPt;
+      await placeDot(gridPt, c);
     },
-    [snap, segs, placeDot]
+    [snap, segs, placeDot, resetShapeState, onShapeClosed]
   );
 
   const onMouseMove = useCallback(
@@ -141,39 +194,43 @@ export function usePencilTool(snap: SnapHelpers, segs: SegmentHelpers) {
         gridPt = constrainTo45(startRef.current, gridPt);
       }
       const startPt = startRef.current;
-      if (startPt.row === gridPt.row && startPt.col === gridPt.col) return;
+      if (pointsEqual(startPt, gridPt)) return;
+
+      // Close-to-start detection for drag-to-commit paths too.
+      const initialPt = initialPtRef.current;
+      if (initialPt && pointsEqual(initialPt, gridPt) && segmentCountRef.current >= 2) {
+        segs.addShapeSegments([{ from: startPt, to: gridPt }]);
+        resetShapeState(c);
+        onShapeClosed?.();
+        return;
+      }
 
       segs.addShapeSegments([{ from: startPt, to: gridPt }]);
+      segmentCountRef.current += 1;
       startRef.current = gridPt;
       await placeDot(gridPt, c);
     },
-    [snap, segs, placeDot]
+    [snap, segs, placeDot, resetShapeState, onShapeClosed]
   );
 
   const onDoubleClick = useCallback(
     (c: MinimalCanvas) => {
-      startRef.current = null;
-      downPixelRef.current = null;
-      draggingRef.current = false;
-      clearPreview(c);
-      c.renderAll();
+      resetShapeState(c);
     },
-    [clearPreview]
+    [resetShapeState]
   );
 
   const onEscape = useCallback(
     (c: MinimalCanvas) => {
-      startRef.current = null;
-      downPixelRef.current = null;
-      draggingRef.current = false;
-      clearPreview(c);
-      c.renderAll();
+      resetShapeState(c);
     },
-    [clearPreview]
+    [resetShapeState]
   );
 
   const reset = useCallback(() => {
     startRef.current = null;
+    initialPtRef.current = null;
+    segmentCountRef.current = 0;
     previewRef.current = null;
     downPixelRef.current = null;
     draggingRef.current = false;

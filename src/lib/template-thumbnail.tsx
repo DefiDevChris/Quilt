@@ -100,7 +100,7 @@ function generateLayoutSvg(
     }
     case 'medallion': {
       let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">`;
-      svg += `<rect x="${padding}" y="${padding}" width="${availableSize}" height="${availableSize}" rx="3" fill="#FED7AA" opacity="0.3" stroke="#F97316" stroke-width="0.8"/>`;
+      svg += `<rect x="${padding}" y="${padding}" width="${availableSize}" height="${availableSize}" rx="3" fill="#C5DFF3" opacity="0.3" stroke="#7CB9E8" stroke-width="0.8"/>`;
       svg += `<rect x="${padding + 8}" y="${padding + 8}" width="${availableSize - 16}" height="${availableSize - 16}" rx="2" fill="#FBCFE8" opacity="0.3" stroke="#EC4899" stroke-width="0.8"/>`;
       svg += `<rect x="${padding + 20}" y="${padding + 20}" width="${availableSize - 40}" height="${availableSize - 40}" rx="2" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1.2"/>`;
       svg += `</svg>`;
