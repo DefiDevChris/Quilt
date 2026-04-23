@@ -30,8 +30,8 @@ const csp = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   // Fonts: self + Google Fonts
   "font-src 'self' https://fonts.gstatic.com",
-  // Images: self + data URIs (Fabric.js exports) + Google avatars + CloudFront
-  `img-src 'self' data: blob: https://*.googleusercontent.com https://i.pravatar.cc${cloudfrontCspSource}`,
+  // Images: self + data URIs (Fabric.js exports) + Google avatars + CloudFront + hyperagent public CDN (shop imagery)
+  `img-src 'self' data: blob: https://*.googleusercontent.com https://i.pravatar.cc https://pub.hyperagent.com${cloudfrontCspSource}`,
   // Canvas/WebWorker blobs used by Fabric.js
   "worker-src 'self' blob:",
   // Stripe payment frame + Stripe fraud-detection beacon
@@ -70,6 +70,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.googleusercontent.com' },
+      { protocol: 'https', hostname: 'pub.hyperagent.com' },
       ...(cloudfrontHostname ? [{ protocol: 'https' as const, hostname: cloudfrontHostname }] : []),
     ],
   },
