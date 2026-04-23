@@ -160,7 +160,7 @@ export function QuickInfo() {
     <div
       role="region"
       aria-label="Object dimensions info"
-      className="absolute z-40 min-w-[160px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-2 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+      className="absolute z-40 min-w-[160px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-2 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
       style={{ left: panelPos.x, top: panelPos.y }}
     >
       <div className="mb-1 text-caption font-semibold text-[var(--color-text-dim)]">Quick Info</div>

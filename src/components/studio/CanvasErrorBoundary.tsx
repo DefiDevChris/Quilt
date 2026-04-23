@@ -84,7 +84,7 @@ export class CanvasErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <div className="flex-1 flex items-center justify-center bg-[var(--color-bg)]">
-          <div className="max-w-sm w-full rounded-lg bg-[var(--color-bg)] p-8 shadow-[0_1px_2px_rgba(26,26,26,0.08)] text-center">
+          <div className="max-w-sm w-full rounded-lg bg-[var(--color-bg)] p-8 shadow-[0_1px_2px_rgba(54,49,45,0.08)] text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--color-accent)]/10">
               <svg
                 width="24"
@@ -117,7 +117,7 @@ export class CanvasErrorBoundary extends Component<
             <button
               type="button"
               onClick={this.handleReload}
-              className="rounded-full bg-[var(--color-primary)] text-[var(--color-text)] hover:opacity-90 transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+              className="rounded-full bg-[var(--color-primary)] text-[var(--color-text)] hover:opacity-90 transition-colors duration-150 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
             >
               Reload Canvas
             </button>

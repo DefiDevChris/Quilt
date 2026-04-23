@@ -98,7 +98,7 @@ export default function DesignStudioFeature() {
               className="w-full rounded-lg overflow-hidden"
               style={{
                 backgroundColor: COLORS.surface,
-                boxShadow: '0 12px 32px rgba(26,26,26,0.12)',
+                boxShadow: '0 12px 32px rgba(54,49,45,0.12)',
               }}
             >
               {/* Mock browser chrome */}

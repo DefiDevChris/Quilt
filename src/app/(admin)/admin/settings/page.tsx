@@ -130,7 +130,7 @@ export default function AdminSettingsPage() {
       )}
 
       {/* Shop Toggle Section */}
-      <div className="bg-surface border border-default rounded-lg p-6 space-y-4 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+      <div className="bg-surface border border-default rounded-lg p-6 space-y-4 shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold text-default">Fabric Shop</h3>
@@ -178,7 +178,7 @@ export default function AdminSettingsPage() {
           className="fixed inset-0 z-50 flex items-center justify-center"
           style={{ backgroundColor: withAlpha(COLORS.text, 0.4) }}
         >
-          <div className="bg-surface border border-default rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+          <div className="bg-surface border border-default rounded-lg p-6 max-w-md w-full mx-4 space-y-4 shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
             <h3 className="text-lg font-semibold text-default">Enable Fabric Shop</h3>
             <p className="text-sm text-dim">
               This will make the shop visible to all users. A &quot;Shop&quot; tab will appear in

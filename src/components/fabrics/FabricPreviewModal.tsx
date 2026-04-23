@@ -61,7 +61,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
         aria-modal="true"
         aria-labelledby="fabric-preview-title"
         tabIndex={-1}
-        className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] outline-none"
+        className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(54,49,45,0.08)] outline-none"
       >
         {/* Close */}
         <button
@@ -156,7 +156,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-primary)] text-[var(--color-text)] text-[16px] leading-[24px] hover:bg-[var(--color-primary)] transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-primary)] text-[var(--color-text)] text-[16px] leading-[24px] hover:bg-[var(--color-primary)] transition-colors duration-150 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
               >
                 <ShoppingBag size={14} />
                 Add to Shopping List
