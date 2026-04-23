@@ -162,7 +162,7 @@ export function CanvasSelectionToolbar(): React.ReactElement | null {
 
   return (
     <div
-      className="absolute z-50 flex items-center gap-1 rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-2 py-1.5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+      className="absolute z-50 flex items-center gap-1 rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-2 py-1.5 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
       style={{ left: position.left, top: position.top }}
     >
       {buttons.map((button) => (
