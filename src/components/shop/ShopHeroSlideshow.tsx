@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { COLORS, darkenHex } from '@/lib/design-system';
+import { SHOP_IMAGERY } from '@/lib/shop-imagery';
 
 const slides = [
   {
     id: 1,
-    image: '/images/shop/fabric-by-yard.jpg',
+    image: SHOP_IMAGERY.fabricByYard,
     title: 'Spring Collection',
     subtitle: 'New this season',
     description: 'Fresh prints for fresh projects.',
@@ -15,7 +16,7 @@ const slides = [
   },
   {
     id: 2,
-    image: '/images/shop/featured-store.jpg',
+    image: SHOP_IMAGERY.featuredStore,
     title: 'Design Your Own Quilt',
     subtitle: 'The Design Studio',
     description: 'Sketch it, swap fabrics, take home a pattern.',
@@ -24,7 +25,7 @@ const slides = [
   },
   {
     id: 3,
-    image: '/images/shop/fabric-shop-shelves.jpg',
+    image: SHOP_IMAGERY.fabricShopShelves,
     title: 'Fresh Arrivals',
     subtitle: 'Just in',
     description: 'New bolts from the designers we love.',
@@ -33,7 +34,7 @@ const slides = [
   },
   {
     id: 4,
-    image: '/images/shop/fabric-collection.jpg',
+    image: SHOP_IMAGERY.fabricCollection,
     title: 'Essential Solids',
     subtitle: 'Do yourself a solid',
     description: 'Timeless basics that play well with everything.',

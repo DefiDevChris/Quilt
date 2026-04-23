@@ -1,6 +1,7 @@
 'use client';
 
 import { COLORS } from '@/lib/design-system';
+import { SHOP_IMAGERY } from '@/lib/shop-imagery';
 
 export default function FeaturedCollection() {
   return (
@@ -54,7 +55,7 @@ export default function FeaturedCollection() {
           </div>
           <div className="w-full md:w-1/2 relative" style={{ minHeight: '480px' }}>
             <img
-              src="/images/shop/fabric-shop-shelves.jpg"
+              src={SHOP_IMAGERY.fabricShopShelves}
               alt="Colorful fabric patterns"
               className="w-full h-full object-cover"
               onError={(e) => {
