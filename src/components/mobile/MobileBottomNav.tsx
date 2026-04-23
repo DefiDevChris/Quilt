@@ -10,7 +10,7 @@ interface MobileBottomNavProps {
 }
 
 function HomeIcon({ active }: { active: boolean }) {
-  const stroke = active ? '#7CB9E8' : '#d4d4d4';
+  const stroke = active ? 'var(--color-primary)' : 'var(--color-border)';
   const strokeWidth = active ? 1.8 : 1.5;
   return (
     <svg
@@ -30,7 +30,7 @@ function HomeIcon({ active }: { active: boolean }) {
 }
 
 function ProfileIcon({ active }: { active: boolean }) {
-  const stroke = active ? '#7CB9E8' : '#d4d4d4';
+  const stroke = active ? 'var(--color-primary)' : 'var(--color-border)';
   const strokeWidth = active ? 1.8 : 1.5;
   return (
     <svg
@@ -50,7 +50,7 @@ function ProfileIcon({ active }: { active: boolean }) {
 }
 
 function SignInIcon({ active }: { active: boolean }) {
-  const stroke = active ? '#7CB9E8' : '#d4d4d4';
+  const stroke = active ? 'var(--color-primary)' : 'var(--color-border)';
   const strokeWidth = active ? 1.8 : 1.5;
   return (
     <svg
@@ -95,7 +95,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
         <span
           className="text-[14px] leading-[20px] font-semibold"
           style={{
-            color: homeActive ? '#7CB9E8' : '#d4d4d4',
+            color: homeActive ? 'var(--color-primary)' : 'var(--color-border)',
           }}
         >
           Home
@@ -121,7 +121,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
             height="20"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#1a1a1a"
+            stroke="var(--color-text-on-primary)"
             strokeWidth={2}
             strokeLinecap="round"
           >
@@ -145,7 +145,7 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
         <span
           className="text-[14px] leading-[20px] font-semibold"
           style={{
-            color: profileActive ? '#7CB9E8' : '#d4d4d4',
+            color: profileActive ? 'var(--color-primary)' : 'var(--color-border)',
           }}
         >
           {isAuthenticated ? 'Profile' : 'Sign In'}
