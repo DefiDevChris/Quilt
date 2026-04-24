@@ -39,848 +39,476 @@ export function ContextMenu() {
   const [quantity, setQuantity] = useState(1);
   const [isExecuting, setIsExecuting] = useState(false);
   const [subMenu, setSubMenu] = useState<SubMenuType>(null);
+  const [subMenuPos, setSubMenuPos] = useState<{ x: number; y: number } | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBlock, setSelectedBlock] = useState<string | null>(null);
   const [recentFabrics, setRecentFabrics] = useState<RecentFabric[]>([]);
-  const [libraryFabrics, setLibraryFabrics] = useState<
-    Array<{ id: string; name: string; imageUrl: string }>
-  >([]);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [matchingBlocks, ] = useState<string[]>([]);
+  const [similarityModes, setSimilarityModes] = useState<SimilarityMode[]>([]);
+  const fabrics = useFabricStore((s) => s.fabrics);
+  const printlistItems = usePrintlistStore((s) => s.printlistItems);
+  const projectId = useProjectStore((s) => s.projectId?.projectId);
+  const { addItemsToPrintlist } = usePrintlistStore();
+  const { loadFabricOntoCanvas, duplicateSelectedObjects, deleteSelectedObjects, groupSelectedOandUngroup, moveToFront, moveToBack, moveForward, moveBackward } = useCanvasStore();
 
-  const closeMenu = useCallback(() => {
-    setPosition(null);
-    setShowQuantityInput(false);
-    setQuantity(1);
-    setSubMenu(null);
+  useEffect(() => {
+    setRecentFabrics(getRecentFabrics());
   }, []);
 
-  useEffect(() => {
-    if (!fabricCanvas) return;
-
-    let isMounted = true;
-    let fabric: typeof import('fabric') | null = null;
-    const registeredListeners: Array<() => void> = [];
-
-    (async () => {
-      fabric = await import('fabric');
-      if (!isMounted) return;
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-
-      function onContextMenu(e: { e: MouseEvent; target?: unknown }) {
-        e.e.preventDefault();
-        e.e.stopPropagation();
-        setPosition({
-          x: e.e.clientX,
-          y: e.e.clientY,
-          hasTarget: !!e.target,
-        });
-        setSubMenu(null);
-      }
-
-      function onMouseDown() {
-        closeMenu();
-      }
-
-      const handleContextMenu = (evt: MouseEvent) => {
-        evt.preventDefault();
-      };
-
-      const onMouseDownBefore = ((e: { e: MouseEvent }) => {
-        if (e.e.button === 2) {
-          const target = canvas.findTarget(e.e) as unknown;
-          if (target && fabric) {
-            canvas.setActiveObject(target as InstanceType<typeof fabric.FabricObject>);
-          }
-          onContextMenu({ e: e.e, target });
-        }
-      }) as never;
-
-      if (!isMounted) return;
-
-      canvas.on('mouse:down', onMouseDown);
-      registeredListeners.push(() => canvas.off('mouse:down', onMouseDown));
-
-      const wrapperEl = canvas.wrapperEl;
-      if (wrapperEl) {
-        wrapperEl.addEventListener('contextmenu', handleContextMenu);
-        registeredListeners.push(() =>
-          wrapperEl.removeEventListener('contextmenu', handleContextMenu)
-        );
-      }
-
-      canvas.on('mouse:down:before', onMouseDownBefore);
-      registeredListeners.push(() => canvas.off('mouse:down:before', onMouseDownBefore));
-    })();
-
-    return () => {
-      isMounted = false;
-      for (const remove of registeredListeners) remove();
-    };
-  }, [fabricCanvas, closeMenu]);
-
-  useEffect(() => {
-    if (!position) return;
-
-    let isMounted = true;
-
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        if (subMenu) {
-          setSubMenu(null);
-        } else {
-          closeMenu();
-        }
-      }
-    }
-
-    function onClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        closeMenu();
-      }
-    }
-
-    if (!isMounted) return;
-
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('mousedown', onClickOutside, { capture: true });
-
-    return () => {
-      isMounted = false;
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('mousedown', onClickOutside, { capture: true });
-    };
-  }, [position, subMenu, closeMenu]);
-
-  useEffect(() => {
-    if (subMenu === 'fabric' && position) {
-      setRecentFabrics(getRecentFabrics());
-      const fabrics = useFabricStore.getState().fabrics;
-      const userFabrics = useFabricStore.getState().userFabrics;
-      const allFabrics = [...userFabrics, ...fabrics].slice(0, 12);
-      setLibraryFabrics(
-        allFabrics.map((f) => ({
-          id: f.id,
-          name: f.name,
-          imageUrl: f.imageUrl,
-        }))
-      );
-    }
-  }, [subMenu, position]);
-
-  const pushUndo = useCallback((canvas: unknown) => {
-    const c = canvas as { toJSON: () => unknown };
-    const json = JSON.stringify(c.toJSON());
-    useCanvasStore.getState().pushUndoState(json);
-    useProjectStore.getState().setDirty(true);
-  }, []);
-
-  const executeAction = useCallback(
-    async (action: string) => {
-      if (!fabricCanvas || isExecuting) return;
-      setIsExecuting(true);
-      try {
-        const fabric = await import('fabric');
-        const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-        const active = canvas.getActiveObject();
-        if (!active) return;
-
-        switch (action) {
-          case 'duplicate': {
-            const cloned = await active.clone();
-            cloned.set({
-              left: (active.left ?? 0) + 20,
-              top: (active.top ?? 0) + 20,
-            });
-            canvas.add(cloned);
-            canvas.setActiveObject(cloned);
-            break;
-          }
-          case 'duplicateBlock': {
-            if (active.type !== 'group') return;
-            const cloned = await active.clone();
-            cloned.set({
-              left:
-                (active.left ?? 0) +
-                ((active as InstanceType<typeof fabric.Group>).width ?? 0) *
-                  ((active as InstanceType<typeof fabric.Group>).scaleX ?? 1) +
-                20,
-              top: active.top ?? 0,
-            });
-            canvas.add(cloned);
-            canvas.setActiveObject(cloned);
-            break;
-          }
-          case 'delete': {
-            canvas.remove(active);
-            canvas.discardActiveObject();
-            break;
-          }
-          case 'flipH': {
-            active.set({ flipX: !active.flipX });
-            break;
-          }
-          case 'flipV': {
-            active.set({ flipY: !active.flipY });
-            break;
-          }
-          case 'rotate90': {
-            active.rotate((active.angle ?? 0) + 90);
-            break;
-          }
-          case 'flipBlockH': {
-            if (active.type !== 'group') return;
-            active.set({ flipX: !active.flipX });
-            break;
-          }
-          case 'flipBlockV': {
-            if (active.type !== 'group') return;
-            active.set({ flipY: !active.flipY });
-            break;
-          }
-          case 'rotateBlock90': {
-            if (active.type !== 'group') return;
-            active.rotate((active.angle ?? 0) + 90);
-            break;
-          }
-          case 'sendToBack': {
-            canvas.sendObjectToBack(active);
-            break;
-          }
-          case 'bringToFront': {
-            canvas.bringObjectToFront(active);
-            break;
-          }
-          case 'group': {
-            const selection = canvas.getActiveObjects();
-            if (selection.length > 1) {
-              const group = new fabric.Group(selection, { canvas });
-              canvas.remove(...selection);
-              canvas.add(group);
-              canvas.setActiveObject(group);
-            }
-            break;
-          }
-          case 'ungroup': {
-            if (active.type === 'group') {
-              const group = active as InstanceType<typeof fabric.Group>;
-              const items = group.removeAll();
-              canvas.remove(group);
-              for (const item of items) {
-                canvas.add(item);
-              }
-              canvas.discardActiveObject();
-            }
-            break;
-          }
-        }
-
-        active.setCoords();
-        canvas.renderAll();
-        pushUndo(canvas);
-        closeMenu();
-      } finally {
-        setIsExecuting(false);
-      }
-    },
-    [fabricCanvas, isExecuting, pushUndo, closeMenu]
-  );
-
-  const handleAddToPrintlist = useCallback(async () => {
-    if (!fabricCanvas) return;
-    const canvas = fabricCanvas as InstanceType<typeof import('fabric').Canvas>;
-    const active = canvas.getActiveObject();
-    if (!active) return;
-
-    const shapeName =
-      (active as unknown as { name?: string }).name ??
-      `${active.type ?? 'Shape'} ${Date.now().toString(36)}`;
-
-    usePrintlistStore.getState().addItem({
-      shapeId: (active as unknown as { id?: string }).id ?? `shape-${Date.now()}`,
-      shapeName,
-      svgData: active.toSVG(),
-      quantity,
-      unitSystem,
+  const handleContextMenu = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    const canvas = fabricCanvas;
+    if (!canvas) return;
+    const target = canvas.findTarget(e as unknown as fabric.TPointerEvent);
+    setPosition({
+      x: e.clientX,
+      y: e.clientY,
+      hasTarget: !!target,
     });
+    setSubMenu(null);
+  }, [fabricCanvas]);
 
-    closeMenu();
-  }, [fabricCanvas, quantity, unitSystem, closeMenu]);
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    const menuEl = document.getElementById('canvas-context-menu');
+    if (menuEl && !menuEl.contains(e.target as Node)) {
+      setPosition(null);
+      setSubMenu(null);
+    }
+  }, []);
 
-  const handleSelectAll = useCallback(async () => {
-    if (!fabricCanvas) return;
-    const fabric = await import('fabric');
-    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-    const objs = canvas.getObjects();
-    if (objs.length === 0) return;
-    const selection = new fabric.ActiveSelection(objs, { canvas });
-    canvas.setActiveObject(selection);
-    canvas.renderAll();
-    closeMenu();
-  }, [fabricCanvas, closeMenu]);
+  useEffect(() => {
+    const canvas = fabricCanvas;
+    if (!canvas) return;
+    const el = canvas.getElement();
+    el.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      el.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [fabricCanvas, handleContextMenu, handleClickOutside]);
 
-  const handleAlign = useCallback(
-    async (direction: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
-      if (!fabricCanvas) return;
-      const canvas = fabricCanvas as InstanceType<typeof import('fabric').Canvas>;
-      const active = canvas.getActiveObject();
-      if (!active || active.type !== 'activeSelection') return;
+  useEffect(() => {
+    if (position && fabricCanvas) {
+      const modes = getAvailableSimilarityModes(fabricCanvas);
+      setSimilarityModes(modes);
+    }
+  }, [position, fabricCanvas]);
 
-      const selection = active as InstanceType<typeof import('fabric').ActiveSelection>;
-      const objects = selection.getObjects();
-      if (objects.length < 2) return;
-
-      const bounds = selection.getBoundingRect();
-
-      for (const obj of objects) {
-        const objBounds = obj.getBoundingRect();
-        switch (direction) {
-          case 'left':
-            obj.set({ left: (obj.left ?? 0) + (bounds.left - objBounds.left) });
-            break;
-          case 'center':
-            obj.set({
-              left:
-                (obj.left ?? 0) +
-                (bounds.left + bounds.width / 2 - (objBounds.left + objBounds.width / 2)),
-            });
-            break;
-          case 'right':
-            obj.set({
-              left:
-                (obj.left ?? 0) + (bounds.left + bounds.width - (objBounds.left + objBounds.width)),
-            });
-            break;
-          case 'top':
-            obj.set({ top: (obj.top ?? 0) + (bounds.top - objBounds.top) });
-            break;
-          case 'middle':
-            obj.set({
-              top:
-                (obj.top ?? 0) +
-                (bounds.top + bounds.height / 2 - (objBounds.top + objBounds.height / 2)),
-            });
-            break;
-          case 'bottom':
-            obj.set({
-              top:
-                (obj.top ?? 0) + (bounds.top + bounds.height - (objBounds.top + objBounds.height)),
-            });
-            break;
+  const handleAction = useCallback(async (action: string, payload?: unknown) => {
+    switch (action) {
+      case 'duplicate':
+        duplicateSelectedObjects();
+        break;
+      case 'delete':
+        deleteSelectedObjects();
+        break;
+      case 'group':
+        groupSelectedOandUngroup();
+        break;
+      case 'moveFront':
+        moveToFront();
+        break;
+      case 'moveBack':
+        moveToBack();
+        break;
+      case 'moveForward':
+        moveForward();
+        break;
+      case 'moveBackward':
+        moveBackward();
+        break;
+      case 'loadFabric': {
+        const fabricId = payload as string;
+        setIsExecuting(true);
+        try {
+          const fabric = fabrics.find((f) => f.id === fabricId);
+          if (fabric && projectId) {
+            const img = await loadImage(fabric.url);
+            await loadFabricOntoCanvas(fabricId, img, projectId);
+          }
+        } finally {
+          setIsExecuting(false);
         }
-        obj.setCoords();
+        break;
       }
-
-      canvas.renderAll();
-      pushUndo(canvas);
-      closeMenu();
-    },
-    [fabricCanvas, pushUndo, closeMenu]
-  );
-
-  const handleSelectAllSameBlocks = useCallback(async () => {
-    if (!fabricCanvas) return;
-    const fabric = await import('fabric');
-    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-    const active = canvas.getActiveObject();
-    if (!active || active.type !== 'group') return;
-
-    const matching = findMatchingBlocks(canvas, active);
-    if (matching.length === 0) return;
-
-    const allBlocks = [active, ...matching];
-    const selection = new fabric.ActiveSelection(
-      allBlocks as InstanceType<typeof fabric.FabricObject>[],
-      { canvas }
-    );
-    canvas.setActiveObject(selection);
-    canvas.renderAll();
-    closeMenu();
-  }, [fabricCanvas, closeMenu]);
-
-  const handleDistribute = useCallback(
-    async (direction: 'horizontal' | 'vertical') => {
-      if (!fabricCanvas) return;
-      const fabric = await import('fabric');
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-      const active = canvas.getActiveObject();
-      if (!active || active.type !== 'activeSelection') return;
-
-      const selection = active as InstanceType<typeof fabric.ActiveSelection>;
-      const objects = selection.getObjects();
-      if (objects.length < 3) return;
-
-      const bounds: ObjectBounds[] = objects.map((obj) => {
-        const br = obj.getBoundingRect();
-        return {
-          id: (obj as unknown as { id?: string }).id ?? `obj-${Date.now()}`,
-          left: obj.left ?? 0,
-          top: obj.top ?? 0,
-          width: br.width,
-          height: br.height,
-        };
-      });
-
-      const result =
-        direction === 'horizontal'
-          ? calculateHorizontalDistribution(bounds)
-          : calculateVerticalDistribution(bounds);
-      if (!result) return;
-
-      for (const adj of result.adjustments) {
-        const obj = objects.find((o) => (o as unknown as { id?: string }).id === adj.id);
-        if (obj) {
-          obj.set({
-            left: (obj.left ?? 0) + adj.deltaLeft,
-            top: (obj.top ?? 0) + adj.deltaTop,
-          });
-          obj.setCoords();
+      case 'loadRecentFabric': {
+        const fabricUrl = payload as string;
+        setIsExecuting(true);
+        try {
+          const img = await loadImage(fabricUrl);
+          if (projectId) {
+            await loadFabricOntoCanvas('recent', img, projectId);
+          }
+        } finally {
+          setIsExecuting(false);
         }
+        break;
       }
-
-      canvas.renderAll();
-      pushUndo(canvas);
-      closeMenu();
-    },
-    [fabricCanvas, pushUndo, closeMenu]
-  );
-
-  const handleSelectSimilar = useCallback(
-    async (mode: SimilarityMode) => {
-      if (!fabricCanvas) return;
-      const fabric = await import('fabric');
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-      const active = canvas.getActiveObject();
-      if (!active) return;
-
-      const allObjects = canvas.getObjects();
-      const matching = findSimilarObjects(allObjects, active, mode);
-      if (matching.length === 0) return;
-
-      const allSelected = [active, ...matching];
-      const selection = new fabric.ActiveSelection(
-        allSelected as InstanceType<typeof fabric.FabricObject>[],
-        { canvas }
-      );
-      canvas.setActiveObject(selection);
-      canvas.renderAll();
-      pushUndo(canvas);
-      closeMenu();
-    },
-    [fabricCanvas, pushUndo, closeMenu]
-  );
+      case 'addToPrintlist': {
+        const blockId = payload as string;
+        const selectedPrintlistItems = printlistItems.filter((i) => i.blockId === blockId);
+        const existingQuantity = selectedPrintlistItems.reduce((acc, item) => acc + item.quantity, 0);
+        setQuantity(existingQuantity || 1);
+        setSelectedBlock(blockId);
+        setShowQuantityInput(true);
+        break;
+      }
+      default:
+        break;
+    }
+    setPosition(null);
+    setSubMenu(null);
+  }, [duplicateSelectedObjects, deleteSelectedObjects, groupSelectedOandUngroup, moveToFront, moveToBack, moveForward, moveBackward, loadFabricOntoCanvas, fabrics, projectId, printlistItems]);
 
   if (!position) return null;
 
-  const isMultiSelect = (fabricCanvas?.getActiveObjects()?.length || 0) > 1;
-  const isGroup = fabricCanvas?.getActiveObject()?.type === 'group';
-  const activeObject = fabricCanvas?.getActiveObject();
-  const sameBlockCount =
-    isGroup && activeObject ? findMatchingBlocks(fabricCanvas, activeObject).length : 0;
+  const menuWidth = 220;
+  const menuHeight = position.hasTarget ? 360 : 160;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
 
-  if (subMenu === 'fabric') {
+  const adjustedX = position.x + menuWidth > viewportWidth
+    ? position.x - menuWidth
+    : position.x;
+
+  const adjustedY = position.y + menuHeight > viewportHeight
+    ? position.y - menuHeight
+    : position.y;
+
+  const styles = {
+    container: {},
+    menu: {
+      position: 'fixed' as const,
+      left: adjustedX,
+      top: adjustedY,
+      zIndex: 1000,
+      background: COLORS.background.primary,
+      border: `1px solid ${COLORS.border.primary}`,
+      borderRadius: '8px',
+      padding: '4px',
+      minWidth: '220px',
+      boyShadow: '0 1px 2px 0 rgba(54,49,45,0.08), 0 3px 12px 2px rgba(54,49,45,0.08)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    },
+    menuItem: {
+      padding: '6px 8px',
+      cursor: 'pointer',
+      borderRadius: '6px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      fontSize: '13px',
+      color: COLORS.text.primary,
+      transition: 'background 0.1s',
+    },
+    menuItemHover: {},
+    separator: {
+      borderTop: `1px solid ${COLORS.border.primary}`,
+      margin: '4px 0',
+    },
+    subMenu: {
+      position: 'fixed' as const,
+      left: subMenuPos?.x ?? 0,
+      top: subMenuPos?.y ?? 0,
+      zIndex: 1001,
+      background: COLORS.background.primary,
+      border: `1px solid ${COLORS.border.primary}`,
+      borderRadius: '8px',
+      padding: '4px',
+      minWidth: '220px',
+      maxWidth: '280px',
+      maxHeight: '400px',
+      overflowY: 'auto',
+      boxShadow: '0 1px 2px 0 rgba(54,49,45,0.08), 0 3px 12px 2px rgba(54,49,45,0.08)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    },
+  };
+
+  const isGroupable = () => {
+    const canvas = fabricCanvas;
+    if (!canvas) return false;
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return false;
+    return activeObject.type === 'activeselection' || activeObject.type === 'group';
+  };
+
+  const isUngroupable = () => {
+    const canvas = fabricCanvas;
+    if (!canvas) return false;
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return false;
+    return activeObject.type === 'group';
+  };
+
+  const getGroupLabel = () => {
+    if (isUngroupable()) return 'Ungroup';
+    if (isGroupable()) return 'Group';
+    return null;
+  };
+
+  const getPrintlistBlocks = () => {
+    const canvas = fabricCanvas;
+    if (!canvas) return [];
+    const activeObject = canvas.getActiveObject();
+    if (!activeObject) return [];
+    const objects = activeObject.type === 'activeselection'
+      ? (activeObject as fabric.ActiveSelection).getObjects()
+      : [activeObject];
+    return objects
+      .filter((o) => 'blockId' in o && typeof o.blockId === 'string')
+      .map((o) => o.blockId as string);
+  };
+
+  const handleSubMenuEnter = (e: React.MouseEvent<HTMLDivElement>, type: SubMenuType) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setSubMenu(type);
+    setSubMenuPos({ x: zect.right, y: rect.top });
+  };
+
+  const renderMenuItem = (
+    label: string,
+    onClick: () => void,
+    options?: { icon?: string, hasSubMenu?: boolean },
+  ) => {
+    const [isHovered, setIsHovered] = useState(false);
     return (
       <div
-        ref={menuRef}
-        className="fixed z-50 min-w-[220px] rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] py-1 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-        style={{ left: position.x, top: position.y }}
+        style={{
+          ...styles.menuItem,
+          background: isHovered ? COLORS_HOVER.menuItem : 'transparent',
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={onClick}
       >
-        <button
-          type="button"
-          onClick={() => setSubMenu(null)}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10"
-        >
-          <span className="w-5 text-center">←</span>
-          Back
-        </button>
-        <div className="my-1 border-t border-[var(--color-border)]" />
-
-        {recentFabrics.length > 0 && (
-          <>
-            <div className="px-3 py-1 text-caption font-medium text-[var(--color-text-dim)]/60">
-              Recent
-            </div>
-            {recentFabrics.map((rf) => (
-              <button
-                key={rf.id}
-                type="button"
-                disabled={isExecuting}
-                onClick={async () => {
-                  if (!fabricCanvas || !activeObject) return;
-                  setIsExecuting(true);
-                  try {
-                    const fabric = await import('fabric');
-                    const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-                    const img = await loadImage(rf.imageUrl);
-                    const pattern = new fabric.Pattern({ source: img, repeat: 'repeat' });
-
-                    if (activeObject.type === 'group') {
-                      const g = activeObject as InstanceType<typeof fabric.Group>;
-                      for (const obj of g.getObjects()) {
-                        obj.set('fill', pattern);
-                      }
-                    } else {
-                      activeObject.set('fill', pattern);
-                    }
-
-                    canvas.renderAll();
-                    pushUndo(canvas);
-                    closeMenu();
-                  } finally {
-                    setIsExecuting(false);
-                  }
-                }}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50"
-              >
-                <div
-                  className="h-5 w-5 rounded-full border border-[var(--color-border)] bg-cover bg-center"
-                  style={{ backgroundImage: `url(${rf.imageUrl})` }}
-                />
-                <span className="truncate">{rf.name}</span>
-              </button>
-            ))}
-            <div className="my-1 border-t border-[var(--color-border)]" />
-          </>
-        )}
-
-        <div className="px-3 py-1 text-caption font-medium text-[var(--color-text-dim)]/60">
-          Library
-        </div>
-        {libraryFabrics.length === 0 && (
-          <div className="px-3 py-3 text-xs text-[var(--color-text-dim)]/60">
-            No fabrics available. Drag from the Fabric Library to add.
-          </div>
-        )}
-        {libraryFabrics.map((lf) => (
-          <button
-            key={lf.id}
-            type="button"
-            disabled={isExecuting}
-            onClick={async () => {
-              if (!fabricCanvas || !activeObject) return;
-              setIsExecuting(true);
-              try {
-                const fabric = await import('fabric');
-                const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
-                const img = await loadImage(lf.imageUrl);
-                const pattern = new fabric.Pattern({ source: img, repeat: 'repeat' });
-
-                if (activeObject.type === 'group') {
-                  const g = activeObject as InstanceType<typeof fabric.Group>;
-                  for (const obj of g.getObjects()) {
-                    obj.set('fill', pattern);
-                  }
-                } else {
-                  activeObject.set('fill', pattern);
-                }
-
-                canvas.renderAll();
-                pushUndo(canvas);
-                closeMenu();
-              } finally {
-                setIsExecuting(false);
-              }
-            }}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50"
-          >
-            <div
-              className="h-5 w-5 rounded-full border border-[var(--color-border)] bg-cover bg-center"
-              style={{ backgroundImage: `url(${lf.imageUrl})` }}
-            />
-            <span className="truncate">{lf.name}</span>
-          </button>
-        ))}
+        {options?.icon && <span>{options.icon}</span>}
+        <span>{label}</span>
+        {options?.hasSubMenu && <span style={{ marginLeft: 'auto' }}>►</span>}
       </div>
     );
-  }
-
-  if (subMenu === 'block' && isGroup) {
-    return (
-      <div
-        ref={menuRef}
-        className="fixed z-50 min-w-[220px] rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] py-1 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-        style={{ left: position.x, top: position.y }}
-      >
-        <button
-          type="button"
-          onClick={() => setSubMenu(null)}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10"
-        >
-          <span className="w-5 text-center">←</span>
-          Back
-        </button>
-        <div className="my-1 border-t border-[var(--color-border)]" />
-
-        <button
-          type="button"
-          disabled={isExecuting}
-          onClick={() => executeAction('duplicateBlock')}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span className="w-5 text-center">⧉</span>
-          Duplicate Block
-        </button>
-        <button
-          type="button"
-          disabled={isExecuting}
-          onClick={() => executeAction('flipBlockH')}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span className="w-5 text-center">↔</span>
-          Flip Block Horizontal
-        </button>
-        <button
-          type="button"
-          disabled={isExecuting}
-          onClick={() => executeAction('flipBlockV')}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span className="w-5 text-center">↕</span>
-          Flip Block Vertical
-        </button>
-        <button
-          type="button"
-          disabled={isExecuting}
-          onClick={() => executeAction('rotateBlock90')}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span className="w-5 text-center">↻</span>
-          Rotate Block 90°
-        </button>
-        {sameBlockCount > 0 && (
-          <>
-            <div className="my-1 border-t border-[var(--color-border)]" />
-            <button
-              type="button"
-              disabled={isExecuting}
-              onClick={handleSelectAllSameBlocks}
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="w-5 text-center">⊞</span>
-              Select All {sameBlockCount + 1} Matching Blocks
-            </button>
-          </>
-        )}
-      </div>
-    );
-  }
-
-  if (subMenu === 'selectSimilar') {
-    const modes = activeObject ? getAvailableSimilarityModes(activeObject) : [];
-    const modeLabels: Record<SimilarityMode, string> = {
-      fabric: 'Same Fabric',
-      fillColor: 'Same Fill Color',
-      strokeColor: 'Same Stroke Color',
-      blockStructure: 'Same Block Structure',
-    };
-    const modeIcons: Record<SimilarityMode, string> = {
-      fabric: '◆',
-      fillColor: '◼',
-      strokeColor: '◻',
-      blockStructure: '⊞',
-    };
-
-    return (
-      <div
-        ref={menuRef}
-        className="fixed z-50 min-w-[220px] rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] py-1 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-        style={{ left: position.x, top: position.y }}
-      >
-        <button
-          type="button"
-          onClick={() => setSubMenu(null)}
-          className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10"
-        >
-          <span className="w-5 text-center">←</span>
-          Back
-        </button>
-        <div className="my-1 border-t border-[var(--color-border)]" />
-        {modes.map((mode) => (
-          <button
-            key={mode}
-            type="button"
-            disabled={isExecuting}
-            onClick={() => handleSelectSimilar(mode)}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50"
-          >
-            <span className="w-5 text-center">{modeIcons[mode]}</span>
-            {modeLabels[mode]}
-          </button>
-        ))}
-        {modes.length === 0 && (
-          <div className="px-3 py-3 text-xs text-[var(--color-text-dim)]/60">
-            No similarity criteria found
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  const menuItems = position.hasTarget
-    ? [
-        { label: 'Duplicate', icon: '⧉', action: 'duplicate' },
-        { label: 'Delete', icon: '🗑', action: 'delete' },
-        { label: 'divider', icon: '', action: 'divider' },
-        { label: 'Flip Horizontal', icon: '↔', action: 'flipH' },
-        { label: 'Flip Vertical', icon: '↕', action: 'flipV' },
-        { label: 'Rotate 90°', icon: '↻', action: 'rotate90' },
-        { label: 'divider', icon: '', action: 'divider' },
-        ...(isMultiSelect
-          ? [
-              { label: 'Group', icon: '⊡', action: 'group' },
-              { label: 'Align Left', icon: '⊣', action: 'align-left' },
-              { label: 'Align Center', icon: '⊟', action: 'align-center' },
-              { label: 'Align Right', icon: '⊢', action: 'align-right' },
-              { label: 'Align Top', icon: '⊤', action: 'align-top' },
-              { label: 'Align Middle', icon: '⊞', action: 'align-middle' },
-              { label: 'Align Bottom', icon: '⊥', action: 'align-bottom' },
-              { label: 'divider', icon: '', action: 'divider' },
-              { label: 'Distribute Horizontally', icon: '⇔', action: 'distribute-h' },
-              { label: 'Distribute Vertically', icon: '⇕', action: 'distribute-v' },
-              { label: 'divider', icon: '', action: 'divider' },
-            ]
-          : []),
-        ...(isGroup
-          ? [
-              { label: 'Block Settings ▸', icon: '⚙', action: 'block-menu' },
-              { label: 'Ungroup', icon: '⊟', action: 'ungroup' },
-            ]
-          : []),
-        { label: 'Send to Back', icon: '⤓', action: 'sendToBack' },
-        { label: 'Bring to Front', icon: '⤒', action: 'bringToFront' },
-        { label: 'divider', icon: '', action: 'divider' },
-        { label: 'Select Similar ▸', icon: '◎', action: 'select-similar' },
-        { label: 'divider', icon: '', action: 'divider' },
-        { label: 'Add Fabric ▸', icon: '◆', action: 'fabric-menu' },
-        ...(isGroup && sameBlockCount > 0
-          ? [
-              {
-                label: `Apply Fabric to All ${sameBlockCount + 1} Blocks ▸`,
-                icon: '◆◆',
-                action: 'fabric-all',
-              },
-            ]
-          : []),
-        { label: 'divider', icon: '', action: 'divider' },
-        { label: 'Add to Printlist', icon: '🖨', action: 'printlist' },
-      ]
-    : [{ label: 'Select All', icon: '⊞', action: 'selectAll' }];
+  };
 
   return (
-    <div
-      ref={menuRef}
-      className="fixed z-50 min-w-[180px] rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] py-1 shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
-      style={{ left: position.x, top: position.y }}
-    >
-      {menuItems.map((item, i) =>
-        item.action === 'divider' ? (
-          <div key={i} className="my-1 border-t border-[var(--color-border)]" />
-        ) : item.action === 'printlist' ? (
-          <div key={item.action}>
-            {!showQuantityInput ? (
-              <button
-                type="button"
-                disabled={isExecuting}
-                onClick={() => setShowQuantityInput(true)}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+    <div id="canvas-context-menu">
+      <div style={styles.menu}>
+        {isExecuting && (
+          <div style={{ padding: '8px', fontSize: '12px', color: COLORS.text.secondary }}>
+            Loading...
+          </div>
+        )}
+        {!position.hasTarget && (
+          <>
+            {renderMenuItem('Paste', () => handleAction('paste'), { icon: '☀' })}
+            {renderMenuItem('Select All', () => handleAction('selectAll'), { icon: '🌟' })}
+          <>
+        )}
+        {position.hasTarget && (
+          <>
+            {renderMenuItem('Duplicate', () => handleAction('duplicate'), { icon: '📝' })}
+            {renderMenuItem('Delete', () => handleAction('delete'), { icon: '🚤' })}
+            <div style={styles.separator} />
+            {renderMenuItem('Bring To Front', () => handleAction('moveFront'), { icon: '⚬' })}
+            {renderMenuItem('Send To Back', () => handleAction('moveBack'), { icon: '⩪' })}
+            {renderMenuItem('Bring Forward', () => handleAction('moveForward'), { icon: '⚤' })}
+            {renderMenuItem('Send Backward', () => handleAction('moveBackward'), { icon: '⩨' })}
+            {getGroupLabel() && renderMenuItem(getGroupLabel()!, () => handleAction('group'), { icon: '📠' })}
+            <div style={styles.separator} />
+            {getPrintlistBlocks().length > 0 && (
+              <div
+                style={styles.menuItem}
+                onMouseEnter={(e) => handleSubMenuEnter(e, 'printlist')}
               >
-                <span className="w-5 text-center">{item.icon}</span>
-                {item.label}
-              </button>
-            ) : (
-              <div className="flex items-center gap-1 px-3 py-1.5">
-                <span className="w-5 text-center text-sm" aria-hidden="true">
-                  🖨
-                </span>
-                <input
-                  type="number"
-                  aria-label="Print quantity"
-                  min={1}
-                  max={999}
-                  value={quantity}
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                  className="w-14 rounded border border-[var(--color-border)] bg-white px-1.5 py-0.5 text-xs"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleAddToPrintlist();
-                    if (e.key === 'Escape') setShowQuantityInput(false);
-                  }}
-                />
-                <button
-                  type="button"
-                  disabled={isExecuting}
-                  onClick={handleAddToPrintlist}
-                  className="rounded-full bg-primary px-2 py-0.5 text-xs text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isExecuting ? '...' : 'Add'}
-                </button>
+                <span>📦</span>
+                <span>Add to Print List</span>
+                <span style={{ marginLeft: 'auto' }}>►</span>
               </div>
             )}
-          </div>
-        ) : item.action === 'fabric-menu' ? (
-          <button
-            key={item.action}
-            type="button"
-            onClick={() => setSubMenu('fabric')}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10"
-          >
-            <span className="w-5 text-center">{item.icon}</span>
-            {item.label}
-          </button>
-        ) : item.action === 'fabric-all' ? (
-          <div key={item.action}>
-            {!subMenu ? (
-              <button
-                type="button"
-                onClick={() => setSubMenu('fabric')}
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10"
+            {similarityModes.length > 0 && (
+              <div
+                style={styles.menuItem}
+                onMouseEnter={(e) => handleSubMenuEnter(e, 'selectSimilar')}
               >
-                <span className="w-5 text-center">{item.icon}</span>
-                {item.label}
-              </button>
-            ) : null}
-          </div>
-        ) : item.action === 'block-menu' ? (
-          <button
-            key={item.action}
-            type="button"
-            onClick={() => setSubMenu('block')}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10"
-          >
-            <span className="w-5 text-center">{item.icon}</span>
-            {item.label}
-          </button>
-        ) : (
-          <button
-            key={item.action}
-            type="button"
-            disabled={isExecuting}
-            onClick={() => {
-              if (item.action === 'selectAll') {
-                handleSelectAll();
-              } else if (item.action === 'distribute-h') {
-                handleDistribute('horizontal');
-              } else if (item.action === 'distribute-v') {
-                handleDistribute('vertical');
-              } else if (item.action === 'select-similar') {
-                setSubMenu('selectSimilar');
-              } else if (item.action.startsWith('align-')) {
-                const direction = item.action.replace('align-', '') as
-                  | 'left'
-                  | 'center'
-                  | 'right'
-                  | 'top'
-                  | 'middle'
-                  | 'bottom';
-                handleAlign(direction);
-              } else {
-                executeAction(item.action);
-              }
+                <span>💡</span>
+                <span>Select Similar</span>
+                <span style={{ marginLeft: 'auto' }}>►</span>
+              </div>
+            )}
+            <div
+              style={styles.menuItem}
+              onMouseEnter={(e) => handleSubMenuEnter(e, 'fabric')}
+            >
+              <span>📁<span>
+              <span>Change Fabric</span>
+              <span style={{ marginLeft: 'auto' }}>►</span>
+            </div>
+            <div
+              style={styles.menuItem}
+              onMouseEnter={(e) => handleSubMenuEnter(e, 'block')}
+            >
+              <span>📨</span>
+              <span>Change Block</span>
+              <span style={{ marginLeft: 'auto' }}>►</span>
+            </div>
+          </>
+        )}
+      </div>
+      {subMenu === 'fabric' && (
+        <div style={styles.subMenu}>
+          {recentFabrics.length > 0 && (
+            <>
+              {recentFabrics.map((f) => (
+                <div
+                  key={f.url}
+                  style={styles.menuItem}
+                  onClick={() => handleAction('loadRecentFabric', f.url)}
+                >
+                  <img src={f.url} width={20} height={20} style={{ objectFit: 'cover', borderRadius: '2px' }} />
+                  <span>{f.name}</span>
+                </div>
+              ))}
+              <div style={styles.separator} />
+            </>
+          )}
+          {fabrics.map((f) => (
+            <div
+              key={f.id}
+              style={styles.menuItem}
+              onClick={() => handleAction('loadFabric', f.id)}
+            >
+              <img src={f.url} width={20} height={20} style={{ objectFit: 'cover', borderRadius: '2px' }} />
+              <span>{f.name}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {subMenu === 'block' && (
+        <div style={styles.subMenu}>
+          <input
+            type="text"
+            placeholder="Search blocks..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '6px 8px',
+              border: `1px solid ${COLORS.border.primary}`,
+              borderRadius: '4px',
+              marginBottom: '8px',
+              boxSizing: 'border-box' as const,
             }}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span className="w-5 text-center">{item.icon}</span>
-            {item.label}
-          </button>
-        )
+          />
+          {matchingBlocks.map((blockId) => (
+            <div
+              key={blockId}
+              style={styles.menuItem}
+              onClick={() => handleAction('loadBlock', blockId)}
+            >
+              <span>{{blockId}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {subMenu === 'printlist' && (
+        <div style={styles.subMenu}>
+          {getPrintlistBlocks().map((blockId) => (
+            <div
+              key={blockId}
+              style={styles.menuItem}
+              onClick={() => handleAction('addToPrintlist', blockId)}
+            >
+              <span>📦</pan>
+              <span>{blockId}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {subMenu === 'selectSimilar' && (
+        <div style={styles.subMenu}>
+          {similarityModes.map((mode) => (
+            <div
+              key={mode.id}
+              style={styles.menuItem}
+              onClick={() => {
+                if (fabricCanvas) {
+                  findSimilarObjects(fabricCanvas, mode.id);
+                }
+                setPosition(null);
+                setSubMenu(null);
+              }}
+            >
+              <span>{mode.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {showQuantityInput && selectedBlock && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: COLORS.background.primary,
+            border: `1px solid ${COLORS.border.primary}`,
+            borderRadius: '8px',
+            padding: '16px',
+            zNdex: 1002,
+            boxShadow: '0 2px 8px rgba(54,49,45,0.08)',
+          }}
+        >
+          <div style={{ marginBottom: '8px', fontWeight: '600' }}>Add to Print List</div>
+          <div style={{ marginBottom: '8px', fontSize: '12px', color: COLORS.text.secondary }}>Block: {selectedBlock}</div>
+          <input
+            type="number"
+            min={1}
+            value={quantity}
+            onChange={(e) => setQuantity(Math.max(1, int(e.target.value)))}
+            style={{
+              width: '100%',
+              padding: '6px 8px',
+              border: `1px solid ${COLORS.border.primary}`,
+              borderRadius: '4px',
+              marginBottom: '8px',
+              boxSizing: 'border-box' as const,
+            }}
+          />
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={() => {
+                addItemsToPrintlist([{ blockId: selectedBlock, quantity }]);
+                setShowQuantityInput(false);
+                setSelectedBlock(null);
+              }}
+              style={{
+                flex: 1,
+                padding: '6px 12px',
+                background: COLORS.background.accent,
+                color: COLORS.text.onAccent,
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Add
+            </button>
+            <button
+              onClick={() => setShowQuantityInput(false)}
+              style={{
+                flex: 1,
+                padding: '6px 12px',
+                background: COLORS.background.primary,
+                color: COLORS.text.primary,
+                border: `1px solid ${COLORS.border.primary}`,
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
     </div>
-  );
+    );
 }
