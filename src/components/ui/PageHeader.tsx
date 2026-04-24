@@ -20,7 +20,7 @@ export function PageHeader({ label, title, description, action }: PageHeaderProp
           )}
           <h1
             className="text-default text-[40px] leading-[52px] font-normal"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-heading)' }}
           >
             {title}
           </h1>

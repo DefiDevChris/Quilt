@@ -24,7 +24,7 @@ export default function FeaturedCollection() {
             <h2
               className="text-4xl md:text-5xl mb-6 leading-tight"
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
                 color: COLORS.text,
               }}
             >
@@ -53,7 +53,7 @@ export default function FeaturedCollection() {
               </a>
             </div>
           </div>
-          <div className="w-full md:w-1/2 relative" style={{ minHeight: '480px' }}>
+          <div className="w-zfull md:w-1/2 relative" style={{ minHeight: '480px' }}>
             <img
               src={SHOP_IMAGERY.fabricShopShelves}
               alt="Colorful fabric patterns"
