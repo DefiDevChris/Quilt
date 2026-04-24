@@ -48,7 +48,7 @@ export default function AsymmetricPostFeed({ posts }: { posts: BlogPost[] }) {
         </div>
         <h2
           className="text-[32px] leading-[40px] md:text-[40px] md:leading-[52px] text-[var(--color-text)]"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           Recent Explorations
         </h2>
@@ -115,7 +115,7 @@ function PostCard({
             <h3
               className="text-[var(--color-text)] leading-[1.15]"
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
                 fontSize:
                   layout.col.includes('col-span-2') || layout.col.includes('col-span-3')
                     ? 'clamp(1.5rem, 2.5vw, 2rem)'

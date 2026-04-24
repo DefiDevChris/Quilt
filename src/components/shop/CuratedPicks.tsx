@@ -38,14 +38,14 @@ export default function CuratedPicks({ fabrics, onAddToCart }: CuratedPicksProps
             <h2
               className="text-3xl md:text-4xl mb-2"
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
                 color: COLORS.text,
               }}
             >
               This Week&apos;s Favorites
             </h2>
             <p style={{ color: COLORS.textDim }}>
-              Bolts we can&rsquo;t stop reaching for this week.
+              Bolts we can&rsquo;stop reaching for this week.
             </p>
           </div>
           <a
@@ -64,7 +64,7 @@ export default function CuratedPicks({ fabrics, onAddToCart }: CuratedPicksProps
         </div>
 
         {/* Fabric Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x6 gap-y-10">
           {picks.map((fabric) => {
             const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}` : '';
             return (
