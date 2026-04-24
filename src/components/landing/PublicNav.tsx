@@ -42,7 +42,7 @@ export default function PublicNav() {
           />
           <span
             className="text-2xl font-bold text-default"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-heading)' }}
           >
             QuiltCorgi
           </span>
