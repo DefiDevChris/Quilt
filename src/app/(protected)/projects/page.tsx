@@ -1,282 +1,196 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Grid, List, Calendar, Plus } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { PageHeader } from '@/components/ui/PageHeader';
-import Mascot from '@/components/landing/Mascot';
-import { COLORS, COLORS_HOVER, SHADOW, MOTION, OPACITY } from '@/lib/design-system';
+import { Grid, List, Plus } from 'lucide-react';
+import { COLORS, SHADOW, MAX_WIDTHS, withAlpha } from '@/lib/design-system';
+import { ProjectCard } from '@/components/projects/ProjectCard';
+import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
+import type { Project } from '@/types/project';
 
-interface ProjectListItem {
-  id: string;
-  name: string;
-  description: string | null;
-  thumbnailUrl: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-
-export default function AllProjectsPage() {
-  const [projects, setProjects] = useState<ProjectListItem[]>([]);
+export default function ProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const fetchProjects = async () => {
+    try {
+      const res = await fetch('/api/projects');
+      if (!res.ok) throw new Error('Failed to fetch projects');
+      const data = await res.json();
+      setProjects(data.data.projects);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchProjects() {
-      try {
-        const res = await fetch('/api/projects?limit=50&sort=updatedAt&order=desc');
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        setProjects(data.data.projects);
-      } catch (error) {
-        console.error('Failed to fetch projects:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     fetchProjects();
   }, []);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="h-8 rounded-lg w-48" style={{ backgroundColor: COLORS.border }}></div>
-        <div className="h-12 rounded-lg" style={{ backgroundColor: COLORS.border }}></div>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, i) => (
-            <div
-              key={i}
-              className="h-48 rounded-lg"
-              style={{ backgroundColor: COLORS.border }}
-            ></div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <>
-      <PageHeader
-        label="Archive"
-        title="Project Library"
-        description={`${projects.length} ${projects.length === 1 ? 'curated design' : 'curated designs'}`}
-        action={
-          <div className="flex items-center gap-4">
-            <div
-              className="flex items-center rounded-lg p-1"
-              style={{ backgroundColor: COLORS.border }}
-            >
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-full transition-colors`}
-                style={{
-                  transitionDuration: `${MOTION.transitionDuration}ms`,
-                  transitionTimingFunction: MOTION.transitionEasing,
-                  ...(viewMode === 'grid'
-                    ? {
-                        backgroundColor: COLORS.surface,
-                        color: COLORS.primary,
-                        boxShadow: SHADOW.brand,
-                      }
-                    : { color: COLORS.secondary }),
-                }}
-                onMouseEnter={(e) => {
-                  if (viewMode !== 'grid') {
-                    (e.currentTarget as HTMLButtonElement).style.color = COLORS.text;
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (viewMode !== 'grid') {
-                    (e.currentTarget as HTMLButtonElement).style.color = COLORS.secondary;
-                  }
-                }}
-                title="Grid View"
-              >
-                <Grid size={18} />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-full transition-colors`}
-                style={{
-                  transitionDuration: `${MOTION.transitionDuration}ms`,
-                  transitionTimingFunction: MOTION.transitionEasing,
-                  ...(viewMode === 'list'
-                    ? {
-                        backgroundColor: COLORS.surface,
-                        color: COLORS.primary,
-                        boxShadow: SHADOW.brand,
-                      }
-                    : { color: COLORS.secondary }),
-                }}
-                onMouseEnter={(e) => {
-                  if (viewMode !== 'list') {
-                    (e.currentTarget as HTMLButtonElement).style.color = COLORS.text;
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (viewMode !== 'list') {
-                    (e.currentTarget as HTMLButtonElement).style.color = COLORS.secondary;
-                  }
-                }}
-                title="List View"
-              >
-                <List size={18} />
-              </button>
-            </div>
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-medium text-sm transition-colors"
-              style={{
-                backgroundColor: COLORS.primary,
-                color: COLORS.text,
-                boxShadow: SHADOW.brand,
-                transitionDuration: `${MOTION.transitionDuration}ms`,
-                transitionTimingFunction: MOTION.transitionEasing,
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = COLORS_HOVER.primary;
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.backgroundColor = COLORS.primary;
-              }}
-            >
-              <Plus size={16} strokeWidth={3} />
-              Create New
-            </Link>
-          </div>
-        }
-      />
-
-      <div className="max-w-5xl">
-      {projects.length === 0 ? (
-        <div className="flex flex-col items-center py-32 text-center">
-          <Mascot pose="sitting" size="xl" className="mb-6 opacity-30" />
-          <h3
-            className="text-[24px] leading-[32px] font-semibold text-[var(--color-text)] mb-3"
-            style={{ fontFamily: 'var(--font-display)' }}
+    <div
+      className="min-h-screen p-6"
+      style={{ backgroundColor: COLORS.bg }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1
+            className="text-2xl font-normal mb-1"
+            style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
           >
-            No projects yet
-          </h3>
-          <p className="text-[18px] leading-[28px] text-[var(--color-text-dim)] mb-10 max-w-sm leading-relaxed">
-            Start your first quilt design and build your collection of curated patterns.
+            Recent Quilts
+          </h1>
+          <p className="text-sm" style={{ color: COLORS.textDim }}>
+            {projects.length} project {projects.length === 1 ? '' : 's'}
           </p>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-medium text-sm transition-colors"
+        </div>
+        <div className="flex items-center gap-3">
+          <div
+            className="flex items-center rounded-lg border p-1"
+            style={{ borderColor: withAlpha(COLORS.border, 0.6) }}
+          >
+            <button
+              onClick={() => setViewMode('grid')}
+              className="p-1.5 rounded-md transition-colors"
+              style={{
+                backgroundColor: viewMode === 'grid' ? COLORS.primary : 'transparent',
+              }}
+              aria-label="Grid view"
+            >
+              <Grid size={16} style={{ color: viewMode === 'grid' ? COLORS.text : COLORS.textDim }} />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className="p-1.5 rounded-md transition-colors"
+              style={{
+                backgroundColor: viewMode === 'list' ? COLORS.primary : 'transparent',
+              }}
+              aria-label="List view"
+            >
+              <List size={16} style={{ color: viewMode === 'list' ? COLORS.text : COLORS.textDim }} />
+            </button>
+          </div>
+          <button
+            onClick={() => setDialogOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-colors"
             style={{
               backgroundColor: COLORS.primary,
               color: COLORS.text,
               boxShadow: SHADOW.brand,
-              transitionDuration: `${MOTION.transitionDuration}ms`,
-              transitionTimingFunction: MOTION.transitionEasing,
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = COLORS_HOVER.primary;
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5AA0D5';
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.backgroundColor = COLORS.primary;
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.primary;
             }}
           >
-            <Plus size={20} strokeWidth={3} />
-            Start Your First Quilt
-          </Link>
+            <Plus size={16} strokeWidth={2.5} />
+            New Quilt
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      {isLoading ? (
+        <div className="flex items-center justify-center py-24">
+          <div
+            className="w-8 h-8 rounded-full animate-pulse"
+            style={{ backgroundColor: withAlpha(COLORS.primary, 0.2) }}
+          />
+        </div>
+      ) : projects.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6"
+            style={{ backgroundColor: withAlpha(COLORS.primary, 0.1) }}
+          >
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              style={{ color: COLORS.primary }}
+            >
+              <path
+                d="M3 4h6v6H3zM9 4h6v6H9zM15 4h6v6h-6zM3 10h6v6H3zM9 10h6v6H9zM15 10h6v6h-6zM3 16h6v6H3zS9 16h6v6h6zM15 16h6v6h-6z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </svg>
+          </div>
+          <h2
+            className="text-xl mb-2"
+            style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
+          >
+            No quilts yet
+          </h2>
+          <p className="text-sm mb-6 max-w-xs" style={{ color: COLORS.textDim }}>
+            Create your first quilt design to get started.
+          </p>
+          <button
+            onClick={() => setDialogOpen(true)}
+            className="flex items-center gap-2 px-5 py-2 rounded-full font-medium text-sm transition-colors"
+            style={{
+              backgroundColor: COLORS.primary,
+              color: COLORS.text,
+              boxShadow: SHADOW.brand,
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5AA0D5';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.primary;
+            }}
+          >
+            <Plus size={16} strokeWidth={2.5} />
+            New Quilt
+          </button>
+        </div>
+      ) : viewMode === 'grid' ? (
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+          style={{ maxWidth: MAX_WIDTHS.content }}
+        >
+          {projects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              viewMode="grid"
+              onUpdate={fetchProjects}
+            />
+          ))}
         </div>
       ) : (
         <div
-          className={
-            viewMode === 'grid'
-              ? 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6'
-              : 'space-y-4'
-          }
+          className="flex flex-col gap-3"
+          style={{ maxWidth: MAX_WIDTHS.content }}
         >
           {projects.map((project) => (
-            <Link
+            <ProjectCard
               key={project.id}
-              href={`/studio/${project.id}`}
-              className={`group block transition-colors ${
-                viewMode === 'grid' ? 'rounded-lg p-4' : 'rounded-lg p-4 flex items-center gap-4'
-              }`}
-              style={{
-                backgroundColor: COLORS.surface,
-                border: `1px solid ${COLORS.border}`,
-                transitionDuration: `${MOTION.transitionDuration}ms`,
-                transitionTimingFunction: MOTION.transitionEasing,
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.boxShadow = SHADOW.brand;
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLAnchorElement).style.boxShadow = 'none';
-              }}
-            >
-              <div
-                className={viewMode === 'grid' ? 'aspect-square mb-4' : 'w-16 h-16 flex-shrink-0'}
-              >
-                {project.thumbnailUrl ? (
-                  <Image
-                    src={project.thumbnailUrl}
-                    alt={project.name}
-                    width={viewMode === 'grid' ? 200 : 64}
-                    height={viewMode === 'grid' ? 200 : 64}
-                    className="w-full h-full object-cover rounded-lg"
-                    style={{ backgroundColor: COLORS.border }}
-                  />
-                ) : (
-                  <div
-                    className="w-full h-full rounded-lg flex items-center justify-center"
-                    style={{ backgroundColor: COLORS.border }}
-                  >
-                    <span
-                      style={{ color: COLORS.secondary, opacity: OPACITY.disabled }}
-                      className="font-bold text-lg"
-                    >
-                      {project.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex-1">
-                <h3
-                  className="font-bold transition-colors line-clamp-2"
-                  style={{
-                    color: COLORS.text,
-                    transitionDuration: `${MOTION.transitionDuration}ms`,
-                    transitionTimingFunction: MOTION.transitionEasing,
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLHeadingElement).style.color = COLORS.primary;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLHeadingElement).style.color = COLORS.text;
-                  }}
-                >
-                  {project.name}
-                </h3>
-                <div
-                  className="flex items-center gap-1 mt-2 text-xs"
-                  style={{ color: COLORS.textDim }}
-                >
-                  <Calendar size={12} />
-                  <span>Updated {formatDate(project.updatedAt)}</span>
-                </div>
-              </div>
-            </Link>
+              project={project}
+              viewMode="list"
+              onUpdate={fetchProjects}
+            />
           ))}
         </div>
       )}
-      </div>
-    </>
+
+      <NewProjectWizard
+        open={dialogOpen}
+        onClose={() => {
+          setDialogOpen(false);
+          fetchProjects();
+        }}
+      />
+    </div>
   );
 }
