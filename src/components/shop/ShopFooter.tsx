@@ -37,7 +37,7 @@ export default function ShopFooter() {
               href="/shop"
               className="text-3xl font-bold mb-6 flex items-center gap-2"
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
                 color: COLORS.primary,
                 letterSpacing: '-0.02em',
               }}
