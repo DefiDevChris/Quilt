@@ -19,7 +19,7 @@ export default function Footer() {
               />
               <span
                 className="text-xl font-bold text-[var(--color-text)]"
-                style={{ fontFamily: 'var(--font-display)' }}
+                style={{ fontFamily: 'var(--font-heading)' }}
               >
                 QuiltCorgi
               </span>
@@ -34,7 +34,7 @@ export default function Footer() {
           <div>
             <h4
               className="font-bold text-[var(--color-text)] mb-4 text-sm"
-              style={{ fontFamily: 'var(--font-display)' }}
+              style={{ fontFamily: 'var(--font-heading)' }}
             >
               Product
             </h4>
@@ -59,7 +59,7 @@ export default function Footer() {
           <div>
             <h4
               className="font-bold text-[var(--color-text)] mb-4 text-sm"
-              style={{ fontFamily: 'var(--font-display)' }}
+              style={{ fontFamily: 'var(--font-heading)' }}
             >
               Resources
             </h4>
@@ -81,7 +81,7 @@ export default function Footer() {
           <div>
             <h4
               className="font-bold text-[var(--color-text)] mb-4 text-sm"
-              style={{ fontFamily: 'var(--font-display)' }}
+              style={{ fontFamily: 'var(--font-heading)' }}
             >
               Company
             </h4>
