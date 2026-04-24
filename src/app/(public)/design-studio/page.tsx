@@ -41,7 +41,7 @@ export default function DesignStudioLandingPage() {
             />
             <span
               className="text-2xl font-bold tracking-tight"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
             >
               QuiltCorgi
             </span>
@@ -90,7 +90,7 @@ export default function DesignStudioLandingPage() {
             </span>
             <h1
               className="text-5xl lg:text-7xl font-bold leading-[1.05] mb-8"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
             >
               Design your next quilt <br />
               <span style={{ color: COLORS.primary }}>in the browser.</span>
@@ -169,7 +169,7 @@ export default function DesignStudioLandingPage() {
           <div className="text-center mb-20">
             <h2
               className="text-4xl lg:text-5xl font-bold mb-6"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
             >
               Professional tools for your process.
             </h2>
@@ -269,7 +269,7 @@ export default function DesignStudioLandingPage() {
         </div>
       </section>
 
-      {/* ─── FINAL CTA ──────────────────────────────────────── */}
+      {/* ─── FINAL CTA ─────────────────────────────────────── */}
       <section className="py-32 px-6">
         <div
           className="relative mx-auto max-w-5xl overflow-hidden rounded-lg border border-[var(--color-border)] p-16 text-center lg:p-24"
@@ -286,7 +286,7 @@ export default function DesignStudioLandingPage() {
             />
             <h2
               className="mb-8 text-4xl font-bold lg:text-6xl"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
             >
               Start Your Next Masterpiece.
             </h2>
