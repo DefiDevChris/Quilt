@@ -124,7 +124,7 @@ export function StudioSidebar({ onMobileUploadsToggle }: StudioSidebarProps) {
         <div className="mb-10">
           <p
             className="text-xl"
-            style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+            style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
           >
             {displayName}
           </p>
