@@ -89,7 +89,7 @@ export default function ShopClient({ initialFabrics, shopEnabled }: ShopClientPr
           </div>
           <h1
             className="text-[28px] font-semibold mb-2"
-            style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+            style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
           >
             Shop Coming Soon
           </h1>
