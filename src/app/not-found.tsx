@@ -17,7 +17,7 @@ export default function NotFound() {
           <Mascot pose="walking" size="lg" className="mx-auto mb-6 opacity-30" />
           <h1
             className="text-[40px] leading-[52px] font-normal text-primary mb-4"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-heading)' }}
           >
             404
           </h1>
@@ -32,13 +32,13 @@ export default function NotFound() {
             <Link
               href="/dashboard"
               className="inline-flex items-center justify-center px-6 py-2 bg-primary text-default rounded-full font-normal hover:bg-primary-dark transition-colors duration-150"
-            >
+              >
               Go to Dashboard
             </Link>
             <Link
               href="/"
               className="inline-flex items-center justify-center px-6 py-2 border-2 border-primary text-primary rounded-full font-normal hover:bg-primary/10 transition-colors duration-150"
-            >
+              >
               Back to Home
             </Link>
           </div>

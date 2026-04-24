@@ -27,13 +27,13 @@ export function AuthForm({ mode }: AuthFormProps) {
         </Link>
         <span
           className="text-2xl font-bold text-default mb-1"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           QuiltCorgi
         </span>
         <h1
           className="text-center text-[2rem] font-semibold leading-[1.1] text-default"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           {isSignUp ? 'Create your account' : 'Welcome back'}
         </h1>
