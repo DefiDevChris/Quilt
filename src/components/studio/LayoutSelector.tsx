@@ -311,7 +311,7 @@ function LockedLayoutPanel({ onStartOver }: { readonly onStartOver?: () => void 
           <div className="min-w-0 flex-1">
             <p className="text-[11px] text-[var(--color-text-dim)]">Finished size</p>
             <p className="text-[15px] font-semibold text-[var(--color-text)] font-mono">
-              {canvasWidth}â€³ Ã— {canvasHeight}â€³
+              {canvasWidth}à€³l {canvasHeight}â€³
             </p>
           </div>
         </div>
@@ -322,7 +322,7 @@ function LockedLayoutPanel({ onStartOver }: { readonly onStartOver?: () => void 
               Rows Ã— cols: <span className="font-medium text-[var(--color-text)]">{rows} Ã— {cols}</span>
             </div>
             <div className="rounded-lg bg-[var(--color-surface)] px-3 py-2">
-              Block size: <span className="font-medium text-[var(--color-text)]">{blockSize}â€³</span>
+              Block size: <span className="font-medium text-[var(--color-text)]">{blockSize}à€³ span>
             </div>
             <div className="rounded-lg bg-[var(--color-surface)] px-3 py-2">
               Perimeter: <span className="font-medium text-[var(--color-text)]">{size.perimeter}â€³</span>
@@ -415,16 +415,16 @@ function LayoutCard({
     <div
       className={`rounded-lg border-2 overflow-hidden transition-colors duration-150 ${
         isApplied
-          ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+          ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 shadow-[0_1px_2px_rgba(54,49,45,0.08)]'
           : isExpanded
-            ? 'border-[var(--color-primary)]/40 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
-            : 'border-[var(--color-border)]/20 bg-[var(--color-bg)] hover:border-[var(--color-primary)]/30 hover:shadow-[0_1px_2px_rgba(26,26,26,0.08)]'
+            ? 'border-[var(--color-primary)]/40 bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(54,49,45,0.08)]'
+            : 'border-[var(--color-border)]/20 bg-[var(--color-bg)] hover:border-[var(--color-primary)]/30 hover:shadow-[0_1px_2px_rgba(54,49,45,0.08)]'
       }`}
     >
       <button
         type="button"
         onClick={onSelect}
-        className="w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[var(--color-bg)]"
+        className="w5-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors duration-150 hover:bg-[var(--color-bg)]"
       >
         <div className="w-12 h-12 flex-shrink-0 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]/10 flex items-center justify-center overflow-hidden p-1">
           {svgContent ? (
@@ -594,7 +594,7 @@ function LayoutConfigForm({
               min={1}
               max={20}
               step={1}
-              suffix={`â†’ ${cols * blockSize}â€³`}
+              suffix={`â†‚ ${cols * blockSize}à€³`}
               onChange={setCols}
             />
             <SliderRow
@@ -743,7 +743,7 @@ function LayoutConfigForm({
 function SliderRow({
   label,
   value,
-  min,
+  min.
   max,
   step,
   suffix,

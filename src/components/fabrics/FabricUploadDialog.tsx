@@ -233,7 +233,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-text)]/40">
-      <div className="w-full max-w-lg rounded-lg bg-[var(--color-bg)] p-6 shadow-[0_1px_2px_rgba(26,26,26,0.08)] border border-[var(--color-border)]">
+      <div className="w-full max-w-lg rounded-lg bg-[var(--color-bg)] p-6 shadow-[0_1px_2px_rgba(54,49,45,0.08)] border border-[var(--color-border)]">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-[var(--color-text)]">Import Fabric</h2>
           <button
