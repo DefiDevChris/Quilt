@@ -79,7 +79,7 @@ function StepIndicator({
                   ? 'bg-[var(--color-primary)] text-white'
                   : index === currentIndex
                     ? 'bg-[var(--color-primary)] text-white ring-2 ring-[var(--color-primary)] ring-offset-2'
-                    : 'bg-[var(--color-surface-alt)] text-[var(--color-text-muted)]'
+                    : 'bg-[var(--color-bg)] text-[var(--color-text-dim)]'
               }
             `}
           >
@@ -137,14 +137,14 @@ function ModeStep({
               transition-colors duration-150
               ${
                 isSelected
-                  ? 'border-[var(--color-primary)] bg-[var(--color-primary-light)]'
-                  : 'border-[var(--color-border)] bg-[var(--color-surface-alt)] hover:border-[var(--color-primary-light)] hover:bg-[var(--color-surface-alt)]'
+                  ? 'border-[var(--color-primary)] bg-[var(--color-secondary)]'
+                  : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-secondary)] hover:bg-[var(--color-bg)]'
               }
             `}
           >
             <Icon
               className={`w-6 h-6 mt-0.5 flex-shrink-0 ${
-                isSelected ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]'
+                isSelected ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-dim)]'
               }`}
             />
             <div className="text-left">
@@ -155,7 +155,7 @@ function ModeStep({
               >
                 {mode.label}
               </div>
-              <div className="text-xs text-[var(--color-text-muted)] mt-0.5">
+              <div className="text-xs text-[var(--color-text-dim)] mt-0.5">
                 {mode.description}
               </div>
             </div>
@@ -214,14 +214,14 @@ function LayoutStep({
                   transition-colors duration-150
                   ${
                     isSelected
-                      ? 'border-[var(--color-primary)] bg-[var(--color-primary-light)]'
-                      : 'border-[var(--color-border)] bg-[var(--color-surface-alt)] hover:border-[var(--color-primary-light)]'
+                      ? 'border-[var(--color-primary)] bg-[var(--color-secondary)]'
+                      : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-secondary)]'
                   }
                 `}
               >
                 <Icon
                   className={`w-5 h-5 ${
-                    isSelected ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-muted)]'
+                    isSelected ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-dim)]'
                   }`}
                 />
                 <div className="text-center">
@@ -266,8 +266,8 @@ function LayoutStep({
                     transition-colors duration-150
                     ${
                       isSelected
-                        ? 'border-[var(--color-primary)] bg-[var(--color-primary-light)]'
-                        : 'border-[var(--color-border)] bg-[var(--color-surface-alt)] hover:border-[var(--color-primary-light)]'
+                        ? 'border-[var(--color-primary)] bg-[var(--color-secondary)]'
+                        : 'border-[var(--color-border)] bg-[var(--color-bg)] hover:border-[var(--color-secondary)]'
                     }
                   `}
                 >
@@ -278,7 +278,7 @@ function LayoutStep({
                   >
                     {preset.label}
                   </div>
-                  <div className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                  <div className="text-xs text-[var(--color-text-dim)] mt-0.5">
                     {preset.rows}×{preset.cols} @ {preset.blockSize}\"
                   </div>
                 </button>
@@ -305,7 +305,7 @@ function DetailsStep({
       {/* Grid dimensions */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+          <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
             Rows
           </label>
           <input
@@ -318,7 +318,7 @@ function DetailsStep({
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+          <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
             Columns
           </label>
           <input
@@ -334,7 +334,7 @@ function DetailsStep({
 
       {/* Block size */}
       <div>
-        <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+        <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
           Block size (inches)
         </label>
         <input
@@ -350,7 +350,7 @@ function DetailsStep({
 
       {/* Sashing */}
       <div>
-        <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+        <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
           Sashing width (inches)
         </label>
         <input
@@ -388,7 +388,7 @@ function DetailsStep({
 
       {/* Binding */}
       <div>
-        <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+        <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
           Binding width (inches)
         </label>
         <input
@@ -428,7 +428,7 @@ function ConfirmStep({ state }: { state: WizardState }) {
       <dl className="space-y-2">
         {summaryRows.map((row) => (
           <div key={row.label} className="flex justify-between items-center py-1 border-b border-[var(--color-border)]">
-            <dt className="text-xs text-[var(--color-text-muted)]">{row.label}</dt>
+            <dt className="text-xs text-[var(--color-text-dim)]">{row.label}</dt>
             <dd className="text-xs font-medium text-[var(--color-text)]">{row.value}</dd>
           </div>
         ))}
@@ -512,7 +512,7 @@ export function NewProjectWizard({
         <button
           onClick={onDismiss}
           aria-label="Close wizard"
-          className="absolute top-4 right-4 p-1 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-alt)] transition-colors duration-150"
+          className="absolute top-4 right-4 p-1 rounded-lg text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)] transition-colors duration-150"
         >
           <X className="w-5 h-5" />
         </button>
