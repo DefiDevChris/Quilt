@@ -41,7 +41,7 @@ export default function DesignStudioLandingPage() {
             />
             <span
               className="text-2xl font-bold tracking-tight"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
             >
               QuiltCorgi
             </span>
@@ -90,7 +90,7 @@ export default function DesignStudioLandingPage() {
             </span>
             <h1
               className="text-5xl lg:text-7xl font-bold leading-[1.05] mb-8"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
             >
               Design your next quilt <br />
               <span style={{ color: COLORS.primary }}>in the browser.</span>
@@ -139,7 +139,7 @@ export default function DesignStudioLandingPage() {
           {/* Right Side: Real Screenshot */}
           <div className="flex-1 relative">
             <div
-              className="relative z-10 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+              className="relative z-10 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
               style={{ aspectRatio: '16/10' }}
             >
               <Image
@@ -169,7 +169,7 @@ export default function DesignStudioLandingPage() {
           <div className="text-center mb-20">
             <h2
               className="text-4xl lg:text-5xl font-bold mb-6"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
             >
               Professional tools for your process.
             </h2>
@@ -181,7 +181,7 @@ export default function DesignStudioLandingPage() {
           <div className="grid md:grid-cols-3 gap-12">
             {/* Feature 1 */}
             <div className="group">
-              <div className="relative mb-8 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+              <div className="relative mb-8 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
                 <Image
                   src="/images/quilts/studio_quilt_two_1775440552376.png"
                   alt="Block Library"
@@ -210,7 +210,7 @@ export default function DesignStudioLandingPage() {
 
             {/* Feature 2 */}
             <div className="group">
-              <div className="relative mb-8 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+              <div className="relative mb-8 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
                 <Image
                   src="/images/quilts/studio_quilt_four_1775440582256.png"
                   alt="Fabric Previews"
@@ -239,7 +239,7 @@ export default function DesignStudioLandingPage() {
 
             {/* Feature 3 */}
             <div className="group">
-              <div className="relative mb-8 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+              <div className="relative mb-8 overflow-hidden rounded-lg border border-[var(--color-border)] shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
                 <Image
                   src="/images/quilts/studio_quilt_eight_1775440844687.png"
                   alt="Pattern Export"
@@ -269,7 +269,7 @@ export default function DesignStudioLandingPage() {
         </div>
       </section>
 
-      {/* ─── FINAL CTA ───────────────────────────────────────── */}
+      {/* ─── FINAL CTA ─────────────────────────────────────── */}
       <section className="py-32 px-6">
         <div
           className="relative mx-auto max-w-5xl overflow-hidden rounded-lg border border-[var(--color-border)] p-16 text-center lg:p-24"
@@ -286,7 +286,7 @@ export default function DesignStudioLandingPage() {
             />
             <h2
               className="mb-8 text-4xl font-bold lg:text-6xl"
-              style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
             >
               Start Your Next Masterpiece.
             </h2>

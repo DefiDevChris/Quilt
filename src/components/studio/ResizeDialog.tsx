@@ -106,7 +106,7 @@ export function ResizeDialog({ isOpen, onClose }: ResizeDialogProps) {
       }}
     >
       <div
-        className={`bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] w-[${LAYOUT.dialogSm}] max-w-[90vw]`}
+        className={`bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] w-[${LAYOUT.dialogSm}] max-w-[90vw]`}
         role="dialog"
         aria-label="Resize Quilt"
       >

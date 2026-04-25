@@ -118,7 +118,7 @@ function CollectionSection({
               {/* Title overlay */}
               <h3
                 className="absolute bottom-6 left-6 right-6 text-3xl md:text-4xl text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)] bg-black/20 w-fit px-4 py-2 rounded-lg backdrop-blur-sm"
-                style={{ fontFamily: 'var(--font-display)' }}
+                style={{ fontFamily: 'var(--font-heading)' }}
               >
                 {collection.name}
               </h3>
@@ -131,7 +131,7 @@ function CollectionSection({
               className="text-base italic mb-3"
               style={{
                 color: COLORS.primary,
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
               }}
             >
               Collection spotlight

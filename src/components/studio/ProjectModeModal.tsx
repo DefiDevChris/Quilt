@@ -52,7 +52,7 @@ export function ProjectModeModal({ onModeSelected }: ProjectModeModalProps) {
         >
           Choose Project Type
         </h2>
-        <p className="mb-6 text-center text-sm text-[var(--color-text-muted)]">Select how you want to work</p>
+        <p className="mb-6 text-center text-sm text-[var(--color-text-dim)]">Select how you want to work</p>
 
         <div className="grid grid-cols-2 gap-4">
           {/* Quilt Design card */}
@@ -60,16 +60,16 @@ export function ProjectModeModal({ onModeSelected }: ProjectModeModalProps) {
             onClick={() => handleModeSelect('quilt')}
             className="
               flex flex-col items-center gap-3 rounded-lg border-2 border-transparent
-              bg-[var(--color-surface-alt)] p-6
+              bg-[var(--color-bg)] p-6
               transition-colors duration-150
-              hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-light)]
+              hover:border-[var(--color-primary)] hover:bg-[var(--color-secondary)]
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]
             "
           >
             <Grid3X3 className="h-8 w-8 text-[var(--color-primary)]" />
             <div className="text-center">
               <div className="font-medium text-[var(--color-text)]">Quilt Design</div>
-              <div className="text-xs text-[var(--color-text-muted)]">Design quilts block by block</div>
+              <div className="text-xs text-[var(--color-text-dim)]">Design quilts block by block</div>
             </div>
           </button>
 
@@ -78,16 +78,16 @@ export function ProjectModeModal({ onModeSelected }: ProjectModeModalProps) {
             onClick={() => handleModeSelect('fabric-library')}
             className="
               flex flex-col items-center gap-3 rounded-lg border-2 border-transparent
-              bg-[var(--color-surface-alt)] p-6
+              bg-[var(--color-bg)] p-6
               transition-colors duration-150
-              hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-light)]
+              hover:border-[var(--color-primary)] hover:bg-[var(--color-secondary)]
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]
             "
           >
             <Layers className="h-8 w-8 text-[var(--color-primary)]" />
             <div className="text-center">
               <div className="font-medium text-[var(--color-text)]">Fabric Library</div>
-              <div className="text-xs text-[var(--color-text-muted)]">Manage your fabric stash</div>
+              <div className="text-xs text-[var(--color-text-dim)]">Manage your fabric stash</div>
             </div>
           </button>
         </div>

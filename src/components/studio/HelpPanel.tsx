@@ -214,7 +214,7 @@ export function HelpPanel({ isOpen, onClose }: HelpPanelProps) {
             animate={{ x: 0 }}
             exit={{ x: 360 }}
             transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
-            className={`fixed top-0 right-0 bottom-0 w-[${LAYOUT.helpPanelWidth}] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(26,26,26,0.08)] z-50 flex flex-col`}
+            className={`fixed top-0 right-0 bottom-0 w-[${LAYOUT.helpPanelWidth}] bg-[var(--color-bg)] shadow-[0_1px_2px_rgba(54,49,45,0.08)] z-50 flex flex-col`}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 h-12 flex-shrink-0 border-b border-[var(--color-border)]/[0.08]">

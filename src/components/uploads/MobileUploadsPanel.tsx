@@ -140,7 +140,7 @@ export function MobileUploadsPanel() {
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}
-              className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+              className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
             >
               <div className="aspect-square bg-[var(--color-bg)] animate-pulse" />
               <div className="p-3 space-y-2">

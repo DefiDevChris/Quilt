@@ -42,7 +42,7 @@ export default function ShopHeader() {
               href="/shop"
               className="flex items-center gap-2 text-4xl font-bold"
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
                 color: COLORS.primary,
               }}
             >

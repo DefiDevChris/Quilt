@@ -8,7 +8,7 @@
 
 import brandConfig from '../../brand_config.json';
 
-// ─── Helpers ───────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────
 
 /**
  * Converts a hex color + alpha to an rgba string.
@@ -34,7 +34,7 @@ function darkenHex(hex: string, amount: number): string {
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
-// ─── Colors ───────────────────────────────────────────────────────────
+// ─── Colors ─────────────────────────────────────────────────────────────
 
 const { color_palette: cp } = brandConfig;
 const cc = brandConfig.canvas_colors;
@@ -70,7 +70,7 @@ export const COLORS_HOVER = {
   primary: comp.primary_hover,
 } as const;
 
-// ─── Canvas / Tool Colors ────────────────────────────────────────────
+// ─── Canvas / Tool Colors ───────────────────────────────────────────────────
 
 export const CANVAS = {
   gridLine: cc.grid_line,
@@ -102,11 +102,11 @@ export const CANVAS = {
   mockQuiltStitch: cc.mock_quilt_stitch,
 } as const;
 
-// ─── Fence Role Colors ───────────────────────────────────────────────
+// ─── Fence Role Colors ────────────────────────────────────────────────────────
 
 export const FENCE = fc as typeof fc;
 
-// ─── Shade Colors ────────────────────────────────────────────────────
+// ─── Shade Colors ──────────────────────────────────────────────────────────────────
 
 export const SHADE = {
   dark: sc.dark,
@@ -115,7 +115,7 @@ export const SHADE = {
   unknown: sc.unknown,
 } as const;
 
-// ─── Pattern Preview Colors ──────────────────────────────────────────
+// ─── Pattern Preview Colors ───────────────────────────────────────────────────────
 
 export const PATTERN_PREVIEW = {
   fill: pp.fill,
@@ -123,21 +123,21 @@ export const PATTERN_PREVIEW = {
   accent: pp.accent,
 } as const;
 
-// ─── Default Canvas Colors ───────────────────────────────────────────
+// ─── Default Canvas Colors ──────────────────────────────────────────────────────
 
 export const DEFAULT_CANVAS = {
   fill: dc.fill,
   stroke: dc.stroke,
 } as const;
 
-// ─── Default Layout Colors ───────────────────────────────────────────
+// ─── Default Layout Colors ──────────────────────────────────────────────────────
 
 export const DEFAULT_LAYOUT = {
   sashing: dl.sashing,
   border: dl.border,
 } as const;
 
-// ─── Grid / Measurement Colors ───────────────────────────────────────
+// ─── Grid / Measurement Colors ───────────────────────────────────────────────────
 
 export const GRID = {
   bg: gc.bg,
@@ -145,7 +145,7 @@ export const GRID = {
   border: gc.border,
 } as const;
 
-// ─── Typography ───────────────────────────────────────────────────────
+// ─── Typography ───────────────────────────────────────────────────────────────
 
 const { scale: ts } = brandConfig.typography;
 
@@ -174,7 +174,7 @@ export const SPACING = {
 } as const;
 
 // Fonts are defined in globals.css via CSS variables - CSS is the source of truth
-const FONT_HEADING = 'Noto Serif';
+const FONT_HEADING = 'Noto Sans';
 const FONT_BODY = 'Montserrat';
 
 export const TYPOGRAPHY = {
@@ -216,7 +216,7 @@ export const TYPOGRAPHY = {
   },
 } as const;
 
-// ─── Layout ───────────────────────────────────────────────────────────
+// ─── Layout ───────────────────────────────────────────────────────────────
 
 const { layout: l } = brandConfig.design_system;
 
@@ -235,14 +235,14 @@ export const LAYOUT = {
   modalMaxHeight: '90vh',
 } as const;
 
-// ─── Motion ───────────────────────────────────────────────────────────
+// ─── Motion ───────────────────────────────────────────────────────────────
 
 export const MOTION = {
   transitionDuration: 150,
   transitionEasing: 'ease-out',
 } as const;
 
-// ─── Shadow ───────────────────────────────────────────────────────────
+// ─── Shadow ───────────────────────────────────────────────────────────────
 
 export const SHADOW = {
   brand: `0 1px 2px ${withAlpha(ac.shadows.brand.hex, ac.shadows.brand.alpha)}`,
@@ -250,14 +250,14 @@ export const SHADOW = {
   inset: `inset 0 2px 8px ${withAlpha(ac.shadows.inset_inner.hex, ac.shadows.inset_inner.alpha)}, inset 0 1px 3px ${withAlpha(ac.shadows.inset_inner_subtle.hex, ac.shadows.inset_inner_subtle.alpha)}`,
 } as const;
 
-// ─── Decoration ─────────────────────────────────────────────────────
+// ─── Decoration ─────────────────────────────────────────────────────────────
 
 export const DECORATION = {
   defaultOpacity: 12,
   stitchColor: 'var(--color-text)',
 } as const;
 
-// ─── Mascots ──────────────────────────────────────────────────────────
+// ─── Mascots ────────────────────────────────────────────────────────────────
 
 export const MASCOT = {
   positions: {
@@ -307,7 +307,7 @@ export const MASCOT = {
   maxPerScreen: 1,
 } as const;
 
-// ─── Assets ───────────────────────────────────────────────────────────
+// ─── Assets ───────────────────────────────────────────────────────────────
 
 export const ASSETS = {
   logo: brandConfig.public_assets.logo,
@@ -315,14 +315,14 @@ export const ASSETS = {
   icons: brandConfig.public_assets.icons.path,
 } as const;
 
-// ─── Radius ───────────────────────────────────────────────────────────
+// ─── Radius ───────────────────────────────────────────────────────────────
 
 export const RADIUS = {
   full: '9999px',
   lg: '8px',
 } as const;
 
-// ─── Opacity ──────────────────────────────────────────────────────────
+// ─── Opacity ───────────────────────────────────────────────────────────────
 
 export const OPACITY = {
   disabled: 0.5,
@@ -333,7 +333,7 @@ export const OPACITY = {
   reviewOverlay: 0.35,
 } as const;
 
-// ─── Z-Index ─────────────────────────────────────────────────────────
+// ─── Z-Index ──────────────────────────────────────────────────────────────
 
 export const Z_INDEX = {
   base: 0,
@@ -348,12 +348,12 @@ export const Z_INDEX = {
   modal: 70,
 } as const;
 
-// ─── Breakpoints ─────────────────────────────────────────────────────
+// ─── Breakpoints ─────────────────────────────────────────────────────────────
 
 export const BREAKPOINTS = {
   mobile: 768,
 } as const;
 
-// ─── Exports for external use ─────────────────────────────────────────
+// ─── Exports for external use ────────────────────────────────────────────────────
 
 export { withAlpha, darkenHex };

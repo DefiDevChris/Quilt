@@ -15,12 +15,12 @@ export default function DesignStudioFeature() {
           }}
         >
           {/* Text column */}
-          <div className="w-full md:w-1/2 p-12 lg:p-16 flex flex-col justify-center">
+          <div className="w full md:w-1/2 p-12 lg:p-16 flex flex-col justify-center">
             <p
               className="text-base italic mb-3"
               style={{
                 color: COLORS.primary,
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
               }}
             >
               The Design Studio
@@ -28,14 +28,14 @@ export default function DesignStudioFeature() {
             <h2
               className="text-4xl md:text-5xl mb-6 leading-tight"
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
                 color: COLORS.text,
               }}
             >
               Sketch your next quilt.
             </h2>
             <p className="text-lg mb-8 leading-relaxed" style={{ color: COLORS.textDim }}>
-              Every quilt starts with an idea. Piece yours together here — block by block, fabric by
+              Every quilt starts with an idea. Piece yourstogether here — block by block, fabric by
               fabric — until it feels like yours.
             </p>
 
@@ -98,7 +98,7 @@ export default function DesignStudioFeature() {
               className="w-full rounded-lg overflow-hidden"
               style={{
                 backgroundColor: COLORS.surface,
-                boxShadow: '0 12px 32px rgba(26,26,26,0.12)',
+                boxShadow: '0 12px 32px rgba(54,49,45,0.12)',
               }}
             >
               {/* Mock browser chrome */}

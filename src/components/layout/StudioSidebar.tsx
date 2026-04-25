@@ -124,7 +124,7 @@ export function StudioSidebar({ onMobileUploadsToggle }: StudioSidebarProps) {
         <div className="mb-10">
           <p
             className="text-xl"
-            style={{ fontFamily: 'var(--font-display)', color: COLORS.text }}
+            style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
           >
             {displayName}
           </p>
@@ -174,7 +174,7 @@ export function StudioSidebar({ onMobileUploadsToggle }: StudioSidebarProps) {
               transitionDuration: `${MOTION.transitionDuration}ms`,
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5AA0D5';
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'var(--color-primary-hover)';
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLButtonElement).style.backgroundColor = COLORS.primary;

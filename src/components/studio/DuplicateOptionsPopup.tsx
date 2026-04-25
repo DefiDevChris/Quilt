@@ -103,7 +103,7 @@ export function DuplicateOptionsPopup() {
         aria-modal="true"
         aria-labelledby="duplicate-options-title"
         tabIndex={-1}
-        className="bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-4 min-w-64 outline-none"
+        className="bg-[var(--color-bg)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-4 min-w-64 outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         <h4

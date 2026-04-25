@@ -108,7 +108,7 @@ export function CartDrawer() {
       {/* Backdrop */}
       <div
         className="fixed inset-0 z-40"
-        style={{ backgroundColor: 'rgba(26, 26, 26, 0.3)' }}
+        style={{ backgroundColor: 'rgba(54, 49, 45, 0.3)' }}
         onClick={() => setDrawerOpen(false)}
         aria-hidden="true"
       />

@@ -18,7 +18,7 @@ export default function CtaSection() {
               width="calc(100% - 16px)"
               height="calc(100% - 16px)"
               fill="none"
-              stroke="#7CB9E8"
+              stroke="var(--color-primary)"
               strokeWidth="2"
               strokeDasharray="8 6"
               strokeLinecap="round"
@@ -41,7 +41,7 @@ export default function CtaSection() {
             </div>
             <h2
               className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-default mb-4"
-              style={{ fontFamily: 'var(--font-display)' }}
+              style={{ fontFamily: 'var(--font-heading)' }}
             >
               Ready to Start Your Next Quilting Adventure?
             </h2>
@@ -52,7 +52,7 @@ export default function CtaSection() {
 
             <Link
               href="/auth/signup"
-              className="px-8 py-4 bg-primary text-default rounded-full font-bold text-lg hover:bg-primary-dark transition-colors duration-150 shadow-[0_1px_2px_rgba(26,26,26,0.08)] inline-block"
+              className="px-8 py-4 bg-primary text-default rounded-full font-bold text-lg hover:bg-primary-dark transition-colors duration-150 shadow-[0_1px_2px_rgba(54,49,45,0.08)] inline-block"
             >
               Start Designing Free
             </Link>
