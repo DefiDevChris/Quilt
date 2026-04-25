@@ -90,7 +90,7 @@ export function VerifyEmailForm() {
         </Link>
         <h1
           className="text-center text-[2rem] font-semibold leading-[1.1] text-default"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           Verify your email
         </h1>

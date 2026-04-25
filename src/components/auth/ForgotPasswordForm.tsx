@@ -90,7 +90,7 @@ export function ForgotPasswordForm() {
         </Link>
         <h1
           className="text-center text-[2rem] font-semibold leading-[1.1] text-default"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           {step === 'request' ? 'Reset your password' : 'Enter reset code'}
         </h1>

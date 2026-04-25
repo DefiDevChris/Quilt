@@ -160,7 +160,7 @@ function Slide({
         <Link href={`/blog/${post.slug}`} className="group block">
           <h2
             className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-[var(--color-text)] mb-6"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-heading)' }}
             onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
             onMouseLeave={(e) => (e.currentTarget.style.color = '')}
           >

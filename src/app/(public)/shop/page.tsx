@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import ShopClient from './ShopClient';
 import { getShopSettings, getShopFabrics } from '@/lib/shop';
+import { SHOP_IMAGERY } from '@/lib/shop-imagery';
 import type { ShopFabric } from '@/types/fabric';
 
-const HERO_IMAGE = '/images/shop/fabric-by-yard.jpg';
+const HERO_IMAGE = SHOP_IMAGERY.fabricByYard;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://quiltcorgi.com';
 
 export async function generateMetadata(): Promise<Metadata> {

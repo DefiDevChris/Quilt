@@ -21,13 +21,13 @@ export default function OrderCard({ order }: OrderCardProps) {
   const firstItem = lineItems?.[0];
 
   return (
-    <div className="bg-[#ffffff] rounded-lg shadow-[0_1px_2px_rgba(26,26,26,0.08)] p-6 transition-colors duration-150 ease-out hover:bg-[#F7F9FC]/50">
+    <div className="bg-[var(--color-surface)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-6 transition-colors duration-150 ease-out hover:bg-[var(--color-bg)]/50">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <p className="text-sm text-[#4a4a4a] font-['Montserrat']">
+          <p className="text-sm text-[var(--color-text-dim)] font-['Montserrat']">
             {formatOrderDate(order.createdAt)}
           </p>
-          <p className="text-lg font-['Noto_Serif'] font-semibold text-[#1a1a1a] mt-1">
+          <p className="text-lg font-['Noto_Sans'] font-semibold text-[var(--color-text)] mt-1">
             Order #{order.shopifyOrderId.slice(-6)}
           </p>
         </div>
@@ -40,7 +40,7 @@ export default function OrderCard({ order }: OrderCardProps) {
           {lineItems.slice(0, 4).map((item, index) => (
             <div
               key={index}
-              className="w-12 h-12 rounded-lg overflow-hidden bg-[#F7F9FC] flex-shrink-0"
+              className="w-12 h-12 rounded-lg overflow-hidden bg-[var(--color-bg)] flex-shrink-0"
             >
               {item.imageUrl ? (
                 <img
@@ -50,12 +50,12 @@ export default function OrderCard({ order }: OrderCardProps) {
                   loading="lazy"
                 />
               ) : (
-                <div className="w-full h-full bg-[#d4d4d4]" />
+                <div className="w-full h-full bg-[var(--color-border)]" />
               )}
             </div>
           ))}
           {lineItems.length > 4 && (
-            <div className="w-12 h-12 rounded-lg bg-[#F7F9FC] flex items-center justify-center text-sm text-[#4a4a4a] font-['Montserrat']">
+            <div className="w-12 h-12 rounded-lg bg-[var(--color-bg)] flex items-center justify-center text-sm text-[var(--color-text-dim)] font-['Montserrat']">
               +{lineItems.length - 4}
             </div>
           )}
@@ -65,11 +65,11 @@ export default function OrderCard({ order }: OrderCardProps) {
       {/* Order summary */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-[#4a4a4a] font-['Montserrat']">
+          <p className="text-sm text-[var(--color-text-dim)] font-['Montserrat']">
             {lineItems?.length || 0} fabric{lineItems?.length !== 1 ? 's' : ''}
           </p>
           {firstItem && (
-            <p className="text-sm text-[#4a4a4a] font-['Montserrat'] truncate max-w-[200px]">
+            <p className="text-sm text-[var(--color-text-dim)] font-['Montserrat'] truncate max-w-[200px]">
               {firstItem.fabricName}
               {lineItems.length > 1 ? ` +${lineItems.length - 1} more` : ''}
             </p>
@@ -77,12 +77,12 @@ export default function OrderCard({ order }: OrderCardProps) {
         </div>
 
         <div className="text-right">
-          <p className="text-xl font-['Noto_Serif'] font-semibold text-[#1a1a1a]">
+          <p className="text-xl font-['Noto_Sans'] font-semibold text-[var(--color-text)]">
             {formatCents(order.totalCents, order.currency)}
           </p>
           <Link
             href={`/dashboard/orders/${order.id}`}
-            className="text-sm text-[#7CB9E8] font-['Montserrat'] hover:text-[#5AA0D5] transition-colors duration-150 ease-out"
+            className="text-sm text-[var(--color-primary)] font-['Montserrat'] hover:text-[var(--color-primary-hover)] transition-colors duration-150 ease-out"
           >
             View Details
           </Link>

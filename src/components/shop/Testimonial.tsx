@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { COLORS } from '@/lib/design-system';
+import { SHOP_IMAGERY } from '@/lib/shop-imagery';
 
 const TESTIMONIALS = [
   {
@@ -10,7 +11,7 @@ const TESTIMONIALS = [
       "The quality of the precuts made piecing so much faster—and the colors are even prettier in person. I get compliments on my quilts everywhere I go!",
     author: 'Amber R.',
     subtext: 'Quilter since 2019',
-    image: '/images/shop/fabric-by-yard.jpg',
+    image: SHOP_IMAGERY.fabricByYard,
     bgColor: `${COLORS.secondary}33`,
   },
   {
@@ -19,7 +20,7 @@ const TESTIMONIALS = [
       "QuiltCorgi's collections have completely transformed my quilting process. The colors are always perfectly curated, and I love showing them off.",
     author: 'Eleanor H.',
     subtext: 'Master Quilter',
-    image: '/images/shop/fabric-collection.jpg',
+    image: SHOP_IMAGERY.fabricCollection,
     bgColor: `${COLORS.primary}20`,
   },
   {
@@ -28,7 +29,7 @@ const TESTIMONIALS = [
       "I've never felt so inspired. The moment I unboxed my fabric, I had to fire up the sewing machine. The quality is simply unmatched.",
     author: 'Sarah M.',
     subtext: 'Quilter since 2021',
-    image: '/images/shop/quilting-thread.jpg',
+    image: SHOP_IMAGERY.quiltingThread,
     bgColor: '#e8f4f8',
   },
 ];
@@ -73,7 +74,7 @@ export default function Testimonial() {
                   key={t.id}
                   className="text-2xl md:text-3xl leading-relaxed absolute inset-0 transition-opacity duration-1000 ease-in-out flex items-center"
                   style={{
-                    fontFamily: 'var(--font-display)',
+                    fontFamily: 'var(--font-heading)',
                     color: COLORS.text,
                     opacity: i === activeIndex ? 1 : 0,
                     pointerEvents: i === activeIndex ? 'auto' : 'none',

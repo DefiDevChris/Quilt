@@ -151,7 +151,7 @@ export function ProfileEditForm() {
         <button
           type="submit"
           disabled={isSaving}
-          className="w-full h-14 rounded-full bg-primary text-default text-[16px] leading-[24px] hover:bg-primary-dark transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(26,26,26,0.08)]"
+          className="w-full h-14 rounded-full bg-primary text-default text-[16px] leading-[24px] hover:bg-primary-dark transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
         >
           {isSaving ? 'Saving...' : 'Save Profile'}
         </button>
@@ -187,7 +187,7 @@ function FieldInput({
         maxLength={maxLength}
         placeholder={placeholder}
         required={required}
-        className="w-full px-5 py-3 rounded-lg bg-surface border border-default text-default text-[16px] leading-[24px] focus:outline-2 focus:outline-[#7CB9E8] transition-colors duration-150 placeholder:text-dim"
+        className="w-full px-5 py-3 rounded-lg bg-surface border border-default text-default text-[16px] leading-[24px] focus:outline-2 focus:outline-[var(--color-primary)] transition-colors duration-150 placeholder:text-dim"
       />
       {error && <p className="text-primary text-[14px] leading-[20px] mt-1">{error}</p>}
     </div>

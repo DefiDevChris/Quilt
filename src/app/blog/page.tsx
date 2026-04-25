@@ -39,7 +39,7 @@ export default async function BlogPage() {
           <Mascot pose="sitting" size="xl" className="mx-auto mb-8 opacity-40" />
           <h2
             className="text-[32px] leading-[40px] font-semibold text-default mb-4"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-heading)' }}
           >
             No stories yet
           </h2>

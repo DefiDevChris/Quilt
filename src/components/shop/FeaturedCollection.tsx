@@ -1,6 +1,7 @@
 'use client';
 
 import { COLORS } from '@/lib/design-system';
+import { SHOP_IMAGERY } from '@/lib/shop-imagery';
 
 export default function FeaturedCollection() {
   return (
@@ -23,7 +24,7 @@ export default function FeaturedCollection() {
             <h2
               className="text-4xl md:text-5xl mb-6 leading-tight"
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
                 color: COLORS.text,
               }}
             >
@@ -52,9 +53,9 @@ export default function FeaturedCollection() {
               </a>
             </div>
           </div>
-          <div className="w-full md:w-1/2 relative" style={{ minHeight: '480px' }}>
+          <div className="w-zfull md:w-1/2 relative" style={{ minHeight: '480px' }}>
             <img
-              src="/images/shop/fabric-shop-shelves.jpg"
+              src={SHOP_IMAGERY.fabricShopShelves}
               alt="Colorful fabric patterns"
               className="w-full h-full object-cover"
               onError={(e) => {

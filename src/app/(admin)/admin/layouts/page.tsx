@@ -384,7 +384,7 @@ function LayoutFormModal({
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8"
       style={{ backgroundColor: withAlpha(COLORS.text, 0.4) }}
     >
-      <div className="bg-[var(--color-bg)] border border-default rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(26,26,26,0.08)]">
+      <div className="bg-[var(--color-bg)] border border-default rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-default">
             {isEditing ? 'Edit Layout' : 'Create New Layout'}

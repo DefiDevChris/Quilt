@@ -23,28 +23,16 @@ const cloudfrontCspSource = cloudfrontHostname ? ` https://${cloudfrontHostname}
  */
 const csp = [
   "default-src 'self'",
-  // Scripts: self + Next.js inline runtime + Stripe.js
-  // NEXT_PUBLIC_DEV_CSP is set during development (replaces unreliable NODE_ENV check)
   `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${process.env.NEXT_PUBLIC_DEV_CSP === 'true' ? " 'unsafe-eval'" : ''} https://js.stripe.com`,
-  // Styles: self + inline styles (required by Fabric.js and Tailwind)
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  // Fonts: self + Google Fonts
   "font-src 'self' https://fonts.gstatic.com",
-  // Images: self + data URIs (Fabric.js exports) + Google avatars + CloudFront
   `img-src 'self' data: blob: https://*.googleusercontent.com https://i.pravatar.cc${cloudfrontCspSource}`,
-  // Canvas/WebWorker blobs used by Fabric.js
   "worker-src 'self' blob:",
-  // Stripe payment frame + Stripe fraud-detection beacon
   'frame-src https://js.stripe.com https://hooks.stripe.com',
-  // API calls: self + Stripe + Google OAuth + S3 presigned uploads
   "connect-src 'self' https://api.stripe.com https://accounts.google.com https://*.s3.amazonaws.com https://*.s3.us-east-1.amazonaws.com https://*.s3.us-east-2.amazonaws.com https://*.s3.us-west-1.amazonaws.com https://*.s3.us-west-2.amazonaws.com",
-  // Block all plugins (Flash, etc.)
   "object-src 'none'",
-  // Disallow framing this site
   "frame-ancestors 'none'",
-  // Only allow HTTPS form submissions
   "form-action 'self'",
-  // Force HTTPS for all subresource loads
   'upgrade-insecure-requests',
 ].join('; ');
 

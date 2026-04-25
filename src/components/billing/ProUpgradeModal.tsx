@@ -30,7 +30,7 @@ export function ProUpgradeModal({ onClose }: ProUpgradeModalProps) {
         aria-modal="true"
         aria-labelledby="pro-upgrade-title"
         tabIndex={-1}
-        className="relative w-full max-w-4xl bg-surface rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(26,26,26,0.08)] my-8 border border-default outline-none"
+        className="relative w-full max-w-4xl bg-surface rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(54,49,45,0.08)] my-8 border border-default outline-none"
       >
         {/* Close Button */}
         <button
