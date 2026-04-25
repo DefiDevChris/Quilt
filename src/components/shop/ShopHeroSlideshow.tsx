@@ -104,7 +104,7 @@ export default function ShopHeroSlideshow() {
                   className="text-lg italic mb-4"
                   style={{
                     color: COLORS.primary,
-                    fontFamily: 'var(--font-display)',
+                    fontFamily: 'var(--font-heading)',
                   }}
                 >
                   {slide.subtitle}
@@ -112,7 +112,7 @@ export default function ShopHeroSlideshow() {
                 <h2
                   className="text-5xl md:text-6xl lg:text-7xl mb-6 leading-tight"
                   style={{
-                    fontFamily: 'var(--font-display)',
+                    fontFamily: 'var(--font-heading)',
                     color: COLORS.text,
                   }}
                 >

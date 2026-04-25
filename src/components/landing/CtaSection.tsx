@@ -41,7 +41,7 @@ export default function CtaSection() {
             </div>
             <h2
               className="text-[32px] leading-[40px] md:text-[36px] md:leading-[44px] font-bold text-default mb-4"
-              style={{ fontFamily: 'var(--font-display)' }}
+              style={{ fontFamily: 'var(--font-heading)' }}
             >
               Ready to Start Your Next Quilting Adventure?
             </h2>

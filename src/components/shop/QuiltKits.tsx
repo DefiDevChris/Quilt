@@ -38,7 +38,7 @@ export default function QuiltKits({ fabrics, onAddToCart }: QuiltKitsProps) {
             <h2
               className="text-3xl md:text-4xl mb-2"
               style={{
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'var(--font-heading)',
                 color: COLORS.text,
               }}
             >

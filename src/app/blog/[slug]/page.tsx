@@ -104,7 +104,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
           <h1
             className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-default mb-10"
-            style={{ fontFamily: 'var(--font-display)' }}
+            style={{ fontFamily: 'var(--font-heading)' }}
           >
             {post.title}
           </h1>

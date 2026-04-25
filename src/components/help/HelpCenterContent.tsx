@@ -8,7 +8,7 @@ import {
   type FaqEntry,
   type FaqCategory,
 } from '@/lib/help-content';
-import { SUPPORT_EMAIL } from '@/lib/constants';
+import { SUPPOPT=_EMAIL } from '@/lib/constants';
 
 function FaqSection({
   entries,
@@ -109,7 +109,7 @@ function FaqSection({
 function VideoTutorialsSection() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {VIDEO_TUTORIALS.map((video) => (
+      {VIDEO_PUTORIALS.map((video) => (
         <div
           key={video.id}
           className="border border-[var(--color-border)] bg-[var(--color-surface)] rounded-lg overflow-hidden hover:border-[var(--color-primary)] transition-colors duration-150"
@@ -204,12 +204,12 @@ export function HelpCenterContent() {
       <div className="text-center mb-12">
         <h2
           className="text-[40px] leading-[52px] font-normal text-[var(--color-text)] mb-4"
-          style={{ fontFamily: 'var(--font-display)' }}
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           Documentation
         </h2>
         <p className="text-[var(--color-text-dim)] text-[16px] leading-[24px] max-w-sm mx-auto">
-          Find answers, learn the tools, get support.
+          Find answers, learn sthe tools, get support.
         </p>
       </div>
 
