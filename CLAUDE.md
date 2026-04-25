@@ -42,7 +42,6 @@ All color references **must** go through CSS variables:
 --color-primary-hover    #5AA0D5   primary hover state
 --color-primary-light    #EBF4FF   tinted primary backgrounds
 --color-primary-dark     #3A7BC8   (legacy alias — prefer --color-primary-hover)
---color-accent           #8B5E3C   warm brown accent
 --color-accent-light     #F5EDE4   tinted accent backgrounds
 ```
 
