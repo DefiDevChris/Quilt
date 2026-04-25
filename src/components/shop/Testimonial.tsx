@@ -74,7 +74,7 @@ export default function Testimonial() {
                   key={t.id}
                   className="text-2xl md:text-3xl leading-relaxed absolute inset-0 transition-opacity duration-1000 ease-in-out flex items-center"
                   style={{
-                    fontFamily: 'var(--font-display)',
+                    fontFamily: 'var(--font-heading)',
                     color: COLORS.text,
                     opacity: i === activeIndex ? 1 : 0,
                     pointerEvents: i === activeIndex ? 'auto' : 'none',
