@@ -163,7 +163,10 @@ const INITIAL_STATE = {
     enabled: GRID_DEFAULT_ENABLED,
     size: GRID_DEFAULT_SIZE,
     snapToGrid: GRID_DEFAULT_SNAP,
-    granularity: 'inch' as GridGranularity,
+    // Default to ¼″ snap — quilters work in eighths and quarters; the prior
+    // 1″ default produced a UX where pieces drifted off true grid lines as
+    // soon as you drew anything more precise than a whole-inch shape.
+    granularity: 'quarter' as GridGranularity,
   },
   selectedObjectIds: [] as string[],
   activeTool: 'select' as ToolType,
