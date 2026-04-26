@@ -110,8 +110,10 @@ export function useTemplateHydration(): void {
       } catch (err) {
         console.error('[useTemplateHydration] loadFromJSON failed:', err);
       }
-      // Mark as applied so subsequent runs don't re-trigger
+      // Mark as applied so subsequent runs don't re-trigger, and flag that
+      // the canvas now has content (needed for Save-as-Template visibility).
       useLeftPanelStore.getState().applyPreview();
+      useProjectStore.getState().setHasContent(true);
       return;
     }
 
@@ -129,6 +131,7 @@ export function useTemplateHydration(): void {
       const tpl = parsed.template;
       useProjectStore.getState().setCanvasDimensions(tpl.canvasWidth, tpl.canvasHeight);
       useLeftPanelStore.getState().applyPreview();
+      useProjectStore.getState().setHasContent(true);
     }
   }, [projectMode, layoutLocked, previewCache, getCanvas]);
 }

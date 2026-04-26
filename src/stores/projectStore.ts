@@ -60,7 +60,7 @@ interface ProjectStoreState {
   reset: () => void;
 }
 
-export const useProjectStore = create<ProjectStoreState>((set) => ({
+export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   projectId: null,
   projectName: 'Untitled Quilt',
   mode: 'layout',
@@ -92,7 +92,14 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
     }),
 
   setProjectName: (projectName) => set({ projectName }),
-  setMode: (mode) => set({ mode, modeSelected: true, isDirty: true }),
+  setMode: (mode) => {
+    // Mode is chosen once at project start and locked for the life of the
+    // project. Once modeSelected is true the user cannot change modes —
+    // they must create a new project instead.
+    const { modeSelected: alreadySelected, mode: currentMode } = get();
+    if (alreadySelected && currentMode !== mode) return;
+    set({ mode, modeSelected: true, isDirty: true });
+  },
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setDirty: (isDirty) => set({ isDirty }),
   setHasContent: (hasContent) => set({ hasContent }),
