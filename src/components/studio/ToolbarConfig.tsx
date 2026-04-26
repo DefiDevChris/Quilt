@@ -191,6 +191,15 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     );
   }
 
+  // Template mode: only selection, panning, history, and zoom. Template users
+  // interact exclusively through fabric swaps — no shape drawing at all.
+  if (projectMode === 'template') {
+    const TEMPLATE_ALLOWED = new Set([
+      'select', 'pan', 'undo', 'redo', 'zoom-in', 'zoom-out',
+    ]);
+    return tools.filter((tool) => TEMPLATE_ALLOWED.has(tool.id));
+  }
+
   // Filter drawing/shape tools when an applied layout constrains the canvas
   // to fence cells. The drawing group + rectangle/triangle shapes are only
   // useful in free-form mode.

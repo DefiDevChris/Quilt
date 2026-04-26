@@ -78,6 +78,12 @@ export function StudioClient({ projectId }: StudioClientProps) {
         const isFresh = !lastSaved || Math.abs(lastSaved - created) < 5_000;
         if (!isFresh && json.data.mode) {
           useProjectStore.setState({ mode: json.data.mode, modeSelected: true });
+          // Previously committed projects should skip Phase 1 — restore the
+          // layout lock so the user goes straight to the design canvas.
+          useLayoutStore.setState({
+            layoutLocked: true,
+            hasAppliedLayout: true,
+          });
         }
         setLoadState({ kind: 'ready', project: json.data });
       } catch (err) {
