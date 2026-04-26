@@ -50,6 +50,9 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   // We avoid an unused variable lint warning for ignored callbacks
   void callbacks;
 
+  // Labels are kept short so they always display in full at 14px in the
+  // 72-px-wide button. The TooltipHint (`description` below) carries the
+  // full sentence for hover discovery.
   const tools: ToolDef[] = [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
     {
@@ -77,8 +80,8 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'easydraw',
-      label: 'Easydraw',
-      description: 'Freehand drawing tool',
+      label: 'Draw',
+      description: 'Freehand drawing tool (Easydraw)',
       toolType: 'easydraw',
       group: 'tools',
       icon: <Pencil size={20} />,
@@ -86,7 +89,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     {
       id: 'bend',
       label: 'Bend',
-      description: 'Warp/modify existing shapes',
+      description: 'Warp / modify existing shapes',
       toolType: 'bend',
       group: 'tools',
       icon: <Wand2 size={20} />,
@@ -94,7 +97,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     // ── Shapes ──
     {
       id: 'rectangle',
-      label: 'Rectangle',
+      label: 'Rect',
       shortcut: 'R',
       description: 'Draw a rectangle',
       toolType: 'rectangle',
@@ -142,7 +145,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     // ── Zoom ──
     {
       id: 'zoom-in',
-      label: 'Zoom In',
+      label: 'Zoom +',
       shortcut: 'Ctrl+=',
       description: 'Zoom in on the canvas',
       group: 'zoom',
@@ -152,7 +155,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
     },
     {
       id: 'zoom-out',
-      label: 'Zoom Out',
+      label: 'Zoom −',
       shortcut: 'Ctrl+-',
       description: 'Zoom out on the canvas',
       group: 'zoom',
