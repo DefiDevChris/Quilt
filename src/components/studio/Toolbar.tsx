@@ -1,7 +1,6 @@
 'use client';
 
 import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
-import { useProjectStore } from '@/stores/projectStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ToolDef, ToolIcon } from '@/components/ui/ToolIcon';
 import { Separator } from '@/components/ui/Separator';
@@ -21,7 +20,6 @@ export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarP
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
-  const projectMode = useProjectStore((s) => s.mode);
 
   const callbacks: ToolbarCallbacks = {
     onOpenImageExport,
@@ -31,7 +29,12 @@ export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarP
 
   const tools = useQuiltTools(callbacks);
 
-  const shouldRender = activeWorktable === 'quilt' && projectMode === 'free-form';
+  // Toolbar shows for the Quilt worktable across all three project modes
+  // (template / layout / free-form). Block Builder owns its own internal
+  // toolbar, so we hide this one when it is the active worktable.
+  // Mode-aware tool filtering (drawing tools only in free-form, etc.) is
+  // handled inside `useQuiltTools`.
+  const shouldRender = activeWorktable === 'quilt';
 
   if (!shouldRender) return null;
 
