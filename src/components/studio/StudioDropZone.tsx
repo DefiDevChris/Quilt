@@ -1,61 +1,39 @@
 'use client';
 
 import { useCallback } from 'react';
-import type { Project } from '@/types/project';
-import { CanvasWorkspace } from '@/components/canvas/CanvasWorkspace';
-import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
-import { useFabricDrop } from '@/hooks/useFabricLayout';
-import { useBlockDrop } from '@/hooks/useBlockDrop';
+import { useLayoutStore } from '@/stores/layoutStore';
 
 interface StudioDropZoneProps {
-  readonly project: Project;
+  children: React.ReactNode;
 }
 
-/**
- * Wraps the CanvasWorkspace with the unified drag-drop dispatcher.
- *
- * The dispatcher routes:
- *  - `application/quiltcorgi-fabric-id` → applies a pattern fill (fence-enforced)
- *  - everything else                      → block drop with cell-snap (fence-enforced)
- *
- * Layout configuration is now handled inline via the LayoutSelector in the
- * right panel — no drag-to-apply layout presets.
- */
-export function StudioDropZone({ project }: StudioDropZoneProps) {
-  const { handleDragOver, handleDrop } = useBlockDrop();
-  const { handleFabricDragOver, handleFabricDrop } = useFabricDrop();
+export default function StudioDropZone({ children }: StudioDropZoneProps) {
+  const { addFabricToCanvas } = useLayoutStore();
 
-  const combinedDragOver = useCallback(
-    async (e: React.DragEvent) => {
-      await handleDragOver(e);
-      await handleFabricDragOver(e);
-    },
-    [handleDragOver, handleFabricDragOver]
-  );
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, []);
 
-  const combinedDrop = useCallback(
+  const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
-      const fabricId = e.dataTransfer.getData('application/quiltcorgi-fabric-id');
-      if (fabricId) {
-        handleFabricDrop(e);
-      } else {
-        handleDrop(e);
+      const fabricId = e.dataTransfer.getData('fabricId');
+      const imageUrl = e.dataTransfer.getData('imageUrl');
+      if (fabricId && imageUrl) {
+        addFabricToCanvas({ fabricId, imageUrl, x: e.clientX, y: e.clientY });
       }
     },
-    [handleDrop, handleFabricDrop]
+    [addFabricToCanvas]
   );
 
   return (
-    <CanvasErrorBoundary>
-      <div
-        className="flex-1 flex overflow-hidden relative"
-        data-canvas-wrapper
-        onDragOver={combinedDragOver}
-        onDrop={combinedDrop}
-      >
-        <CanvasWorkspace project={project} />
-      </div>
-    </CanvasErrorBoundary>
+    <div
+      className="relative flex-1 overflow-hidden"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {children}
+    </div>
   );
 }

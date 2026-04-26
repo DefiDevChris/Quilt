@@ -1,89 +1,70 @@
 'use client';
 
-import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
-import { useProjectStore } from '@/stores/projectStore';
-import { TooltipHint } from '@/components/ui/TooltipHint';
-import { ToolDef, ToolIcon } from '@/components/ui/ToolIcon';
-import { Separator } from '@/components/ui/Separator';
-import { useQuiltTools, type ToolbarCallbacks } from './ToolbarConfig';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
-type ToolbarProps = ToolbarCallbacks;
+interface ToolbarProps {
+  side: 'left' | 'right';
+  mode: 'template' | 'layout' | 'freeform';
+}
 
-const GROUP_LABELS: Record<string, string> = {
-  tools: '',
-  shapes: '',
-  history: '',
-  zoom: '',
-  default: '',
-};
+type LeftTab = 'fabrics' | 'blocks' | 'layers';
 
-export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarProps) {
-  const activeTool = useCanvasStore((s) => s.activeTool);
-  const setActiveTool = useCanvasStore((s) => s.setActiveTool);
-  const activeWorktable = useCanvasStore((s) => s.activeWorktable);
-  const projectMode = useProjectStore((s) => s.mode);
+export default function Toolbar({ side, mode }: ToolbarProps) {
+  const [activeTab, setActiveTab] = useState<LeftTab>('fabrics');
 
-  const callbacks: ToolbarCallbacks = {
-    onOpenImageExport,
-    onSaveBlock,
-    onNewBlock,
-  };
-
-  const tools = useQuiltTools(callbacks);
-
-  const shouldRender = activeWorktable === 'quilt' && projectMode === 'free-form';
-
-  if (!shouldRender) return null;
-
-  // Group tools by group name
-  const groups: { name: string; items: ToolDef[] }[] = [];
-  let currentGroup = '';
-  for (const tool of tools) {
-    const group = tool.group ?? 'default';
-    if (group !== currentGroup) {
-      groups.push({ name: group, items: [tool] });
-      currentGroup = group;
-    } else {
-      groups[groups.length - 1].items.push(tool);
-    }
+  if (side === 'right') {
+    return (
+      <aside className="w-64 border-l bg-background flex flex-col shrink-0 overflow-y-auto">
+        <div className="p-3 border-b">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Properties</p>
+        </div>
+        <div className="p-3 text-sm text-muted-foreground">
+          Select an object to edit its properties.
+        </div>
+      </aside>
+    );
   }
 
+  // Left toolbar
+  const tabs: { id: LeftTab; label: string }[] = [
+    { id: 'fabrics', label: 'Fabrics' },
+    // Block Builder tab — only for layout and freeform modes
+    ...(mode !== 'template' ? [{ id: 'blocks' as LeftTab, label: 'Block Builder' }] : []),
+    { id: 'layers', label: 'Layers' },
+  ];
+
   return (
-    <nav
-      aria-label="Design tools"
-      data-tour="toolbar"
-      className="bg-[var(--color-bg)] border-r border-[var(--color-border)]/15 flex flex-col py-2 h-full overflow-y-auto min-w-[88px] w-[88px] shrink-0"
-    >
-      <div className="flex flex-col items-center gap-0.5 px-1">
-        {groups.map((group, groupIdx) => (
-          <div key={group.name}>
-            {groupIdx > 0 && <Separator />}
-            <div className="flex flex-col items-center gap-0.5 py-0.5">
-              {group.items.map((tool) => {
-                const isActive = tool.toolType
-                  ? activeTool === tool.toolType
-                  : tool.isActive
-                    ? tool.isActive()
-                    : false;
-                return (
-                  <ToolIcon
-                    key={tool.id}
-                    tool={tool}
-                    isActive={isActive}
-                    onClick={() => {
-                      if (tool.onClick) {
-                        tool.onClick();
-                      } else if (tool.toolType) {
-                        setActiveTool(tool.toolType);
-                      }
-                    }}
-                  />
-                );
-              })}
-            </div>
-          </div>
+    <aside className="w-64 border-r bg-background flex flex-col shrink-0">
+      {/* Tab strip */}
+      <div className="flex border-b">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 py-2 text-xs font-medium transition-colors ${
+              activeTab === tab.id
+                ? 'border-b-2 border-primary text-primary'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {tab.label}
+          </button>
         ))}
       </div>
-    </nav>
+
+      {/* Tab content */}
+      <div className="flex-1 overflow-y-auto p-3">
+        {activeTab === 'fabrics' && (
+          <p className="text-sm text-muted-foreground">Drag fabrics onto the canvas.</p>
+        )}
+        {activeTab === 'blocks' && mode !== 'template' && (
+          <p className="text-sm text-muted-foreground">Choose a block pattern to stamp onto the canvas.</p>
+        )}
+        {activeTab === 'layers' && (
+          <p className="text-sm text-muted-foreground">No layers yet.</p>
+        )}
+      </div>
+    </aside>
   );
 }
