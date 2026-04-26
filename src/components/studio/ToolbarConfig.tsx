@@ -1,8 +1,7 @@
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { useYardageStore } from '@/stores/yardageStore';
-import { usePrintlistStore } from '@/stores/printlistStore';
+import { useProjectStore } from '@/stores/projectStore';
 
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { ToolDef } from '@/components/ui/ToolIcon';
@@ -11,13 +10,14 @@ import {
   Hand,
   Pencil,
   Wand2,
-  Grid3x3,
   Undo2,
   Redo2,
   Square,
   Triangle,
   ZoomIn,
   ZoomOut,
+  Frame,
+  Box,
 } from 'lucide-react';
 import { ZOOM_FACTOR } from '@/lib/constants';
 
@@ -39,7 +39,16 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   // prevent users from drawing outside fence cells.
   const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
   const layoutType = useLayoutStore((s) => s.layoutType);
+  const layoutLocked = useLayoutStore((s) => s.layoutLocked);
+  const projectMode = useProjectStore((s) => s.mode);
   const showDrawingTools = !hasAppliedLayout || layoutType === 'free-form';
+
+  // Free-form Phase 2 actions: Add Border / Add Edging (binding) directly
+  // from the toolbar. Only show once the user has clicked "Start Designing"
+  // — pre-lock these are configured via the SelectionShell sliders.
+  const showFreeformActions = projectMode === 'free-form' && layoutLocked;
+  // We avoid an unused variable lint warning for ignored callbacks
+  void callbacks;
 
   const tools: ToolDef[] = [
     // ── PRIMARY: Essentials a hobbyist needs every session ──
@@ -152,6 +161,35 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       icon: <ZoomOut size={20} />,
     },
   ];
+
+  // Free-form actions: Add Border (appends a new 2" border, capped at 5)
+  // and Add Edging (toggles bindingWidth between 0 and 0.5"). The layout
+  // store's locks have a free-form bypass for these decoration setters.
+  if (showFreeformActions) {
+    tools.push(
+      {
+        id: 'add-border',
+        label: 'Add Border',
+        description: 'Append a new outer border to the quilt',
+        group: 'actions',
+        onClick: () => useLayoutStore.getState().addBorder(),
+        isActive: () => false,
+        icon: <Frame size={20} />,
+      },
+      {
+        id: 'add-edging',
+        label: 'Add Edging',
+        description: 'Toggle binding/edging on the quilt perimeter',
+        group: 'actions',
+        onClick: () => {
+          const ls = useLayoutStore.getState();
+          ls.setBindingWidth(ls.bindingWidth > 0 ? 0 : 0.5);
+        },
+        isActive: () => useLayoutStore.getState().bindingWidth > 0,
+        icon: <Box size={20} />,
+      }
+    );
+  }
 
   // Filter drawing/shape tools when an applied layout constrains the canvas
   // to fence cells. The drawing group + rectangle/triangle shapes are only
