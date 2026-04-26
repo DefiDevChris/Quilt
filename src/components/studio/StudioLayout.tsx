@@ -1,94 +1,185 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { LayoutGrid, Layers } from 'lucide-react';
+
+import { StudioTopBar } from '@/components/studio/StudioTopBar';
+import { Toolbar } from '@/components/studio/Toolbar';
+import { ContextPanel } from '@/components/studio/ContextPanel';
+import { BottomBar } from '@/components/studio/BottomBar';
+import { StudioDropZone } from '@/components/studio/StudioDropZone';
+import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
+import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { useLayoutStore } from '@/stores/layoutStore';
-import StudioTopBar from './StudioTopBar';
-import Toolbar from './Toolbar';
-import StudioDropZone from './StudioDropZone';
-import SaveAsTemplateModal from './SaveAsTemplateModal';
-import { useState, useEffect, useRef } from 'react';
-import { inchesToPixels } from '@/lib/layout-size-utils';
+import { saveProject } from '@/lib/save-project';
+import { useCanvasContext } from '@/contexts/CanvasContext';
+import { useTemplateHydration } from '@/hooks/useTemplateHydration';
+import type { Project } from '@/types/project';
 
-// Dynamically import Fabric.js canvas wrapper to avoid SSR issues
-const FabricCanvas = dynamic(() => import('./FabricCanvas').catch(() => {
-  // Fallback if FabricCanvas doesn't exist yet
-  const Fallback = () => <div className="w-full h-full bg-gray-50 flex items-center justify-center text-muted-foreground text-sm">Canvas loading…</div>;
-  Fallback.displayName = 'FabricCanvasFallback';
-  return { default: Fallback };
-}), { ssr: false });
+interface StudioLayoutProps {
+  /** The fully-loaded project from the API. Required for canvas hydration. */
+  project: Project;
+}
 
-export default function StudioLayout() {
-  const { mode, width, height } = useProjectStore();
-  const { clearAllFabrics } = useLayoutStore();
-  const [saveModalOpen, setSaveModalOpen] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+/**
+ * StudioLayout — the Phase 2 (designing) studio chrome.
+ *
+ * Per the design studio spec, this layout is identical for all three modes
+ * (template, layout, freeform), with two structural differences:
+ *
+ *   1. The Block Builder tab is only available in `template` and `layout`
+ *      modes. Freeform mode treats the whole canvas as a giant block
+ *      builder, so a separate block builder tab is redundant and hidden.
+ *
+ *   2. When the user switches to the Block Builder tab, the entire work
+ *      area (toolbar + canvas + library panel) is replaced with
+ *      `BlockBuilderWorktable` — its own self-contained editor with its
+ *      own toolbar, canvas, and right panel.
+ *
+ *   ┌───────────────────────────────────────────────────────┐
+ *   │ StudioTopBar                                             │
+ *   ├───────────────────────────────────────────────────────┤
+ *   │ [Quilt] [Block Builder]   ← tabs (template/layout only)  │
+ *   ├───────────────────────────────────────────────────────┤
+ *   │ Toolbar │  Canvas  │ ContextPanel  ← Quilt worktable     │
+ *   │   88px  │  flex-1  │     320px        OR                 │
+ *   │         │          │                BlockBuilderWorktable│
+ *   ├───────────────────────────────────────────────────────┤
+ *   │ BottomBar                                                │
+ *   └───────────────────────────────────────────────────────┘
+ */
+export function StudioLayout({ project }: StudioLayoutProps) {
+  const { getCanvas } = useCanvasContext();
+  const isSaving = useRef(false);
 
-  const canvasWidthPx = inchesToPixels(width ?? 60);
-  const canvasHeightPx = inchesToPixels(height ?? 80);
+  const projectMode = useProjectStore((s) => s.mode);
+  const activeWorktable = useCanvasStore((s) => s.activeWorktable);
+  const setActiveWorktable = useCanvasStore((s) => s.setActiveWorktable);
 
-  async function handleSaveAsTemplate(name: string) {
-    // Serialize the canvas to JSON (if fabric canvas is mounted)
-    const canvasJson = canvasRef.current
-      ? JSON.stringify((canvasRef.current as unknown as { toJSON: () => object }).toJSON?.())
-      : null;
+  // Per spec: Block Builder is available in Layout and Freeform — NOT
+  // Template. Templates are pre-baked complete quilts; there's no block
+  // authoring needed in that mode. Layout has block cells to fill, and
+  // Freeform users may want to author standalone blocks for reuse.
+  const showBlockBuilderTab = projectMode === 'layout' || projectMode === 'free-form';
 
-    const res = await fetch('/api/templates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name,
-        canvas_json: canvasJson,
-        width_in: width,
-        height_in: height,
-      }),
-    });
-    if (!res.ok) {
-      const { error } = await res.json();
-      throw new Error(error ?? 'Failed to save template');
+  // One-shot template stamp once the canvas is ready.
+  useTemplateHydration();
+
+  // Safety: if the tab isn't allowed in this mode (template), force back to
+  // the quilt worktable. Defends against stale state from a previous session.
+  useEffect(() => {
+    if (!showBlockBuilderTab && activeWorktable !== 'quilt') {
+      setActiveWorktable('quilt');
     }
-  }
+  }, [showBlockBuilderTab, activeWorktable, setActiveWorktable]);
+
+  // ── Manual save handler ────────────────────────────────────
+  const handleSave = useCallback(async () => {
+    if (isSaving.current) return;
+    isSaving.current = true;
+    try {
+      const { projectId } = useProjectStore.getState();
+      const fabricCanvas = getCanvas();
+      if (!projectId || !fabricCanvas) return;
+      await saveProject({ projectId, fabricCanvas, source: 'manual' });
+    } finally {
+      isSaving.current = false;
+    }
+  }, [getCanvas]);
+
+  // ── Drag start handlers — emit the dataTransfer payloads that the
+  // unified drop dispatcher in StudioDropZone routes to either the
+  // fabric or block drop hooks. ───────────────────────────────
+  const handleBlockDragStart = useCallback(
+    (e: React.DragEvent, blockId: string) => {
+      e.dataTransfer.setData('application/quiltcorgi+block-id', blockId);
+      e.dataTransfer.effectAllowed = 'copy';
+    },
+    [],
+  );
+
+  const handleFabricDragStart = useCallback(
+    (e: React.DragEvent, fabricId: string) => {
+      e.dataTransfer.setData('application/quiltcorgi-fabric-id', fabricId);
+      e.dataTransfer.effectAllowed = 'copy';
+    },
+    [],
+  );
 
   return (
-    <div className="flex flex-col h-screen bg-background">
-      {/* Top bar */}
-      <StudioTopBar
-        onSaveAsTemplate={() => setSaveModalOpen(true)}
-        onClearFabrics={mode === 'template' ? clearAllFabrics : undefined}
-      />
+    <div className="studio-layout flex h-full flex-col">
+      {/* ── Top bar ── */}
+      <StudioTopBar onSave={handleSave} />
 
+      {/* ── Worktable tabs (template + layout modes only) ── */}
+      {showBlockBuilderTab && (
+        <div
+          role="tablist"
+          aria-label="Studio worktable"
+          className="flex items-center gap-1 px-3 py-1.5 bg-[var(--color-bg)] border-b border-[var(--color-border)]/15 flex-shrink-0"
+        >
+          <WorktableTab
+            label="Quilt"
+            icon={<LayoutGrid size={14} strokeWidth={2} />}
+            active={activeWorktable === 'quilt'}
+            onClick={() => setActiveWorktable('quilt')}
+          />
+          <WorktableTab
+            label="Block Builder"
+            icon={<Layers size={14} strokeWidth={2} />}
+            active={activeWorktable === 'block-builder'}
+            onClick={() => setActiveWorktable('block-builder')}
+          />
+        </div>
+      )}
+
+      {/* ── Main work area: switches between Quilt and Block Builder ── */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left toolbar */}
-        <Toolbar side="left" mode={mode ?? 'freeform'} />
-
-        {/* Canvas area */}
-        <StudioDropZone>
-          <div
-            className="absolute inset-0 flex items-center justify-center bg-gray-100"
-          >
-            <div
-              style={{ width: canvasWidthPx, height: canvasHeightPx }}
-              className="shadow-lg bg-white"
-            >
-              <FabricCanvas
-                width={canvasWidthPx}
-                height={canvasHeightPx}
-                canvasRef={canvasRef}
-              />
-            </div>
-          </div>
-        </StudioDropZone>
-
-        {/* Right toolbar */}
-        <Toolbar side="right" mode={mode ?? 'freeform'} />
+        {activeWorktable === 'quilt' ? (
+          <>
+            <Toolbar />
+            <StudioDropZone project={project} />
+            <ContextPanel
+              onBlockDragStart={handleBlockDragStart}
+              onFabricDragStart={handleFabricDragStart}
+            />
+          </>
+        ) : (
+          <BlockBuilderWorktable />
+        )}
       </div>
 
-      {/* Save as template modal */}
-      <SaveAsTemplateModal
-        open={saveModalOpen}
-        onClose={() => setSaveModalOpen(false)}
-        onSave={handleSaveAsTemplate}
-      />
+      {/* ── Bottom bar ── */}
+      <BottomBar />
     </div>
+  );
+}
+
+function WorktableTab({
+  label,
+  icon,
+  active,
+  onClick,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold transition-colors ${
+        active
+          ? 'bg-[var(--color-primary)] text-[var(--color-text-on-primary)] shadow-[0_1px_2px_rgba(54,49,45,0.08)]'
+          : 'text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/20'
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
   );
 }

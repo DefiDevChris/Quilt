@@ -1,39 +1,62 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useLayoutStore } from '@/stores/layoutStore';
+import type { Project } from '@/types/project';
+import { CanvasWorkspace } from '@/components/canvas/CanvasWorkspace';
+import { CanvasErrorBoundary } from '@/components/studio/CanvasErrorBoundary';
+import { useFabricDrop } from '@/hooks/useFabricLayout';
+import { useBlockDrop } from '@/hooks/useBlockDrop';
 
 interface StudioDropZoneProps {
-  children: React.ReactNode;
+  readonly project: Project;
 }
 
-export default function StudioDropZone({ children }: StudioDropZoneProps) {
-  const { addFabricToCanvas } = useLayoutStore();
+/**
+ * Wraps the CanvasWorkspace with the unified drag-drop dispatcher.
+ *
+ * The dispatcher routes:
+ *  - `application/quiltcorgi-fabric-id` → applies a pattern fill (fence-enforced)
+ *  - everything else                      → block drop with cell-snap (fence-enforced)
+ *
+ * Layout configuration is handled in Phase 1 via SelectionShell — no
+ * drag-to-apply layout presets here, and no in-studio layout switcher
+ * (per spec, the layout choice is locked after Start Designing).
+ */
+export function StudioDropZone({ project }: StudioDropZoneProps) {
+  const { handleDragOver, handleDrop } = useBlockDrop();
+  const { handleFabricDragOver, handleFabricDrop } = useFabricDrop();
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-  }, []);
+  const combinedDragOver = useCallback(
+    async (e: React.DragEvent) => {
+      await handleDragOver(e);
+      await handleFabricDragOver(e);
+    },
+    [handleDragOver, handleFabricDragOver]
+  );
 
-  const handleDrop = useCallback(
+  const combinedDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
-      const fabricId = e.dataTransfer.getData('fabricId');
-      const imageUrl = e.dataTransfer.getData('imageUrl');
-      if (fabricId && imageUrl) {
-        addFabricToCanvas({ fabricId, imageUrl, x: e.clientX, y: e.clientY });
+      const fabricId = e.dataTransfer.getData('application/quiltcorgi-fabric-id');
+      if (fabricId) {
+        handleFabricDrop(e);
+      } else {
+        handleDrop(e);
       }
     },
-    [addFabricToCanvas]
+    [handleDrop, handleFabricDrop]
   );
 
   return (
-    <div
-      className="relative flex-1 overflow-hidden"
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-    >
-      {children}
-    </div>
+    <CanvasErrorBoundary>
+      <div
+        className="flex-1 flex overflow-hidden relative"
+        data-canvas-wrapper
+        onDragOver={combinedDragOver}
+        onDrop={combinedDrop}
+      >
+        <CanvasWorkspace project={project} />
+      </div>
+    </CanvasErrorBoundary>
   );
 }
