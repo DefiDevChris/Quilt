@@ -18,6 +18,8 @@ interface LayoutStoreState {
   previewMode: boolean;
   /** True when a layout has been applied (fence is permanent) */
   hasAppliedLayout: boolean;
+  /** True after user commits to template/layout — disables all layout setters */
+  layoutLocked: boolean;
 
   setLayoutType: (type: LayoutType) => void;
   setSelectedPreset: (presetId: string | null) => void;
@@ -35,6 +37,8 @@ interface LayoutStoreState {
   setPreviewMode: (preview: boolean) => void;
   /** Apply the current layout preview — makes fence permanent */
   applyLayout: () => void;
+  /** Commit layout/template and lock all layout setters (called on "Start Designing") */
+  applyLayoutAndLock: () => void;
   /** Clear the applied layout — removes fence and resets state */
   clearLayout: () => void;
   reset: () => void;
@@ -70,58 +74,97 @@ const INITIAL_STATE = {
   bindingWidth: 0.25,
   previewMode: false,
   hasAppliedLayout: false,
+  layoutLocked: false,
 };
 
-export const useLayoutStore = create<LayoutStoreState>((set) => ({
+export const useLayoutStore = create<LayoutStoreState>((set, get) => ({
   ...INITIAL_STATE,
 
-  setLayoutType: (layoutType) => set({ layoutType }),
+  setLayoutType: (layoutType) => {
+    if (get().layoutLocked) return;
+    set({ layoutType });
+  },
 
-  setSelectedPreset: (selectedPresetId) => set({ selectedPresetId }),
+  setSelectedPreset: (selectedPresetId) => {
+    if (get().layoutLocked) return;
+    set({ selectedPresetId });
+  },
 
-  setExpandedCardId: (expandedCardId) => set({ expandedCardId }),
+  setExpandedCardId: (expandedCardId) => {
+    if (get().layoutLocked) return;
+    set({ expandedCardId });
+  },
 
-  setRows: (rows) => set({ rows: Math.max(1, Math.min(20, rows)) }),
+  setRows: (rows) => {
+    if (get().layoutLocked) return;
+    set({ rows: Math.max(1, Math.min(20, rows)) });
+  },
 
-  setCols: (cols) => set({ cols: Math.max(1, Math.min(20, cols)) }),
+  setCols: (cols) => {
+    if (get().layoutLocked) return;
+    set({ cols: Math.max(1, Math.min(20, cols)) });
+  },
 
-  setBlockSize: (blockSize) => set({ blockSize: Math.max(1, Math.min(24, blockSize)) }),
+  setBlockSize: (blockSize) => {
+    if (get().layoutLocked) return;
+    set({ blockSize: Math.max(1, Math.min(24, blockSize)) });
+  },
 
-  setSashing: (updates) =>
+  setSashing: (updates) => {
+    if (get().layoutLocked) return;
     set((state) => ({
       sashing: { ...state.sashing, ...updates },
-    })),
+    }));
+  },
 
-  setBorders: (borders) => set({ borders }),
+  setBorders: (borders) => {
+    if (get().layoutLocked) return;
+    set({ borders });
+  },
 
-  addBorder: () =>
+  addBorder: () => {
+    if (get().layoutLocked) return;
     set((state) => {
       if (state.borders.length >= 5) return state;
       return { borders: [...state.borders, createBorder()] };
-    }),
+    });
+  },
 
-  updateBorder: (index, updates) =>
+  updateBorder: (index, updates) => {
+    if (get().layoutLocked) return;
     set((state) => ({
       borders: state.borders.map((b, i) => (i === index ? { ...b, ...updates } : b)),
-    })),
+    }));
+  },
 
-  removeBorder: (index) =>
+  removeBorder: (index) => {
+    if (get().layoutLocked) return;
     set((state) => ({
       borders: state.borders.filter((_, i) => i !== index),
-    })),
+    }));
+  },
 
-  setHasCornerstones: (hasCornerstones) => set({ hasCornerstones }),
+  setHasCornerstones: (hasCornerstones) => {
+    if (get().layoutLocked) return;
+    set({ hasCornerstones });
+  },
 
-  setBindingWidth: (bindingWidth) => set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) }),
+  setBindingWidth: (bindingWidth) => {
+    if (get().layoutLocked) return;
+    set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) });
+  },
 
   setPreviewMode: (previewMode) => set({ previewMode }),
 
   applyLayout: () => set({ previewMode: false, hasAppliedLayout: true }),
 
-  clearLayout: () =>
-    set({
-      ...INITIAL_STATE,
-    }),
+  applyLayoutAndLock: () =>
+    set({ previewMode: false, hasAppliedLayout: true, layoutLocked: true }),
+
+  clearLayout: () => {
+    if (get().layoutLocked) return;
+    set({ ...INITIAL_STATE });
+  },
 
   reset: () => set({ ...INITIAL_STATE }),
 }));

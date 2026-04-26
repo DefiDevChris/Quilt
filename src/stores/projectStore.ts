@@ -16,6 +16,8 @@ interface ProjectStoreState {
   projectId: string | null;
   projectName: string;
   mode: 'free-form' | 'layout' | 'template';
+  /** True after user explicitly selects a mode in the mode-selection modal */
+  modeSelected: boolean;
   saveStatus: SaveStatus;
   canvasWidth: number;
   canvasHeight: number;
@@ -62,6 +64,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
   projectId: null,
   projectName: 'Untitled Quilt',
   mode: 'layout',
+  modeSelected: false,
   saveStatus: 'saved',
   canvasWidth: DEFAULT_CANVAS_WIDTH,
   canvasHeight: DEFAULT_CANVAS_HEIGHT,
@@ -78,6 +81,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
       projectId: id,
       projectName: name,
       mode: mode ?? 'layout',
+      modeSelected: true,
       canvasWidth: width,
       canvasHeight: height,
       worktables: worktables ?? [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
@@ -88,7 +92,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
     }),
 
   setProjectName: (projectName) => set({ projectName }),
-  setMode: (mode) => set({ mode, isDirty: true }),
+  setMode: (mode) => set({ mode, modeSelected: true, isDirty: true }),
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setDirty: (isDirty) => set({ isDirty }),
   setHasContent: (hasContent) => set({ hasContent }),
@@ -166,6 +170,7 @@ export const useProjectStore = create<ProjectStoreState>((set) => ({
       projectId: null,
       projectName: 'Untitled Quilt',
       mode: 'layout',
+      modeSelected: false,
       saveStatus: 'saved',
       canvasWidth: DEFAULT_CANVAS_WIDTH,
       canvasHeight: DEFAULT_CANVAS_HEIGHT,

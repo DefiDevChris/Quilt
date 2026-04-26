@@ -1,60 +1,89 @@
 wing: quilt
 rooms:
-- name: public
-  description: Files from public/
-  keywords:
-  - public
-  - public
-- name: src
-  description: Files from src/
-  keywords:
-  - src
-  - src
-- name: testing
-  description: Files from tests/
-  keywords:
-  - testing
-  - tests
-- name: quilt_blocks
-  description: Files from quilt_blocks/
-  keywords:
-  - quilt_blocks
-  - quilt_blocks
-- name: quilt_layouts
-  description: Files from quilt_layouts/
-  keywords:
-  - quilt_layouts
-  - quilt_layouts
-- name: test_results
-  description: Files from test-results/
-  keywords:
-  - test_results
-  - test-results
-- name: playwright_report
-  description: Files from playwright-report/
-  keywords:
-  - playwright_report
-  - playwright-report
-- name: scripts
-  description: Files from scripts/
-  keywords:
-  - scripts
-  - scripts
-- name: backend
-  description: Files from db/
-  keywords:
-  - backend
-  - db
-- name: frontend
-  description: Files from components/
-  keywords:
-  - frontend
-  - components
-- name: planning
-  description: Files from specs/
-  keywords:
-  - planning
-  - specs
-- name: general
-  description: Files that don't fit other rooms
-  keywords: []
+  - name: public
+    description: Static assets and public files
+    keywords:
+      - public
+
+  - name: app
+    description: Next.js App Router — pages, layouts, API routes
+    keywords:
+      - app
+      - pages
+      - routes
+      - api
+
+  - name: components
+    description: React components organized by domain
+    keywords:
+      - components
+      - ui
+
+  - name: hooks
+    description: Custom React hooks (canvas, drawing, auth)
+    keywords:
+      - hooks
+
+  - name: stores
+    description: Zustand state management stores
+    keywords:
+      - stores
+      - state
+      - zustand
+
+  - name: lib
+    description: Pure utility modules and computation engines
+    keywords:
+      - lib
+      - engines
+      - utilities
+      - utils
+
+  - name: types
+    description: Shared TypeScript type definitions
+    keywords:
+      - types
+      - interfaces
+      - schemas
+
+  - name: contexts
+    description: React context providers
+    keywords:
+      - contexts
+      - providers
+
+  - name: db
+    description: Database schema, migrations, and queries
+    keywords:
+      - db
+      - database
+      - schema
+      - drizzle
+      - postgres
+
+  - name: docs
+    description: Documentation and specifications
+    keywords:
+      - docs
+      - documentation
+      - specs
+      - designs
+
+  - name: quilt_blocks
+    description: Quilt block SVG definitions and block data
+    keywords:
+      - blocks
+      - quilt_blocks
+
+  - name: scripts
+    description: Build, seed, and utility scripts
+    keywords:
+      - scripts
+
+  - name: testing
+    description: Test files and test utilities
+    keywords:
+      - testing
+      - tests
+      - vitest
+      - playwright
