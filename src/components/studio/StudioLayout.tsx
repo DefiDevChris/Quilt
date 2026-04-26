@@ -158,8 +158,7 @@ function WorktableTab({
       onClick={onClick}
       className={`px-4 py-1.5 text-[13px] leading-[20px] font-semibold rounded-t-lg transition-colors duration-150 ${
         active
-          ? 'border-b-2 border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-bg)]'
-          : 'text-[var(--color-text)]/60 hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/20'
+          ? 'border-b-2 border-[var(--color-primary)] text-[var(--color-text)] bg-[var(--color-border)]/20'
       }`}
     >
       {label}
