@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 import { StudioTopBar } from '@/components/studio/StudioTopBar';
 import { Toolbar } from '@/components/studio/Toolbar';
@@ -8,6 +9,7 @@ import { ContextPanel } from '@/components/studio/ContextPanel';
 import { BottomBar } from '@/components/studio/BottomBar';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
 import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
+import { YardagePanel } from '@/components/studio/YardagePanel';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { saveProject } from '@/lib/save-project';
@@ -42,9 +44,16 @@ import type { Project } from '@/types/project';
  */
 interface StudioLayoutProps {
   readonly project: Project;
+  /**
+   * True while the SelectionShell (Phase 1 catalogs + sliders) is on top.
+   * The studio chrome stays mounted underneath so the canvas is continuous
+   * between phases — but the side rails (Toolbar + ContextPanel) fade in
+   * once the SelectionShell has slid away, instead of appearing abruptly.
+   */
+  readonly configuring?: boolean;
 }
 
-export function StudioLayout({ project }: StudioLayoutProps) {
+export function StudioLayout({ project, configuring = false }: StudioLayoutProps) {
   const { getCanvas } = useCanvasContext();
   const isSaving = useRef(false);
 
@@ -117,9 +126,25 @@ export function StudioLayout({ project }: StudioLayoutProps) {
         </div>
       )}
 
-      {/* ── Main work area: Toolbar | Center | ContextPanel ── */}
+      {/* ── Main work area: Toolbar | Center | ContextPanel ──
+       *
+       * Toolbar and ContextPanel fade in on the Phase 1 → Phase 2 boundary
+       * (driven by `configuring`). The center column is NOT animated — the
+       * canvas inside StudioDropZone is the constant anchor that the spec
+       * requires to stay visually continuous across phases.
+       */}
       <div className="flex flex-1 overflow-hidden">
-        <Toolbar />
+        <motion.div
+          initial={false}
+          animate={{
+            opacity: configuring ? 0 : 1,
+            x: configuring ? -16 : 0,
+          }}
+          transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1], delay: configuring ? 0 : 0.18 }}
+          className="flex"
+        >
+          <Toolbar />
+        </motion.div>
 
         <main className="flex flex-1 overflow-hidden">
           {activeWorktable === 'block-builder' && showWorktableTabs ? (
@@ -129,14 +154,27 @@ export function StudioLayout({ project }: StudioLayoutProps) {
           )}
         </main>
 
-        <ContextPanel
-          onBlockDragStart={handleBlockDragStart}
-          onFabricDragStart={handleFabricDragStart}
-        />
+        <motion.div
+          initial={false}
+          animate={{
+            opacity: configuring ? 0 : 1,
+            x: configuring ? 16 : 0,
+          }}
+          transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1], delay: configuring ? 0 : 0.18 }}
+          className="flex"
+        >
+          <ContextPanel
+            onBlockDragStart={handleBlockDragStart}
+            onFabricDragStart={handleFabricDragStart}
+          />
+        </motion.div>
       </div>
 
       {/* ── Bottom bar ── */}
       <BottomBar />
+
+      {/* ── Yardage Calculator (modal — driven by useYardageStore) ── */}
+      <YardagePanel />
     </div>
   );
 }

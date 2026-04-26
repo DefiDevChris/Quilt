@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { AnimatePresence } from 'framer-motion';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { ProjectModeModal } from '@/components/studio/ProjectModeModal';
@@ -129,9 +130,16 @@ export function StudioClient({ projectId }: StudioClientProps) {
     <CanvasProvider>
       {phase === 'selecting-mode' && <ProjectModeModal />}
 
-      <StudioLayout project={project} />
+      {/* Studio chrome (top bar, toolbar, canvas, context panel, bottom bar)
+       * is mounted as soon as we have a project — even during the configuring
+       * phase. The SelectionShell rails sit ON TOP via z-30 and animate out
+       * once the user clicks "Start Designing", so the canvas underneath
+       * stays mounted and feels continuous between phases. */}
+      <StudioLayout project={project} configuring={phase === 'configuring'} />
 
-      {phase === 'configuring' && <SelectionShell mode={mode} />}
+      <AnimatePresence>
+        {phase === 'configuring' && <SelectionShell key="selection-shell" mode={mode} />}
+      </AnimatePresence>
     </CanvasProvider>
   );
 }
