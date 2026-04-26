@@ -21,9 +21,9 @@ import type { Project } from '@/types/project';
  * Design-phase shell. Renders the full studio chrome once the project is
  * loaded:
  *
- *   ┌──────────────────────────────────────────┐
+ *   ┌────────────────────────────────────────────┐
  *   │ StudioTopBar                               │
- *   ├───────────────────────────────────────────┤
+ *   ├────────────────────────────────────────────┤
  *   │ Worktable tabs  (Quilt | Block Builder)    │
  *   │   — hidden when mode === 'template' —      │
  *   ├──────┬───────────────────────┬─────────────┤
@@ -31,7 +31,7 @@ import type { Project } from '@/types/project';
  *   │ bar  │       (flex-1)         │ Panel      │
  *   ├──────┴───────────────────────┴─────────────┤
  *   │ BottomBar                                  │
- *   └───────────────────────────────────────────┘
+ *   └────────────────────────────────────────────┘
  *
  * The center area renders one of:
  *   - <StudioDropZone> wrapping <CanvasWorkspace>  (active worktable: 'quilt')
@@ -56,7 +56,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
   // user has clicked "Start Designing" in template mode.
   useTemplateHydration();
 
-  // ── Manual save handler ─────────────────────────────────────
+  // ── Manual save handler ──────────────────────────────────────────
   const handleSave = useCallback(async () => {
     if (isSaving.current) return;
     isSaving.current = true;
@@ -70,7 +70,7 @@ export function StudioLayout({ project }: StudioLayoutProps) {
     }
   }, [getCanvas]);
 
-  // ── Block / fabric drag stubs ──────────────────────────────────
+  // ── Block / fabric drag stubs ───────────────────────────────────
   // The actual drop targets live inside StudioDropZone (see useBlockDrop /
   // useFabricLayout hooks). The ContextPanel only needs these to wire up
   // dataTransfer on dragstart so the dispatcher in StudioDropZone can route.
