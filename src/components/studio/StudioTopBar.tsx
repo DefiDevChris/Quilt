@@ -2,15 +2,19 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { Save, Eraser } from 'lucide-react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 
 import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
+import { SaveAsTemplateModal } from '@/components/studio/SaveAsTemplateModal';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
 import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
+import { useCanvasContext } from '@/contexts/CanvasContext';
+import { clearAllFabricsOnCanvas } from '@/lib/canvas-clear-fabrics';
 
 function formatTimestamp(date: Date | null): string {
   if (!date) return '';
@@ -224,13 +228,46 @@ export function StudioTopBar({
 }: StudioTopBarProps) {
   const router = useRouter();
   const projectName = useProjectStore((s) => s.projectName);
+  const projectMode = useProjectStore((s) => s.mode);
+  const hasContent = useProjectStore((s) => s.hasContent);
   const isDirty = useProjectStore((s) => s.isDirty);
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
+  const layoutLocked = useLayoutStore((s) => s.layoutLocked);
   const [tick, setTick] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [saveAsTemplateOpen, setSaveAsTemplateOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
+  const { getCanvas } = useCanvasContext();
+
+  // Save-as-Template is offered for layout/free-form projects with content.
+  // Template-mode users save via "Save Project" instead — re-saving a
+  // template-based design as a new template would invite confusion.
+  const showSaveAsTemplate = projectMode !== 'template' && layoutLocked && hasContent;
+
+  // Clear-fabrics is only meaningful in template mode where the canvas
+  // arrives pre-populated with bundled fabrics. Layout/free-form modes
+  // start blank, so clearing fabrics there is a no-op.
+  const showClearFabrics = projectMode === 'template' && layoutLocked;
+
+  const handleClearFabrics = useCallback(() => {
+    const canvas = getCanvas();
+    if (!canvas) return;
+    const ok = window.confirm(
+      'Remove all fabric fills from this template? Shapes will remain — you can re-apply fabrics afterwards.'
+    );
+    if (!ok) return;
+    const mutated = clearAllFabricsOnCanvas(canvas);
+    if (mutated) {
+      useProjectStore.getState().setDirty(true);
+      toast({
+        type: 'success',
+        title: 'Fabrics cleared',
+        description: 'All shapes have been stripped back to outlines.',
+      });
+    }
+  }, [getCanvas, toast]);
 
   const handleBackToDashboard = useCallback(async () => {
     if (isDirty && onSave) {
@@ -376,8 +413,42 @@ export function StudioTopBar({
         {/* Center: empty spacer */}
         <div className="absolute left-1/2 -translate-x-1/2" />
 
-        {/* Right: Viewport controls + Settings */}
-        <div className="flex items-center gap-4">
+        {/* Right: mode actions + viewport controls + settings */}
+        <div className="flex items-center gap-2">
+          {showClearFabrics && (
+            <TooltipHint
+              name="Clear all fabrics"
+              description="Strip every fabric fill from this template, leaving only the shape outlines."
+            >
+              <button
+                type="button"
+                onClick={handleClearFabrics}
+                className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] leading-[18px] font-medium text-[var(--color-text)]/80 hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors duration-150"
+                aria-label="Clear all fabrics"
+              >
+                <Eraser size={14} />
+                Clear fabrics
+              </button>
+            </TooltipHint>
+          )}
+
+          {showSaveAsTemplate && (
+            <TooltipHint
+              name="Save as Template"
+              description="Snapshot this design as a reusable template in My Templates."
+            >
+              <button
+                type="button"
+                onClick={() => setSaveAsTemplateOpen(true)}
+                className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] leading-[18px] font-medium text-[var(--color-text)]/80 hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors duration-150"
+                aria-label="Save as Template"
+              >
+                <Save size={14} />
+                Save as Template
+              </button>
+            </TooltipHint>
+          )}
+
           {!isPro && <ProUpgradeButton variant="studio" />}
 
           <EditPreviewToggle />
@@ -393,6 +464,11 @@ export function StudioTopBar({
         onOpenPdfExport={onOpenPdfExport}
         onOpenHelp={onOpenHelp}
         onOpenHistory={onOpenHistory}
+      />
+
+      <SaveAsTemplateModal
+        isOpen={saveAsTemplateOpen}
+        onClose={() => setSaveAsTemplateOpen(false)}
       />
     </>
   );

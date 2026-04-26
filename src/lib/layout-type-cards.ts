@@ -1,9 +1,9 @@
 /**
- * Layout Type Card definitions for the LayoutSelector UI.
+ * Layout Type Card definitions for the SelectionShell layout-mode browser.
  *
  * Each card represents one of the 6 fundamental quilt layout types.
- * Cards display in the right-panel Layouts tab as stacked vertical items
- * that expand in-place when clicked to reveal an inline configuration form.
+ * Used to populate the layout-families catalog in Phase 1 of the
+ * three-mode Studio spec.
  */
 
 export interface LayoutTypeCard {

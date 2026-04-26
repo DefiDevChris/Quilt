@@ -77,53 +77,70 @@ const INITIAL_STATE = {
   layoutLocked: false,
 };
 
+/**
+ * Some setters are off-limits once the user has clicked "Start Designing"
+ * — namely the structural ones (rows/cols/blockSize/sashing). But in
+ * free-form mode the user is expected to keep adding borders and edging
+ * after the lock, so border/binding setters bypass the lock when the
+ * layoutType is 'free-form'. See the three-mode spec, Phase 2 actions
+ * for free-form ("Add Border" / "Add Edging").
+ */
+function isLockedForStructure(state: { layoutLocked: boolean }): boolean {
+  return state.layoutLocked;
+}
+
+function isLockedForDecoration(state: { layoutLocked: boolean; layoutType: LayoutType }): boolean {
+  if (!state.layoutLocked) return false;
+  return state.layoutType !== 'free-form';
+}
+
 export const useLayoutStore = create<LayoutStoreState>((set, get) => ({
   ...INITIAL_STATE,
 
   setLayoutType: (layoutType) => {
-    if (get().layoutLocked) return;
+    if (isLockedForStructure(get())) return;
     set({ layoutType });
   },
 
   setSelectedPreset: (selectedPresetId) => {
-    if (get().layoutLocked) return;
+    if (isLockedForStructure(get())) return;
     set({ selectedPresetId });
   },
 
   setExpandedCardId: (expandedCardId) => {
-    if (get().layoutLocked) return;
+    if (isLockedForStructure(get())) return;
     set({ expandedCardId });
   },
 
   setRows: (rows) => {
-    if (get().layoutLocked) return;
+    if (isLockedForStructure(get())) return;
     set({ rows: Math.max(1, Math.min(20, rows)) });
   },
 
   setCols: (cols) => {
-    if (get().layoutLocked) return;
+    if (isLockedForStructure(get())) return;
     set({ cols: Math.max(1, Math.min(20, cols)) });
   },
 
   setBlockSize: (blockSize) => {
-    if (get().layoutLocked) return;
+    if (isLockedForStructure(get())) return;
     set({ blockSize: Math.max(1, Math.min(24, blockSize)) });
   },
 
   setSashing: (updates) => {
-    if (get().layoutLocked) return;
+    if (isLockedForStructure(get())) return;
     set((state) => ({
       sashing: { ...state.sashing, ...updates },
     }));
   },
 
   setBorders: (borders) => {
-    if (get().layoutLocked) return;
+    if (isLockedForDecoration(get())) return;
     set({ borders });
   },
 
   addBorder: () => {
-    if (get().layoutLocked) return;
+    if (isLockedForDecoration(get())) return;
     set((state) => {
       if (state.borders.length >= 5) return state;
       return { borders: [...state.borders, createBorder()] };
@@ -131,26 +148,26 @@ export const useLayoutStore = create<LayoutStoreState>((set, get) => ({
   },
 
   updateBorder: (index, updates) => {
-    if (get().layoutLocked) return;
+    if (isLockedForDecoration(get())) return;
     set((state) => ({
       borders: state.borders.map((b, i) => (i === index ? { ...b, ...updates } : b)),
     }));
   },
 
   removeBorder: (index) => {
-    if (get().layoutLocked) return;
+    if (isLockedForDecoration(get())) return;
     set((state) => ({
       borders: state.borders.filter((_, i) => i !== index),
     }));
   },
 
   setHasCornerstones: (hasCornerstones) => {
-    if (get().layoutLocked) return;
+    if (isLockedForStructure(get())) return;
     set({ hasCornerstones });
   },
 
   setBindingWidth: (bindingWidth) => {
-    if (get().layoutLocked) return;
+    if (isLockedForDecoration(get())) return;
     set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) });
   },
 
