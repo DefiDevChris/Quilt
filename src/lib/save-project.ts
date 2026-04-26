@@ -79,7 +79,11 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
   }
 
   // Embed layout store state so the fence can be reconstructed on reload.
-  // Stored inside canvasData to avoid a DB schema change.
+  // Stored inside canvasData to avoid a DB schema change. We persist
+  // `layoutLocked` so a user who has already finished Phase 1 doesn't get
+  // dropped back into the SelectionShell on reload — see the locked
+  // three-mode spec: "chosen once at project start and locked for the life
+  // of that project".
   const layoutState = useLayoutStore.getState();
   (canvasData as Record<string, unknown>).__layoutState = {
     layoutType: layoutState.layoutType,
@@ -92,6 +96,7 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
     hasCornerstones: layoutState.hasCornerstones,
     bindingWidth: layoutState.bindingWidth,
     hasAppliedLayout: layoutState.hasAppliedLayout,
+    layoutLocked: layoutState.layoutLocked,
   };
 
   const { unitSystem, gridSettings, activeWorktable } = useCanvasStore.getState();
