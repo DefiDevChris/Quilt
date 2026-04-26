@@ -21,6 +21,16 @@ interface ProjectStoreState {
   saveStatus: SaveStatus;
   canvasWidth: number;
   canvasHeight: number;
+  /**
+   * Locked-in dimensions snapshotted when the user clicked "Start
+   * Designing". Used as the reference point for proportional ¼″-aligned
+   * scale options post-lock — see `getQuiltScaleOptions`. Free-form scaling
+   * always derives candidate sizes from this base, not from the current
+   * (possibly already-scaled) canvas, so options stay consistent across
+   * repeated scale operations.
+   */
+  baseQuiltWidth: number;
+  baseQuiltHeight: number;
   isDirty: boolean;
   hasContent: boolean;
   lastSavedAt: Date | null;
@@ -47,6 +57,12 @@ interface ProjectStoreState {
   setCanvasDimensions: (width: number, height: number) => void;
   setCanvasWidth: (width: number) => void;
   setCanvasHeight: (height: number) => void;
+  /**
+   * Snapshot the current canvas size as the "base" used for proportional
+   * scaling later. Called once when the layout transitions from configuring
+   * to locked (see `SelectionShell.handleCommit`).
+   */
+  lockBaseQuiltSize: (width: number, height: number) => void;
   addFabricPreset: (fabric: FabricPreset) => void;
   removeFabricPreset: (fabricId: string) => void;
   setFabricPresets: (presets: FabricPreset[]) => void;
@@ -68,6 +84,8 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   saveStatus: 'saved',
   canvasWidth: DEFAULT_CANVAS_WIDTH,
   canvasHeight: DEFAULT_CANVAS_HEIGHT,
+  baseQuiltWidth: DEFAULT_CANVAS_WIDTH,
+  baseQuiltHeight: DEFAULT_CANVAS_HEIGHT,
   isDirty: false,
   hasContent: false,
   lastSavedAt: null,
@@ -84,6 +102,11 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
       modeSelected: true,
       canvasWidth: width,
       canvasHeight: height,
+      // Hydrating an existing project — anchor the scale base on whatever
+      // size the project was last saved at. New unsaved projects will
+      // overwrite this when SelectionShell commits.
+      baseQuiltWidth: width,
+      baseQuiltHeight: height,
       worktables: worktables ?? [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
       activeWorktableId: worktables?.[0]?.id ?? 'main',
       version: version ?? 1,
@@ -107,6 +130,8 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   setCanvasDimensions: (canvasWidth, canvasHeight) => set({ canvasWidth, canvasHeight }),
   setCanvasWidth: (canvasWidth) => set({ canvasWidth }),
   setCanvasHeight: (canvasHeight) => set({ canvasHeight }),
+  lockBaseQuiltSize: (baseQuiltWidth, baseQuiltHeight) =>
+    set({ baseQuiltWidth, baseQuiltHeight }),
   addFabricPreset: (fabric) =>
     set((state) => {
       if (state.fabricPresets.some((f) => f.id === fabric.id)) return state;
@@ -181,6 +206,8 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
       saveStatus: 'saved',
       canvasWidth: DEFAULT_CANVAS_WIDTH,
       canvasHeight: DEFAULT_CANVAS_HEIGHT,
+      baseQuiltWidth: DEFAULT_CANVAS_WIDTH,
+      baseQuiltHeight: DEFAULT_CANVAS_HEIGHT,
       isDirty: false,
       hasContent: false,
       lastSavedAt: null,
