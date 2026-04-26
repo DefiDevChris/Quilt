@@ -27,7 +27,7 @@ export default function ProjectsPage() {
   };
 
   useEffect(() => {
-    fetchProjects();
+    void fetchProjects();
   }, []);
 
   return (
