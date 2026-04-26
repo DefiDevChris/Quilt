@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
@@ -11,7 +11,6 @@ import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
 import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
-import { QuiltSettingsDropdown } from '@/components/studio/QuiltSettingsDropdown';
 
 function formatTimestamp(date: Date | null): string {
   if (!date) return '';
@@ -141,11 +140,10 @@ function ReferenceImageToggle() {
 }
 
 /**
- * Compact chip showing the current canvas mode and grid summary so the user
- * always knows whether they are in a constrained grid layout or free-form.
+ * Read-only chip showing the current mode and grid summary so the user
+ * always knows which locked mode they are in.
  */
-function ModeChip({ onEditQuiltSetup }: { readonly onEditQuiltSetup?: () => void }) {
-  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
+function ModeChip() {
   const layoutType = useLayoutStore((s) => s.layoutType);
   const rows = useLayoutStore((s) => s.rows);
   const cols = useLayoutStore((s) => s.cols);
@@ -153,51 +151,33 @@ function ModeChip({ onEditQuiltSetup }: { readonly onEditQuiltSetup?: () => void
   const canvasHeight = useProjectStore((s) => s.canvasHeight);
   const projectMode = useProjectStore((s) => s.mode);
 
+  const sizeLabel = `${canvasWidth}″×${canvasHeight}″`;
+
   if (projectMode === 'free-form') {
-    const modeLabel = 'Free-form';
-    const sizeLabel = `${canvasWidth}″×${canvasHeight}″`;
-
-    const content = (
-      <>
-        <span className="font-semibold text-[var(--color-text)]">{modeLabel}</span>
-        <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
-      </>
-    );
-
-    const title = `Mode: ${modeLabel} · ${sizeLabel}${onEditQuiltSetup ? ' (Click to edit canvas settings)' : ''}`;
-
-    if (onEditQuiltSetup) {
-      return (
-        <button
-          type="button"
-          onClick={onEditQuiltSetup}
-          className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75 hover:bg-[var(--color-border)]/20 hover:text-[var(--color-text)] hover:border-[var(--color-primary)]/40 transition-colors"
-          title={title}
-        >
-          {content}
-        </button>
-      );
-    }
-
     return (
       <span
         className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75"
-        title={title}
+        title={`Mode: Freeform · ${sizeLabel}`}
       >
-        {content}
+        <span className="font-semibold text-[var(--color-text)]">Freeform</span>
+        <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
       </span>
     );
   }
 
-  if (!hasAppliedLayout) {
+  if (projectMode === 'template') {
     return (
-      <span className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text-dim)]">
-        No layout yet
+      <span
+        className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75"
+        title={`Mode: Template · ${sizeLabel}`}
+      >
+        <span className="font-semibold text-[var(--color-text)]">Template</span>
+        <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
       </span>
     );
   }
 
-  const isFreeForm = layoutType === 'free-form';
+  // Layout mode
   const MODE_LABELS: Record<string, string> = {
     'free-form': 'Free-form',
     medallion: 'Medallion',
@@ -207,38 +187,16 @@ function ModeChip({ onEditQuiltSetup }: { readonly onEditQuiltSetup?: () => void
     grid: 'Grid',
   };
   const modeLabel = MODE_LABELS[layoutType] ?? 'Grid';
-  const gridLabel = isFreeForm ? '' : `${rows}×${cols}`;
-  const sizeLabel = `${canvasWidth}″×${canvasHeight}″`;
-
-  const content = (
-    <>
-      <span className="font-semibold text-[var(--color-text)]">{modeLabel}</span>
-      {gridLabel && <span className="text-[var(--color-text-dim)]"> · {gridLabel}</span>}
-      <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
-    </>
-  );
-
-  const title = `Mode: ${modeLabel} · ${gridLabel ? gridLabel + ' · ' : ''}${sizeLabel}${onEditQuiltSetup ? ' (Click to edit layout)' : ''}`;
-
-  if (onEditQuiltSetup) {
-    return (
-      <button
-        type="button"
-        onClick={onEditQuiltSetup}
-        className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75 hover:bg-[var(--color-border)]/20 hover:text-[var(--color-text)] hover:border-[var(--color-primary)]/40 transition-colors"
-        title={title}
-      >
-        {content}
-      </button>
-    );
-  }
+  const gridLabel = `${rows}×${cols}`;
 
   return (
     <span
       className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75"
-      title={title}
+      title={`Mode: Layout · ${modeLabel} · ${gridLabel} · ${sizeLabel}`}
     >
-      {content}
+      <span className="font-semibold text-[var(--color-text)]">Layout</span>
+      <span className="text-[var(--color-text-dim)]"> · {modeLabel} · {gridLabel}</span>
+      <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
     </span>
   );
 }
@@ -255,8 +213,6 @@ interface StudioTopBarProps {
    * navigation.
    */
   readonly onSave?: () => void | Promise<void>;
-  /** Re-opens the quilt setup wizard (layout & size) for editing. */
-  readonly onEditQuiltSetup?: () => void;
 }
 
 export function StudioTopBar({
@@ -265,7 +221,6 @@ export function StudioTopBar({
   onOpenHelp,
   onOpenHistory,
   onSave,
-  onEditQuiltSetup,
 }: StudioTopBarProps) {
   const router = useRouter();
   const projectName = useProjectStore((s) => s.projectName);
@@ -273,17 +228,11 @@ export function StudioTopBar({
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
   const [tick, setTick] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
-  const isQuiltMode = activeWorktable === 'quilt';
   const { toast } = useToast();
 
-  const handleBackToDashboard = async () => {
-    // If the document is dirty, wait for the save to complete before leaving.
-    // Previously onSave() was fire-and-forget, then router.push() navigated
-    // immediately — if the save was still in flight (or failed) the user lost
-    // their unsaved work with no warning.
+  const handleBackToDashboard = useCallback(async () => {
     if (isDirty && onSave) {
       try {
         await onSave();
@@ -295,12 +244,9 @@ export function StudioTopBar({
           description:
             'Your project has unsaved changes that failed to save. Please try again before leaving.',
         });
-        return; // Cancel navigation — keep user on the page so they don't lose work.
+        return;
       }
 
-      // Post-save status check: the saveProject pipeline sets saveStatus
-      // ('error' on permanent failures like quota exceeded, PRO_REQUIRED, or
-      // 409 conflict). Don't navigate away from an unsaved project.
       const status = useProjectStore.getState().saveStatus;
       if (status === 'error') {
         toast({
@@ -309,11 +255,11 @@ export function StudioTopBar({
           description:
             'Your project has unsaved changes. Please resolve the save error before leaving.',
         });
-        return; // Cancel navigation.
+        return;
       }
     }
     router.push('/dashboard');
-  };
+  }, [isDirty, onSave, router, toast]);
 
   useEffect(() => {
     const timer = setInterval(() => setTick((t) => t + 1), 60000);
@@ -423,31 +369,19 @@ export function StudioTopBar({
                 </span>
               )}
             </div>
-            {activeWorktable === 'quilt' && <ModeChip onEditQuiltSetup={onEditQuiltSetup} />}
+            <ModeChip />
           </div>
         </div>
 
         {/* Center: empty spacer */}
         <div className="absolute left-1/2 -translate-x-1/2" />
 
-        {/* Right: Viewport controls + Project info + Settings */}
+        {/* Right: Viewport controls + Settings */}
         <div className="flex items-center gap-4">
           {!isPro && <ProUpgradeButton variant="studio" />}
 
-          {isQuiltMode && (
-            <>
-              <EditPreviewToggle />
-
-              <ReferenceImageToggle />
-
-              <div className="h-6 w-px bg-[var(--color-border)]/30" />
-
-              <QuiltSettingsDropdown
-                onOpenImageExport={onOpenImageExport}
-                onOpenPdfExport={onOpenPdfExport}
-              />
-            </>
-          )}
+          <EditPreviewToggle />
+          <ReferenceImageToggle />
         </div>
       </div>
 
