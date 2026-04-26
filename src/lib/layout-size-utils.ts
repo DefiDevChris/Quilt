@@ -2,7 +2,7 @@
  * Layout size computation — shared utility.
  *
  * Computes finished quilt dimensions from layout configuration.
- * Used by both the LayoutSelector inline config form and the StudioDropZone
+ * Used by the SelectionShell Phase 1 config panels and the StudioDropZone
  * drag-drop handler to ensure consistent sizing across all code paths.
  */
 
