@@ -8,7 +8,7 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 
-import { HamburgerDrawer } from '@/components/studio/HamburgerDrawer';
+import { CommandPalette } from '@/components/studio/CommandPalette';
 import { SaveAsTemplateModal } from '@/components/studio/SaveAsTemplateModal';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
@@ -234,7 +234,7 @@ export function StudioTopBar({
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
   const layoutLocked = useLayoutStore((s) => s.layoutLocked);
   const [tick, setTick] = useState(0);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const [saveAsTemplateOpen, setSaveAsTemplateOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
@@ -303,6 +303,22 @@ export function StudioTopBar({
     return () => clearInterval(timer);
   }, []);
 
+  // Cmd+K / Ctrl+K toggles the command palette globally so users don't
+  // have to mouse over to the hamburger icon to discover commands.
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        // Don't fight the OS / browser when an input element is in focus
+        // for a different purpose — but DO accept it inside our own
+        // components, where Cmd+K is unambiguously "command palette".
+        e.preventDefault();
+        setPaletteOpen((open) => !open);
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   useEffect(() => {
     function handleSaveSuccess() {
       toast({
@@ -347,12 +363,16 @@ export function StudioTopBar({
     <>
       <div className="h-12 bg-[var(--color-bg)] border-b border-[var(--color-border)]/15 flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <TooltipHint name="Menu" description="Access project settings and options">
+          <TooltipHint
+            name="Command palette"
+            shortcut="Ctrl+K"
+            description="Search every action — Save, Export, Yardage, Zoom, libraries, and more."
+          >
             <button
               type="button"
-              onClick={() => setDrawerOpen((prev) => !prev)}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-dim)]/50 hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
-              aria-label="Open menu"
+              onClick={() => setPaletteOpen((prev) => !prev)}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-dim)]/50 hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors duration-150"
+              aria-label="Open command palette"
             >
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                 <path
@@ -456,10 +476,10 @@ export function StudioTopBar({
         </div>
       </div>
 
-      <HamburgerDrawer
-        isOpen={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        onSave={onSave}
+      <CommandPalette
+        isOpen={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        onSave={onSave ? () => void onSave() : undefined}
         onOpenImageExport={onOpenImageExport}
         onOpenPdfExport={onOpenPdfExport}
         onOpenHelp={onOpenHelp}

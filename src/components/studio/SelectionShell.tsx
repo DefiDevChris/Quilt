@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
@@ -75,7 +76,6 @@ const FREEFORM_DIM_MAX = 144;
 
 export function SelectionShell({ mode }: SelectionShellProps) {
   const { getCanvas } = useCanvasContext();
-  const layoutLocked = useLayoutStore((s) => s.layoutLocked);
 
   // Layout-mode state
   const [selectedFamily, setSelectedFamily] = useState<LayoutType | null>(null);
@@ -127,7 +127,12 @@ export function SelectionShell({ mode }: SelectionShellProps) {
     };
   }, [mode, templatesLoaded]);
 
-  if (layoutLocked) return null;
+  // Note: we intentionally do NOT short-circuit on `layoutLocked` here.
+  // The parent (StudioClient) renders this component only while the phase
+  // is 'configuring', and wraps it in AnimatePresence so the rails can
+  // play their exit animation when the user clicks "Start Designing".
+  // Returning null mid-exit would tear the motion subtree out of the DOM
+  // before the slide-and-fade transition completed.
 
   /* ── Layout handlers ── */
   const handleFamilyClick = useCallback((family: LayoutType) => {
@@ -200,6 +205,9 @@ export function SelectionShell({ mode }: SelectionShellProps) {
       store.setLayoutType('free-form');
       store.applyLayoutAndLock();
       ps.setCanvasDimensions(freeformWidth, freeformHeight);
+      // Anchor proportional ¼″-aligned scaling to the size the user just
+      // committed. Subsequent post-lock scale options derive from this base.
+      ps.lockBaseQuiltSize(freeformWidth, freeformHeight);
       const canvas = getCanvas();
       if (canvas) {
         requestAnimationFrame(() => {
@@ -222,6 +230,10 @@ export function SelectionShell({ mode }: SelectionShellProps) {
 
     store.applyLayoutAndLock();
     ps.setCanvasDimensions(size.width, size.height);
+    // Layout/template modes also record the base — the size dropdown only
+    // shows a read-only callout for these, but other consumers (#10 future
+    // hooks) may want the same anchor.
+    ps.lockBaseQuiltSize(size.width, size.height);
 
     const canvas = getCanvas();
     if (canvas) {
@@ -231,11 +243,35 @@ export function SelectionShell({ mode }: SelectionShellProps) {
     }
   }, [mode, freeformWidth, freeformHeight, getCanvas]);
 
-  /* ── Render ── */
+  /* ── Render ──
+   *
+   * The two side rails animate independently so the canvas underneath
+   * (rendered by StudioLayout's center main column) stays visually fixed.
+   * On exit, the left rail slides off to the left, the right rail slides
+   * off to the right, and both fade — revealing the studio chrome that
+   * was already mounted behind them. AnimatePresence in StudioClient
+   * holds this component mounted long enough for the exit to play.
+   *
+   * `pointer-events-none` on the wrapper + `pointer-events-auto` on the
+   * rails lets the canvas behind receive zoom/pan events through the
+   * empty center column even during Phase 1, so previewing a layout
+   * choice on the canvas (selecting different presets) feels live.
+   */
+  const railTransition = {
+    duration: 0.35,
+    ease: [0.32, 0.72, 0, 1] as const,
+  };
+
   return (
-    <div className="absolute inset-0 z-30 flex">
+    <div className="absolute inset-0 z-30 flex pointer-events-none">
       {/* LEFT: Catalog */}
-      <div className="w-[280px] h-full flex-shrink-0 bg-[var(--color-surface)] border-r border-[var(--color-border)] flex flex-col overflow-hidden">
+      <motion.div
+        initial={{ x: -300, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: -300, opacity: 0 }}
+        transition={railTransition}
+        className="w-[280px] h-full flex-shrink-0 bg-[var(--color-surface)] border-r border-[var(--color-border)] flex flex-col overflow-hidden pointer-events-auto"
+      >
         {mode === 'layout' &&
           (browserView === 'families' ? (
             <LayoutFamiliesCatalog onFamilyClick={handleFamilyClick} />
@@ -276,13 +312,19 @@ export function SelectionShell({ mode }: SelectionShellProps) {
             onSelect={handleFreeformPresetClick}
           />
         )}
-      </div>
+      </motion.div>
 
-      {/* CENTER: live preview (transparent — canvas renders behind) */}
+      {/* CENTER: pass-through column (transparent — canvas renders behind) */}
       <div className="flex-1" />
 
       {/* RIGHT: Config */}
-      <div className="w-[320px] h-full flex-shrink-0 bg-[var(--color-bg)] border-l border-[var(--color-border)] flex flex-col overflow-hidden">
+      <motion.div
+        initial={{ x: 320, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: 320, opacity: 0 }}
+        transition={railTransition}
+        className="w-[320px] h-full flex-shrink-0 bg-[var(--color-bg)] border-l border-[var(--color-border)] flex flex-col overflow-hidden pointer-events-auto"
+      >
         {mode === 'layout' && showConfig && selectedPresetId ? (
           <LayoutConfigPanel presetId={selectedPresetId} onCommit={handleCommit} />
         ) : mode === 'template' && selectedTemplateId ? (
@@ -312,14 +354,14 @@ export function SelectionShell({ mode }: SelectionShellProps) {
             </p>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 /* Layout Families Catalog                                            */
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 
 function LayoutFamiliesCatalog({ onFamilyClick }: { onFamilyClick: (family: LayoutType) => void }) {
   const layoutFamilies: Array<{ type: LayoutType; card: typeof LAYOUT_TYPE_CARDS[0] }> = [
@@ -363,9 +405,9 @@ function LayoutFamiliesCatalog({ onFamilyClick }: { onFamilyClick: (family: Layo
   );
 }
 
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 /* Layout Presets Catalog                                              */
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 
 function LayoutPresetsCatalog({
   family,
@@ -442,9 +484,9 @@ function LayoutPresetsCatalog({
   );
 }
 
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 /* Layout Config Panel (right rail)                                    */
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 
 function LayoutConfigPanel({ presetId, onCommit }: { presetId: string; onCommit: () => void }) {
   const preset = getLayoutPreset(presetId);
@@ -608,9 +650,9 @@ function LayoutConfigPanel({ presetId, onCommit }: { presetId: string; onCommit:
   );
 }
 
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 /* Template Catalog                                                    */
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 
 function TemplateCatalog({
   subTab,
@@ -913,9 +955,9 @@ function UserTemplateCard({
   );
 }
 
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 /* Template Config Panel (system templates)                           */
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 
 function TemplateConfigPanel({ templateId, onCommit }: { templateId: string; onCommit: () => void }) {
   const template = QUILT_TEMPLATES.find((t) => t.id === templateId);
@@ -968,9 +1010,9 @@ function TemplateConfigPanel({ templateId, onCommit }: { templateId: string; onC
   );
 }
 
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 /* User-saved Template Config Panel                                   */
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 
 function UserTemplateConfigPanel({
   template,
@@ -1010,9 +1052,9 @@ function UserTemplateConfigPanel({
   );
 }
 
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 /* Free-form Size Presets Catalog                                      */
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 
 function FreeformSizePresetsCatalog({
   selectedId,
@@ -1056,9 +1098,9 @@ function FreeformSizePresetsCatalog({
   );
 }
 
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 /* Free-form Config Panel (right rail)                                 */
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 
 function FreeformConfigPanel({
   width,
@@ -1128,9 +1170,9 @@ function FreeformConfigPanel({
   );
 }
 
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 /* Shared Slider Row                                                   */
-/* ------------------------------------------------------------------ */
+/* ────────────────────────────────────────────────────────────────── */
 
 function SliderRow({
   label,
