@@ -417,7 +417,14 @@ export function useCanvasInit(
             ls.setHasCornerstones(layoutData.hasCornerstones);
           if (typeof layoutData.bindingWidth === 'number')
             ls.setBindingWidth(layoutData.bindingWidth);
-          if (layoutData.hasAppliedLayout) ls.applyLayout();
+          // Restore the Phase-1-completed state. If the saved project was
+          // already locked, jump straight to designing — otherwise users
+          // would be re-prompted to pick layout/template every reload.
+          if (layoutData.layoutLocked === true) {
+            ls.applyLayoutAndLock();
+          } else if (layoutData.hasAppliedLayout) {
+            ls.applyLayout();
+          }
         }
 
         // Defensively drop any backgroundImage whose src is a blob: URL —

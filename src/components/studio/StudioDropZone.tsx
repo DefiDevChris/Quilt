@@ -18,8 +18,8 @@ interface StudioDropZoneProps {
  *  - `application/quiltcorgi-fabric-id` → applies a pattern fill (fence-enforced)
  *  - everything else                      → block drop with cell-snap (fence-enforced)
  *
- * Layout configuration is now handled inline via the LayoutSelector in the
- * right panel — no drag-to-apply layout presets.
+ * Layout configuration is handled in Phase 1 via the SelectionShell — no
+ * drag-to-apply layout presets here.
  */
 export function StudioDropZone({ project }: StudioDropZoneProps) {
   const { handleDragOver, handleDrop } = useBlockDrop();
