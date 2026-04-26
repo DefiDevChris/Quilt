@@ -1,42 +1,40 @@
 'use client';
 
-import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
+import SelectionShell from './SelectionShell';
+import StudioLayout from './StudioLayout';
 import { useProjectStore } from '@/stores/projectStore';
-import { useLayoutStore } from '@/stores/layoutStore';
-import { ProjectModeModal } from '@/components/studio/ProjectModeModal';
-import { SelectionShell } from '@/components/studio/SelectionShell';
-import { CanvasProvider } from '@/contexts/CanvasContext';
 
-const StudioLayout = dynamic(
-  () =>
-    import('@/components/studio/StudioLayout').then((mod) => ({
-      default: mod.StudioLayout,
-    })),
-  { ssr: false },
-);
+type StudioMode = 'template' | 'layout' | 'freeform';
 
-export function StudioClient() {
-  const mode = useProjectStore((s) => s.mode);
-  const modeSelected = useProjectStore((s) => s.modeSelected);
-  const layoutLocked = useLayoutStore((s) => s.layoutLocked);
+export default function StudioClient() {
+  const searchParams = useSearchParams();
+  const rawMode = searchParams.get('mode') ?? 'freeform';
+  const mode: StudioMode = (['template', 'layout', 'freeform'] as const).includes(rawMode as StudioMode)
+    ? (rawMode as StudioMode)
+    : 'freeform';
 
-  const phase = !modeSelected
-    ? ('selecting-mode' as const)
-    : mode === 'free-form' || layoutLocked
-      ? ('designing' as const)
-      : ('configuring' as const);
+  const { isLocked, setProject } = useProjectStore();
 
-  return (
-    <CanvasProvider>
-      {phase === 'selecting-mode' && <ProjectModeModal />}
+  function handleStart(config: {
+    width: number;
+    height: number;
+    templateId?: string;
+    fabricIds?: string[];
+  }) {
+    setProject({
+      mode,
+      width: config.width,
+      height: config.height,
+      templateId: config.templateId,
+      fabricIds: config.fabricIds ?? [],
+      isLocked: true,
+    });
+  }
 
-      <StudioLayout />
+  if (!isLocked) {
+    return <SelectionShell mode={mode} onStart={handleStart} />;
+  }
 
-      {phase === 'configuring' && (
-        <SelectionShell
-          mode={mode === 'template' ? 'template' : 'layout'}
-        />
-      )}
-    </CanvasProvider>
-  );
+  return <StudioLayout />;
 }
