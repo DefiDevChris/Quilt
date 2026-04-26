@@ -1,61 +1,131 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { desc, eq, and, isNull, or } from 'drizzle-orm';
+import { db } from '@/lib/db';
+import { layoutTemplates } from '@/db/schema';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  validationErrorResponse,
+} from '@/lib/auth-helpers';
+import { errorResponse } from '@/lib/api-responses';
 
-function createClient() {
-  const cookieStore = cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) { return cookieStore.get(name)?.value; },
-        set(name: string, value: string, options: object) { cookieStore.set({ name, value, ...options }); },
-        remove(name: string, options: object) { cookieStore.set({ name, value: '', ...options }); },
-      },
+export const dynamic = 'force-dynamic';
+
+/**
+ * GET /api/templates
+ *
+ * Lists templates available to the authenticated user. Supports a `scope`
+ * query param:
+ *   - `mine`    → only templates this user has saved
+ *   - `library` → only system / default templates (isDefault=true)
+ *   - omitted   → both, with system templates first then user templates
+ *
+ * Mirrors the blocks library/mine pattern. Used by the Phase 1 Template
+ * catalog tabs in `SelectionShell`.
+ */
+export async function GET(request: NextRequest) {
+  const session = await getRequiredSession();
+  if (!session) return unauthorizedResponse();
+
+  const url = request.nextUrl;
+  const scope = url.searchParams.get('scope');
+
+  try {
+    if (scope === 'mine') {
+      const rows = await db
+        .select()
+        .from(layoutTemplates)
+        .where(eq(layoutTemplates.userId, session.user.id))
+        .orderBy(desc(layoutTemplates.createdAt));
+      return Response.json({ success: true, data: { templates: rows } });
     }
-  );
+
+    if (scope === 'library') {
+      const rows = await db
+        .select()
+        .from(layoutTemplates)
+        .where(eq(layoutTemplates.isDefault, true))
+        .orderBy(desc(layoutTemplates.createdAt));
+      return Response.json({ success: true, data: { templates: rows } });
+    }
+
+    // Default: combined view (system first, then this user's templates)
+    const rows = await db
+      .select()
+      .from(layoutTemplates)
+      .where(
+        or(
+          eq(layoutTemplates.isDefault, true),
+          eq(layoutTemplates.userId, session.user.id),
+        ),
+      )
+      .orderBy(desc(layoutTemplates.isDefault), desc(layoutTemplates.createdAt));
+    return Response.json({ success: true, data: { templates: rows } });
+  } catch (err) {
+    console.error('[templates GET]', err);
+    return errorResponse('Failed to fetch templates', 'INTERNAL_ERROR', 500);
+  }
 }
 
-export async function GET() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+/**
+ * POST /api/templates
+ *
+ * Saves the current design as a reusable template scoped to this user.
+ *
+ * Expected body:
+ *   {
+ *     name: string,                 // required
+ *     description?: string,
+ *     templateData: {               // shape mirrors QuiltTemplate
+ *       layoutConfig?: object,
+ *       fabricAssignments?: array,
+ *       canvasData?: object,        // Fabric.js JSON snapshot
+ *       canvasWidth?: number,
+ *       canvasHeight?: number,
+ *     },
+ *     thumbnailSvg?: string,
+ *     category?: string,
+ *   }
+ */
+export async function POST(request: NextRequest) {
+  const session = await getRequiredSession();
+  if (!session) return unauthorizedResponse();
 
-  const { data, error } = await supabase
-    .from('user_templates')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false });
+  let body: {
+    name?: string;
+    description?: string;
+    templateData?: Record<string, unknown>;
+    thumbnailSvg?: string;
+    category?: string;
+  };
+  try {
+    body = (await request.json()) as typeof body;
+  } catch {
+    return validationErrorResponse('Invalid JSON body');
+  }
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data ?? []);
-}
+  const name = body.name?.trim();
+  if (!name) return validationErrorResponse('Template name is required');
 
-export async function POST(req: NextRequest) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const [created] = await db
+      .insert(layoutTemplates)
+      .values({
+        userId: session.user.id,
+        name,
+        category: body.category ?? 'custom',
+        templateData: body.templateData ?? {},
+        thumbnailSvg: body.thumbnailSvg ?? null,
+        isDefault: false,
+        // User-saved templates are private by default; admins promote to
+        // system by setting isDefault=true via the admin/layouts route.
+        isPublished: false,
+      })
+      .returning();
 
-  const body = await req.json();
-  const { name, thumbnail_url, canvas_json, width_in, height_in, fabric_ids } = body;
-
-  if (!name) return NextResponse.json({ error: '"name" is required' }, { status: 400 });
-
-  const { data, error } = await supabase
-    .from('user_templates')
-    .insert({
-      user_id: user.id,
-      name,
-      thumbnail_url: thumbnail_url ?? null,
-      canvas_json: canvas_json ?? null,
-      width_in: width_in ?? null,
-      height_in: height_in ?? null,
-      fabric_ids: fabric_ids ?? [],
-    })
-    .select()
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json(data, { status: 201 });
+    return Response.json({ success: true, data: { template: created } }, { status: 201 });
+  } catch (err) {
+    console.error('[templates POST]', err);
+    return errorResponse('Failed to save template', 'INTERNAL_ERROR', 500);
+  }
 }

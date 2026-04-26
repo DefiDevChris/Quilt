@@ -1,76 +1,83 @@
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { eq, and } from 'drizzle-orm';
+import { db } from '@/lib/db';
+import { layoutTemplates } from '@/db/schema';
+import {
+  getRequiredSession,
+  unauthorizedResponse,
+  notFoundResponse,
+} from '@/lib/auth-helpers';
+import { errorResponse } from '@/lib/api-responses';
 
-function createClient() {
-  const cookieStore = cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) { return cookieStore.get(name)?.value; },
-        set(name: string, value: string, options: object) { cookieStore.set({ name, value, ...options }); },
-        remove(name: string, options: object) { cookieStore.set({ name, value: '', ...options }); },
-      },
-    }
-  );
-}
+export const dynamic = 'force-dynamic';
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const { data, error } = await supabase
-    .from('user_templates')
-    .select('*')
-    .eq('id', params.id)
-    .eq('user_id', user.id)
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 404 });
-  return NextResponse.json(data);
-}
-
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const body = await req.json();
-  const { data, error } = await supabase
-    .from('user_templates')
-    .update(body)
-    .eq('id', params.id)
-    .eq('user_id', user.id)
-    .select()
-    .single();
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json(data);
-}
-
+/**
+ * DELETE /api/templates/[id]
+ *
+ * Deletes a user-owned template. Users cannot delete system templates
+ * (isDefault=true) — those are managed via the admin/layouts route.
+ */
 export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const session = await getRequiredSession();
+  if (!session) return unauthorizedResponse();
 
-  const { error } = await supabase
-    .from('user_templates')
-    .delete()
-    .eq('id', params.id)
-    .eq('user_id', user.id);
+  const { id } = await params;
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-  return NextResponse.json({ success: true });
+  try {
+    const result = await db
+      .delete(layoutTemplates)
+      .where(
+        and(
+          eq(layoutTemplates.id, id),
+          eq(layoutTemplates.userId, session.user.id),
+        ),
+      )
+      .returning();
+
+    if (result.length === 0) {
+      return notFoundResponse('Template not found or not owned by you');
+    }
+
+    return Response.json({ success: true });
+  } catch (err) {
+    console.error('[templates DELETE]', err);
+    return errorResponse('Failed to delete template', 'INTERNAL_ERROR', 500);
+  }
+}
+
+/**
+ * GET /api/templates/[id]
+ *
+ * Fetches a single template by id. Returns 404 if the template is neither
+ * a system template (isDefault=true) nor owned by the requesting user.
+ */
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const session = await getRequiredSession();
+  if (!session) return unauthorizedResponse();
+
+  const { id } = await params;
+
+  try {
+    const [row] = await db
+      .select()
+      .from(layoutTemplates)
+      .where(eq(layoutTemplates.id, id))
+      .limit(1);
+
+    if (!row) return notFoundResponse('Template not found');
+
+    const accessible = row.isDefault || row.userId === session.user.id;
+    if (!accessible) return notFoundResponse('Template not found');
+
+    return Response.json({ success: true, data: { template: row } });
+  } catch (err) {
+    console.error('[templates GET id]', err);
+    return errorResponse('Failed to fetch template', 'INTERNAL_ERROR', 500);
+  }
 }
