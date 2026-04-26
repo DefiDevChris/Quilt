@@ -15,10 +15,13 @@ import {
   GRID_CELL_SIZE_STEP,
   QUILT_SIZE_PRESETS,
 } from '@/lib/constants';
+import {
+  getQuiltScaleOptions,
+  applyScaleOption,
+  type QuiltScaleOption,
+} from '@/lib/quilt-scale-utils';
 import { TooltipHint } from '@/components/ui/TooltipHint';
-import { ConfirmationDialog } from '@/components/ui/ConfirmationDialog';
 import { useStudioDialogs } from '@/components/studio/StudioDialogs';
-import { COLORS } from '@/lib/design-system';
 
 interface QuiltSettingsDropdownProps {
   readonly onOpenImageExport?: () => void;
@@ -26,12 +29,19 @@ interface QuiltSettingsDropdownProps {
 }
 
 /**
- * Dropdown menu in the top bar for quilt-level settings:
- * - Quilt dimensions (width/height inputs + presets)
- * - Grid cell size slider + snap toggle
- * - Export buttons (Image / PDF)
+ * Quilt-level settings dropdown in the top bar.
  *
- * Changes trigger confirmation modals before being applied.
+ * Pre-lock (configuring phase) — full editing surface (legacy behaviour)
+ *   • Width / height inputs + preset list
+ *   • Grid cell size slider + snap toggle
+ *   • Export buttons
+ *
+ * Post-lock — read-only sizing
+ *   • Layout/Template modes: only "Layout-driven size" callout, grid + export.
+ *   • Free-form mode: proportional ¼″-aligned scale options that preserve
+ *     aspect ratio. No more confirmation dialogs — the spec says "just
+ *     apply it" once we've validated the option keeps every piece on the
+ *     ¼″ grid (which the option list guarantees by construction).
  */
 export function QuiltSettingsDropdown({
   onOpenImageExport,
@@ -46,6 +56,9 @@ export function QuiltSettingsDropdown({
   const canvasHeight = useProjectStore((s) => s.canvasHeight);
   const setCanvasWidth = useProjectStore((s) => s.setCanvasWidth);
   const setCanvasHeight = useProjectStore((s) => s.setCanvasHeight);
+  const projectMode = useProjectStore((s) => s.mode);
+  const baseQuiltWidth = useProjectStore((s) => s.baseQuiltWidth ?? canvasWidth);
+  const baseQuiltHeight = useProjectStore((s) => s.baseQuiltHeight ?? canvasHeight);
   const gridSettings = useCanvasStore((s) => s.gridSettings);
   const setGridSettings = useCanvasStore((s) => s.setGridSettings);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
@@ -57,11 +70,14 @@ export function QuiltSettingsDropdown({
   const borders = useLayoutStore((s) => s.borders);
   const bindingWidth = useLayoutStore((s) => s.bindingWidth);
   const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
+  const layoutLocked = useLayoutStore((s) => s.layoutLocked);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const dialogs = useStudioDialogs();
   const unit = getUnitLabel(unitSystem);
-  const isLayoutSized = hasAppliedLayout && layoutType !== 'none' && layoutType !== 'free-form';
+
+  const isLayoutSized =
+    hasAppliedLayout && layoutType !== 'none' && layoutType !== 'free-form';
   const layoutSize = isLayoutSized
     ? computeLayoutSize({
         type: layoutType,
@@ -74,16 +90,11 @@ export function QuiltSettingsDropdown({
       })
     : null;
 
-  // Local state for inputs
+  // Local state for inputs (pre-lock only)
   const [widthInput, setWidthInput] = useState(String(canvasWidth));
   const [heightInput, setHeightInput] = useState(String(canvasHeight));
   const [widthError, setWidthError] = useState('');
   const [heightError, setHeightError] = useState('');
-
-  // Confirmation state
-  const [pendingWidth, setPendingWidth] = useState<number | null>(null);
-  const [pendingHeight, setPendingHeight] = useState<number | null>(null);
-  const [pendingCellSize, setPendingCellSize] = useState<number | null>(null);
 
   const triggerRender = useCallback(() => {
     if (fabricCanvas) {
@@ -114,69 +125,7 @@ export function QuiltSettingsDropdown({
   }, [isOpen, canvasWidth, canvasHeight]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  const commitWidth = useCallback(
-    (raw: string) => {
-      try {
-        const decimal = toDecimal(parseFraction(raw.trim()));
-        if (decimal > 0 && Number.isFinite(decimal)) {
-          setWidthError('');
-          // Show confirmation modal if dimensions changed
-          if (decimal !== canvasWidth) {
-            setPendingWidth(decimal);
-          } else {
-            setWidthInput(String(decimal));
-          }
-        } else {
-          setWidthError('Enter a valid dimension');
-        }
-      } catch {
-        setWidthError('Enter a valid dimension');
-      }
-    },
-    [canvasWidth]
-  );
-
-  const commitHeight = useCallback(
-    (raw: string) => {
-      try {
-        const decimal = toDecimal(parseFraction(raw.trim()));
-        if (decimal > 0 && Number.isFinite(decimal)) {
-          setHeightError('');
-          // Show confirmation modal if dimensions changed
-          if (decimal !== canvasHeight) {
-            setPendingHeight(decimal);
-          } else {
-            setHeightInput(String(decimal));
-          }
-        } else {
-          setHeightError('Enter a valid dimension');
-        }
-      } catch {
-        setHeightError('Enter a valid dimension');
-      }
-    },
-    [canvasHeight]
-  );
-
-  const applyPreset = useCallback((w: number, h: number) => {
-    // Always show confirmation for preset changes
-    setPendingWidth(w);
-    setPendingHeight(h);
-  }, []);
-
-  const commitCellSize = useCallback(
-    (newSize: number) => {
-      if (newSize !== gridSettings.size) {
-        setPendingCellSize(newSize);
-      } else {
-        setGridSettings({ size: newSize });
-        triggerRender();
-      }
-    },
-    [gridSettings.size, setGridSettings, triggerRender]
-  );
-
-  const confirmResize = useCallback(
+  const applyDimensions = useCallback(
     (newWidth: number, newHeight: number) => {
       setCanvasWidth(newWidth);
       setCanvasHeight(newHeight);
@@ -186,30 +135,86 @@ export function QuiltSettingsDropdown({
       setHeightError('');
       triggerRender();
       useCanvasStore.getState().centerAndFitViewport(fabricCanvas, newWidth, newHeight);
-      setPendingWidth(null);
-      setPendingHeight(null);
-      setIsOpen(false);
     },
-    [setCanvasWidth, setCanvasHeight, triggerRender, fabricCanvas]
+    [setCanvasWidth, setCanvasHeight, triggerRender, fabricCanvas],
   );
 
-  const confirmCellSizeChange = useCallback(
+  const commitWidth = useCallback(
+    (raw: string) => {
+      try {
+        const decimal = toDecimal(parseFraction(raw.trim()));
+        if (decimal > 0 && Number.isFinite(decimal)) {
+          setWidthError('');
+          if (decimal !== canvasWidth) applyDimensions(decimal, canvasHeight);
+          else setWidthInput(String(decimal));
+        } else {
+          setWidthError('Enter a valid dimension');
+        }
+      } catch {
+        setWidthError('Enter a valid dimension');
+      }
+    },
+    [canvasWidth, canvasHeight, applyDimensions],
+  );
+
+  const commitHeight = useCallback(
+    (raw: string) => {
+      try {
+        const decimal = toDecimal(parseFraction(raw.trim()));
+        if (decimal > 0 && Number.isFinite(decimal)) {
+          setHeightError('');
+          if (decimal !== canvasHeight) applyDimensions(canvasWidth, decimal);
+          else setHeightInput(String(decimal));
+        } else {
+          setHeightError('Enter a valid dimension');
+        }
+      } catch {
+        setHeightError('Enter a valid dimension');
+      }
+    },
+    [canvasWidth, canvasHeight, applyDimensions],
+  );
+
+  const applyPreset = useCallback(
+    (w: number, h: number) => {
+      applyDimensions(w, h);
+    },
+    [applyDimensions],
+  );
+
+  const commitCellSize = useCallback(
     (newSize: number) => {
       setGridSettings({ size: newSize });
       triggerRender();
-      setPendingCellSize(null);
     },
-    [setGridSettings, triggerRender]
+    [setGridSettings, triggerRender],
   );
 
-  const cancelPending = useCallback(() => {
-    setPendingWidth(null);
-    setPendingHeight(null);
-    setPendingCellSize(null);
-    // Reset inputs to current values
-    setWidthInput(String(canvasWidth));
-    setHeightInput(String(canvasHeight));
-  }, [canvasWidth, canvasHeight]);
+  // Post-lock free-form scale options. We compute them from the recorded
+  // base dimensions (set when the user clicked Start Designing) so repeated
+  // scaling stays referenced to the original quilt.
+  const scaleOptions: QuiltScaleOption[] =
+    layoutLocked && projectMode === 'free-form'
+      ? getQuiltScaleOptions(baseQuiltWidth, baseQuiltHeight, canvasWidth, canvasHeight)
+      : [];
+
+  const handleScaleSelect = useCallback(
+    (factor: number) => {
+      const result = applyScaleOption(baseQuiltWidth, baseQuiltHeight, factor);
+      if (!result) return;
+      applyDimensions(result.width, result.height);
+    },
+    [baseQuiltWidth, baseQuiltHeight, applyDimensions],
+  );
+
+  // ── Section visibility ──────────────────────────────────────────
+  // Pre-lock: full editing (inputs + presets), as before.
+  // Post-lock layout/template: read-only "Finished Size" callout.
+  // Post-lock free-form: proportional scale options.
+  const showFreeEditDimensions = !layoutLocked;
+  const showLayoutSizeCallout = layoutLocked && isLayoutSized;
+  const showFreeformScaleOptions =
+    layoutLocked && projectMode === 'free-form' && scaleOptions.length > 0;
 
   return (
     <div ref={ref} className="relative">
@@ -218,7 +223,7 @@ export function QuiltSettingsDropdown({
         <button
           type="button"
           onClick={() => setIsOpen((o) => !o)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[14px] font-medium transition-colors ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[14px] font-medium transition-colors duration-150 ${
             isOpen
               ? 'bg-[var(--color-border)] text-[var(--color-text)]'
               : 'text-[var(--color-text)]/70 hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]'
@@ -254,13 +259,112 @@ export function QuiltSettingsDropdown({
 
       {/* Dropdown panel */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-80 bg-[var(--color-bg)] border border-[var(--color-border)]/20 rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] py-3 z-50">
-          <div className="px-3 pb-3 border-b border-[var(--color-border)]/15">
-            <p className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-3">
-              {isLayoutSized ? 'Finished Size' : `Quilt Size (${unit})`}
-            </p>
+        <div className="absolute right-0 top-full mt-1 w-80 bg-[var(--color-bg)] border border-[var(--color-border)]/20 rounded-lg shadow-elevated py-3 z-50">
+          {/* ── Sizing section ── */}
+          {showFreeEditDimensions && (
+            <div className="px-3 pb-3 border-b border-[var(--color-border)]/15">
+              <p className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-3">
+                {`Quilt Size (${unit})`}
+              </p>
 
-            {isLayoutSized && layoutSize ? (
+              <div className="flex gap-3 mb-3">
+                <div className="flex-1">
+                  <label
+                    htmlFor="quilt-w"
+                    className="block text-xs text-[var(--color-text-dim)] mb-1"
+                  >
+                    Width
+                  </label>
+                  <input
+                    id="quilt-w"
+                    type="text"
+                    inputMode="decimal"
+                    value={widthInput}
+                    onChange={(e) => {
+                      setWidthInput(e.target.value);
+                      setWidthError('');
+                    }}
+                    onBlur={(e) => commitWidth(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter')
+                        commitWidth((e.target as HTMLInputElement).value);
+                    }}
+                    className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-[var(--color-primary)] focus:outline-none ${
+                      widthError ? 'border-[var(--color-error)]' : ''
+                    }`}
+                  />
+                  {widthError && (
+                    <p className="text-xs text-[var(--color-error)] mt-1">{widthError}</p>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <label
+                    htmlFor="quilt-h"
+                    className="block text-xs text-[var(--color-text-dim)] mb-1"
+                  >
+                    Height
+                  </label>
+                  <input
+                    id="quilt-h"
+                    type="text"
+                    inputMode="decimal"
+                    value={heightInput}
+                    onChange={(e) => {
+                      setHeightInput(e.target.value);
+                      setHeightError('');
+                    }}
+                    onBlur={(e) => commitHeight(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter')
+                        commitHeight((e.target as HTMLInputElement).value);
+                    }}
+                    className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-[var(--color-primary)] focus:outline-none ${
+                      heightError ? 'border-[var(--color-error)]' : ''
+                    }`}
+                  />
+                  {heightError && (
+                    <p className="text-xs text-[var(--color-error)] mt-1">{heightError}</p>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-[10px] uppercase text-[var(--color-text-dim)] mb-1.5">Presets</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {QUILT_SIZE_PRESETS.map((p) => {
+                  const isActive = canvasWidth === p.width && canvasHeight === p.height;
+                  return (
+                    <button
+                      key={p.label}
+                      type="button"
+                      onClick={() => applyPreset(p.width, p.height)}
+                      className={`flex items-center justify-between rounded-full px-2 py-1.5 text-xs font-medium transition-colors duration-150 ${
+                        isActive
+                          ? 'bg-[var(--color-primary)] text-[var(--color-text-on-primary)]'
+                          : 'bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[var(--color-border)]'
+                      }`}
+                    >
+                      <span>{p.label}</span>
+                      <span
+                        className={`font-mono text-[10px] ${
+                          isActive
+                            ? 'text-[var(--color-text-on-primary)]/80'
+                            : 'text-[var(--color-text-dim)]'
+                        }`}
+                      >
+                        {p.width}×{p.height}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {showLayoutSizeCallout && layoutSize && (
+            <div className="px-3 pb-3 border-b border-[var(--color-border)]/15">
+              <p className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-3">
+                Finished Size
+              </p>
               <div className="rounded-lg border border-[var(--color-border)]/20 bg-[var(--color-bg)] px-3 py-3">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-[var(--color-text-dim)]">Layout-driven size</span>
@@ -269,101 +373,48 @@ export function QuiltSettingsDropdown({
                   </span>
                 </div>
                 <p className="mt-2 text-xs leading-relaxed text-[var(--color-text-dim)]">
-                  Quilt layouts now keep block cells square. Change rows, columns, block size,
-                  sashing, or borders from the Layouts tab.
+                  Dimensions are derived from your locked-in layout. To change the size,
+                  start a new project with a different layout or template.
                 </p>
               </div>
-            ) : (
-              <>
-                <div className="flex gap-3 mb-3">
-                  <div className="flex-1">
-                    <label
-                      htmlFor="quilt-w"
-                      className="block text-xs text-[var(--color-text-dim)] mb-1"
-                    >
-                      Width
-                    </label>
-                    <input
-                      id="quilt-w"
-                      type="text"
-                      inputMode="decimal"
-                      value={widthInput}
-                      onChange={(e) => {
-                        setWidthInput(e.target.value);
-                        setWidthError('');
-                      }}
-                      onBlur={(e) => commitWidth(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') commitWidth((e.target as HTMLInputElement).value);
-                      }}
-                      className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${
-                        widthError ? 'border-[var(--color-accent)]' : ''
-                      }`}
-                    />
-                    {widthError && (
-                      <p className="text-xs text-[var(--color-accent)] mt-1">{widthError}</p>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <label
-                      htmlFor="quilt-h"
-                      className="block text-xs text-[var(--color-text-dim)] mb-1"
-                    >
-                      Height
-                    </label>
-                    <input
-                      id="quilt-h"
-                      type="text"
-                      inputMode="decimal"
-                      value={heightInput}
-                      onChange={(e) => {
-                        setHeightInput(e.target.value);
-                        setHeightError('');
-                      }}
-                      onBlur={(e) => commitHeight(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') commitHeight((e.target as HTMLInputElement).value);
-                      }}
-                      className={`w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)] focus:border-black focus:outline-none ${
-                        heightError ? 'border-[var(--color-accent)]' : ''
-                      }`}
-                    />
-                    {heightError && (
-                      <p className="text-xs text-[var(--color-accent)] mt-1">{heightError}</p>
-                    )}
-                  </div>
-                </div>
+            </div>
+          )}
 
-                <p className="text-[10px] uppercase text-[var(--color-text-dim)] mb-1.5">Presets</p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {QUILT_SIZE_PRESETS.map((p) => {
-                    const isActive = canvasWidth === p.width && canvasHeight === p.height;
-                    return (
-                      <button
-                        key={p.label}
-                        type="button"
-                        onClick={() => applyPreset(p.width, p.height)}
-                        className={`flex items-center justify-between rounded-full px-2 py-1.5 text-xs font-medium transition-colors ${
-                          isActive
-                            ? 'bg-[var(--color-primary)] text-[var(--color-text)]'
-                            : 'bg-[var(--color-bg)] text-[var(--color-text)] hover:bg-[var(--color-border)]'
-                        }`}
-                      >
-                        <span>{p.label}</span>
-                        <span
-                          className={`font-mono text-[10px] ${isActive ? 'text-[var(--color-text)]/80' : 'text-[var(--color-text-dim)]'}`}
-                        >
-                          {p.width}×{p.height}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-          </div>
+          {showFreeformScaleOptions && (
+            <div className="px-3 pb-3 border-b border-[var(--color-border)]/15">
+              <p className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-1">
+                Scale Quilt
+              </p>
+              <p className="text-[11px] leading-relaxed text-[var(--color-text-dim)] mb-2">
+                Scales the whole quilt proportionally. Every option keeps every piece
+                aligned to the ¼″ grid.
+              </p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {scaleOptions.map((opt) => (
+                  <button
+                    key={opt.factor}
+                    type="button"
+                    onClick={() => handleScaleSelect(opt.factor)}
+                    aria-pressed={opt.isCurrent}
+                    className={`flex flex-col items-start rounded-lg px-2 py-1.5 text-left transition-colors duration-150 border ${
+                      opt.isCurrent
+                        ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/40 text-[var(--color-primary)]'
+                        : 'bg-[var(--color-bg)] border-[var(--color-border)]/30 text-[var(--color-text)] hover:bg-[var(--color-border)]/30'
+                    }`}
+                  >
+                    <span className="text-[12px] font-semibold">
+                      {Math.round(opt.factor * 100)}%
+                    </span>
+                    <span className="text-[10px] font-mono text-[var(--color-text-dim)]">
+                      {opt.width}″ × {opt.height}″
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
-          {/* Grid section */}
+          {/* Grid section — always visible */}
           <div className="px-3 pt-3">
             <p className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-3">
               Cell Grid
@@ -374,7 +425,7 @@ export function QuiltSettingsDropdown({
                   Cell size
                 </label>
                 <span className="text-xs text-[var(--color-text)] font-medium font-mono">
-                  {gridSettings.size.toFixed(2)}&quot;
+                  {gridSettings.size.toFixed(2)}″
                 </span>
               </div>
               <input
@@ -384,13 +435,7 @@ export function QuiltSettingsDropdown({
                 max={GRID_CELL_SIZE_MAX}
                 step={GRID_CELL_SIZE_STEP}
                 value={gridSettings.size}
-                onChange={(e) => {
-                  const newSize = parseFloat(e.target.value);
-                  commitCellSize(newSize);
-                }}
-                onMouseUp={() => {
-                  // Commit on mouse up for slider
-                }}
+                onChange={(e) => commitCellSize(parseFloat(e.target.value))}
                 className="w-full accent-[var(--color-primary)]"
               />
             </div>
@@ -405,7 +450,7 @@ export function QuiltSettingsDropdown({
             </label>
           </div>
 
-          {/* Export section */}
+          {/* Export section — always visible */}
           <div className="px-3 pt-3 mt-3 border-t border-[var(--color-border)]/15">
             <p className="text-label-sm uppercase text-[var(--color-text-dim)] font-medium mb-2">
               Export
@@ -421,7 +466,7 @@ export function QuiltSettingsDropdown({
                   setIsOpen(false);
                   onOpenImageExport?.();
                 }}
-                className="flex-1 bg-[var(--color-primary)] text-[var(--color-text)] rounded-full px-3 py-2 text-xs font-semibold hover:opacity-90 transition-colors duration-150"
+                className="flex-1 bg-[var(--color-primary)] text-[var(--color-text-on-primary)] rounded-full px-3 py-2 text-xs font-semibold hover:bg-[var(--color-primary-hover)] transition-colors duration-150"
               >
                 Image
               </button>
@@ -435,7 +480,7 @@ export function QuiltSettingsDropdown({
                   setIsOpen(false);
                   onOpenPdfExport?.();
                 }}
-                className="flex-1 bg-[var(--color-primary)] text-[var(--color-text)] rounded-full px-3 py-2 text-xs font-semibold hover:opacity-90 transition-colors duration-150"
+                className="flex-1 bg-[var(--color-primary)] text-[var(--color-text-on-primary)] rounded-full px-3 py-2 text-xs font-semibold hover:bg-[var(--color-primary-hover)] transition-colors duration-150"
               >
                 PDF
               </button>
@@ -447,52 +492,6 @@ export function QuiltSettingsDropdown({
             )}
           </div>
         </div>
-      )}
-
-      {/* Confirmation modal for resize */}
-      {pendingWidth !== null && pendingHeight !== null && (
-        <ConfirmationDialog
-          title="Resize Quilt?"
-          message={
-            <>
-              This will change the quilt dimensions from{' '}
-              <span className="font-medium text-[var(--color-text)]">
-                {canvasWidth}″ × {canvasHeight}″
-              </span>{' '}
-              to{' '}
-              <span className="font-medium text-[var(--color-text)]">
-                {pendingWidth}″ × {pendingHeight}″
-              </span>
-              . This action cannot be undone.
-            </>
-          }
-          confirmLabel="Resize"
-          onConfirm={() => confirmResize(pendingWidth, pendingHeight)}
-          onCancel={cancelPending}
-        />
-      )}
-
-      {/* Confirmation modal for cell size change */}
-      {pendingCellSize !== null && (
-        <ConfirmationDialog
-          title="Change Grid Cell Size?"
-          message={
-            <>
-              This will change the grid cell size from{' '}
-              <span className="font-medium text-[var(--color-text)]">
-                {gridSettings.size.toFixed(2)}″
-              </span>{' '}
-              to{' '}
-              <span className="font-medium text-[var(--color-text)]">
-                {pendingCellSize.toFixed(2)}″
-              </span>
-              . This may affect layout positioning.
-            </>
-          }
-          confirmLabel="Change"
-          onConfirm={() => confirmCellSizeChange(pendingCellSize)}
-          onCancel={cancelPending}
-        />
       )}
     </div>
   );
