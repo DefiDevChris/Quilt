@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Grid, List, Plus } from 'lucide-react';
 import { COLORS, SHADOW, MAX_WIDTHS, withAlpha } from '@/lib/design-system';
 import { ProjectCard } from '@/components/projects/ProjectCard';
-import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 import type { Project } from '@/types/project';
 
 export default function ProjectsPage() {
@@ -183,14 +182,6 @@ export default function ProjectsPage() {
           ))}
         </div>
       )}
-
-      <NewProjectWizard
-        open={dialogOpen}
-        onClose={() => {
-          setDialogOpen(false);
-          fetchProjects();
-        }}
-      />
     </div>
   );
 }

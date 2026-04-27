@@ -2,7 +2,7 @@
  * Canvas undo/redo helpers — single source of truth for undo/redo execution.
  *
  * Eliminates duplicate undo/redo logic across FloatingToolbar, Toolbar,
- * HamburgerDrawer, and useCanvasKeyboard.
+ * and useCanvasKeyboard.
  */
 
 import { useCanvasStore } from '@/stores/canvasStore';

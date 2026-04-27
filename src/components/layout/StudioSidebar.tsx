@@ -9,7 +9,6 @@ import { useAuthStore, useAuthDerived } from '@/stores/authStore';
 import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
 import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 import { useMobileUploadStore } from '@/stores/mobileUploadStore';
-import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 
 // Sidebar navigation item with quilt icon
 function SidebarNav({
@@ -192,14 +191,6 @@ export function StudioSidebar({ onMobileUploadsToggle }: StudioSidebarProps) {
           </div>
         )}
       </div>
-
-      <NewProjectWizard
-        open={dialogOpen}
-        onClose={() => {
-          setDialogOpen(false);
-          fetchProjectCount();
-        }}
-      />
     </>
   );
 }
