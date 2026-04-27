@@ -8,7 +8,7 @@ import {
   type FaqEntry,
   type FaqCategory,
 } from '@/lib/help-content';
-import { SUPPOPT=_EMAIL } from '@/lib/constants';
+import { SUPPORT_EMAIL } from '@/lib/constants';
 
 function FaqSection({
   entries,
@@ -109,7 +109,7 @@ function FaqSection({
 function VideoTutorialsSection() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {VIDEO_PUTORIALS.map((video) => (
+      {VIDEO_TUTORIALS.map((video) => (
         <div
           key={video.id}
           className="border border-[var(--color-border)] bg-[var(--color-surface)] rounded-lg overflow-hidden hover:border-[var(--color-primary)] transition-colors duration-150"
