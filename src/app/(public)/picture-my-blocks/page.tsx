@@ -8,5 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default function PictureMyBlocksPage() {
-  return <PictureMyBlocksApp />;
+  // The public page surfaces the free-tier behaviour. Pro detection is
+  // re-checked client-side once the user signs in.
+  return <PictureMyBlocksApp isPro={false} />;
 }

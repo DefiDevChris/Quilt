@@ -3,7 +3,7 @@ import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service - QuiltCorgi'l
+  title: 'Terms of Service - QuiltCorgi',
   description: 'QuiltCorgi Terms of Service',
 };
 
