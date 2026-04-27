@@ -15,6 +15,8 @@ export interface LayoutPreset {
   category: 'grid' | 'sashing' | 'on-point' | 'strippy' | 'medallion' | 'free-form';
   config: Omit<LayoutConfig, 'type'> & {
     type: 'grid' | 'sashing' | 'on-point' | 'strippy' | 'medallion' | 'free-form';
+    bindingWidth?: number;
+    hasCornerstones?: boolean;
   };
 }
 
