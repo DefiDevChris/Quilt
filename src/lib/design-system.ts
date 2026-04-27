@@ -1,14 +1,15 @@
 /**
  * Design System — single source of truth for all QuiltCorgi brand values.
  *
- * Reads from brand_config.json at build time and exports typed constants.
- * Every color, spacing, opacity, rotation, and size used across the app
- * MUST come from this module — zero hardcoded values.
+ * Brand-identity tokens (palette, typography, layout) come from
+ * `brand_config.json`. Studio-internal tokens (canvas/fence/grid/shade colors,
+ * pattern preview, etc.) are defined inline here because they are
+ * implementation details rather than brand-facing values.
  */
 
 import brandConfig from '../../brand_config.json';
 
-// ─── Helpers ─────────────────────────────────────────────────────────────
+// ─── Helpers ────────────────────────────────────────────────────────────
 
 /**
  * Converts a hex color + alpha to an rgba string.
@@ -36,17 +37,8 @@ function darkenHex(hex: string, amount: number): string {
 
 // ─── Colors ─────────────────────────────────────────────────────────────
 
-const { color_palette: cp } = brandConfig;
-const cc = brandConfig.canvas_colors;
-const fc = brandConfig.fence_colors;
-const sc = brandConfig.shade_colors;
-const pp = brandConfig.pattern_preview_colors;
-const dc = brandConfig.default_canvas;
-const dl = brandConfig.default_layout;
-const gc = brandConfig.grid_colors;
-const func = brandConfig.functional_colors;
+const cp = brandConfig.color_palette;
 const comp = brandConfig.computed_colors;
-const ac = brandConfig.alpha_colors;
 
 export const COLORS = {
   primary: cp.primary,
@@ -58,11 +50,12 @@ export const COLORS = {
   text: cp.text,
   textDim: cp.text_dim,
   border: cp.border,
-  error: func.error,
-  success: func.success,
-  fabricFallback: func.fabric_fallback,
-  fabricGridMockBg: func.fabric_grid_mock_bg,
-  mockSurfaceBg: func.mock_surface_bg,
+  error: comp.error,
+  success: comp.success,
+  warning: comp.warning,
+  fabricFallback: '#b8a698',
+  fabricGridMockBg: '#f5f0e8',
+  mockSurfaceBg: comp.surface_alt,
 } as const;
 
 // Computed hover variants (primary darkened for hover state)
@@ -70,92 +63,126 @@ export const COLORS_HOVER = {
   primary: comp.primary_hover,
 } as const;
 
-// ─── Canvas / Tool Colors ───────────────────────────────────────────────────
+// ─── Canvas / Tool Colors ──────────────────────────────────────────────────
 
 export const CANVAS = {
-  gridLine: cc.grid_line,
-  seamLine: cc.seam_line,
-  pencilPreview: cc.pencil_preview,
-  patchHover: cc.patch_hover,
-  blockHighlight: cc.block_highlight,
-  fabricHighlight: cc.fabric_highlight,
-  strokeDefault: cc.stroke_default,
-  fenceLabelBg: withAlpha(ac.canvas.fence_label_bg.hex, ac.canvas.fence_label_bg.alpha),
-  fenceLabelBgLight: withAlpha(
-    ac.canvas.fence_label_bg_light.hex,
-    ac.canvas.fence_label_bg_light.alpha
-  ),
-  selectionHighlight: withAlpha(
-    ac.canvas.selection_highlight.hex,
-    ac.canvas.selection_highlight.alpha
-  ),
-  gridLineDimmed: withAlpha(ac.canvas.grid_line_dimmed.hex, ac.canvas.grid_line_dimmed.alpha),
-  calibrationBackdrop: withAlpha(
-    ac.canvas.calibration_backdrop.hex,
-    ac.canvas.calibration_backdrop.alpha
-  ),
-  dotIndicatorInactive: withAlpha(
-    ac.canvas.dot_indicator_inactive.hex,
-    ac.canvas.dot_indicator_inactive.alpha
-  ),
-  mockGridBg: withAlpha(ac.canvas.mock_grid_bg.hex, ac.canvas.mock_grid_bg.alpha),
-  mockQuiltStitch: cc.mock_quilt_stitch,
+  gridLine: '#E6E1DC',
+  seamLine: '#7A726C',
+  pencilPreview: '#7CB9E8',
+  patchHover: '#C5DFF3',
+  blockHighlight: '#7CB9E8',
+  fabricHighlight: '#FFE08A',
+  strokeDefault: '#36312D',
+  fenceLabelBg: withAlpha('#FEFDFB', 0.92),
+  fenceLabelBgLight: withAlpha('#ffffff', 0.85),
+  selectionHighlight: withAlpha('#7CB9E8', 0.18),
+  gridLineDimmed: withAlpha('#E6E1DC', 0.4),
+  calibrationBackdrop: withAlpha('#36312D', 0.6),
+  dotIndicatorInactive: withAlpha('#7A726C', 0.3),
+  mockGridBg: withAlpha('#F5EDE4', 0.5),
+  mockQuiltStitch: '#7A726C',
 } as const;
 
-// ─── Fence Role Colors ────────────────────────────────────────────────────────
+// ─── Fence Role Colors ────────────────────────────────────────────────────
+// `normal` fills/strokes are the solid colors used while editing.
+// `preview` fills/strokes are dashed/transparent — used in preview mode.
 
-export const FENCE = fc as typeof fc;
+export const FENCE = {
+  normal: {
+    fills: {
+      'block-cell': withAlpha('#7CB9E8', 0.10),
+      'setting-triangle': withAlpha('#C5DFF3', 0.18),
+      sashing: withAlpha('#C5DFF3', 0.30),
+      border: withAlpha('#FFE08A', 0.18),
+      cornerstone: withAlpha('#F6C6C8', 0.20),
+      binding: withAlpha('#7A726C', 0.10),
+    },
+    strokes: {
+      'block-cell': '#7CB9E8',
+      'setting-triangle': '#C5DFF3',
+      sashing: '#C5DFF3',
+      border: '#FFE08A',
+      cornerstone: '#F6C6C8',
+      binding: '#7A726C',
+    },
+  },
+  preview: {
+    fills: {
+      'block-cell': 'transparent',
+      'setting-triangle': 'transparent',
+      sashing: withAlpha('#C5DFF3', 0.12),
+      border: withAlpha('#FFE08A', 0.10),
+      cornerstone: withAlpha('#F6C6C8', 0.10),
+      binding: withAlpha('#7A726C', 0.05),
+    },
+    strokes: {
+      'block-cell': withAlpha('#7CB9E8', 0.50),
+      'setting-triangle': withAlpha('#C5DFF3', 0.40),
+      sashing: withAlpha('#C5DFF3', 0.60),
+      border: withAlpha('#FFE08A', 0.50),
+      cornerstone: withAlpha('#F6C6C8', 0.50),
+      binding: withAlpha('#7A726C', 0.40),
+    },
+  },
+  // Legacy single-role colors (deprecated — prefer `normal.fills[role]`).
+  block: '#7CB9E8',
+  sashing: '#C5DFF3',
+  border: '#FFE08A',
+  cornerstone: '#F6C6C8',
+  binding: '#7A726C',
+  defaultColor: '#E6E1DC',
+} as const;
 
 // ─── Shade Colors ──────────────────────────────────────────────────────────────────
 
 export const SHADE = {
-  dark: sc.dark,
-  light: sc.light,
-  background: sc.background,
-  unknown: sc.unknown,
+  dark: '#36312D',
+  light: '#F5F0E8',
+  background: '#FEFDFB',
+  unknown: '#7A726C',
 } as const;
 
 // ─── Pattern Preview Colors ───────────────────────────────────────────────────────
 
 export const PATTERN_PREVIEW = {
-  fill: pp.fill,
-  stroke: pp.stroke,
-  accent: pp.accent,
+  fill: '#FEFDFB',
+  stroke: '#36312D',
+  accent: '#7CB9E8',
 } as const;
 
 // ─── Default Canvas Colors ──────────────────────────────────────────────────────
 
 export const DEFAULT_CANVAS = {
-  fill: dc.fill,
-  stroke: dc.stroke,
+  fill: '#FEFDFB',
+  stroke: '#E6E1DC',
 } as const;
 
 // ─── Default Layout Colors ──────────────────────────────────────────────────────
 
 export const DEFAULT_LAYOUT = {
-  sashing: dl.sashing,
-  border: dl.border,
+  sashing: '#C5DFF3',
+  border: '#FFE08A',
 } as const;
 
 // ─── Grid / Measurement Colors ───────────────────────────────────────────────────
 
 export const GRID = {
-  bg: gc.bg,
-  label: gc.label,
-  border: gc.border,
+  bg: '#FEFDFB',
+  label: '#7A726C',
+  border: '#E6E1DC',
 } as const;
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 
-const { scale: ts } = brandConfig.typography;
+const ts = brandConfig.design_system.typography.scale;
 
 export const FONT_SIZE = {
-  h1: ts.h1.size,
-  h1LineHeight: ts.h1.line_height,
-  h2: ts.h2.size,
-  h2LineHeight: ts.h2.line_height,
-  h3: ts.h3.size,
-  h3LineHeight: ts.h3.line_height,
+  h1: ts['3xl'],
+  h1LineHeight: '1.2',
+  h2: ts['2xl'],
+  h2LineHeight: '1.3',
+  h3: ts.xl,
+  h3LineHeight: '1.4',
   body: '18px',
   bodyLineHeight: '28px',
   small: '16px',
@@ -179,53 +206,51 @@ const FONT_BODY = 'Montserrat';
 
 export const TYPOGRAPHY = {
   h1: {
-    fontSize: ts.h1.size,
-    lineHeight: ts.h1.line_height,
+    fontSize: ts['3xl'],
+    lineHeight: '1.2',
     fontFamily: FONT_HEADING,
-    tailwind: ts.h1.tailwind,
+    tailwind: 'text-3xl',
   },
   h2: {
-    fontSize: ts.h2.size,
-    lineHeight: ts.h2.line_height,
+    fontSize: ts['2xl'],
+    lineHeight: '1.3',
     fontFamily: FONT_HEADING,
-    tailwind: ts.h2.tailwind,
+    tailwind: 'text-2xl',
   },
   h3: {
-    fontSize: ts.h3.size,
-    lineHeight: ts.h3.line_height,
+    fontSize: ts.xl,
+    lineHeight: '1.4',
     fontFamily: FONT_HEADING,
-    tailwind: ts.h3.tailwind,
+    tailwind: 'text-xl',
   },
   body: {
-    fontSize: ts.body.size,
-    lineHeight: ts.body.line_height,
+    fontSize: ts.base,
+    lineHeight: '1.6',
     fontFamily: FONT_BODY,
-    tailwind: ts.body.tailwind,
+    tailwind: 'text-base',
   },
   small: {
-    fontSize: ts.small.size,
-    lineHeight: ts.small.line_height,
+    fontSize: ts.sm,
+    lineHeight: '1.5',
     fontFamily: FONT_BODY,
-    tailwind: ts.small.tailwind,
+    tailwind: 'text-sm',
   },
   label: {
-    fontSize: ts.label.size,
-    lineHeight: ts.label.line_height,
+    fontSize: ts.sm,
+    lineHeight: '1.4',
     fontFamily: FONT_BODY,
-    tailwind: ts.label.tailwind,
+    tailwind: 'text-sm',
   },
 } as const;
 
 // ─── Layout ───────────────────────────────────────────────────────────────
 
-const { layout: l } = brandConfig.design_system;
-
 export const LAYOUT = {
-  containerMax: l.container_max,
-  gutter: l.gutter,
-  baseSpacing: parseInt(l.base_spacing, 10),
-  sidebarWidth: l.sidebar_width,
-  headerHeight: l.header_height,
+  containerMax: '1280px',
+  gutter: '24px',
+  baseSpacing: 4,
+  sidebarWidth: '256px',
+  headerHeight: '64px',
   contextPanelWidth: '320px',
   toolbarWidth: '88px',
   dialogSm: '380px',
@@ -233,6 +258,14 @@ export const LAYOUT = {
   dialogLg: '560px',
   helpPanelWidth: '340px',
   modalMaxHeight: '90vh',
+} as const;
+
+// Common max-widths for layout containers (page wrappers, content blocks)
+export const MAX_WIDTHS = {
+  page: '1280px',
+  content: '720px',
+  narrow: '560px',
+  wide: '1440px',
 } as const;
 
 // ─── Motion ───────────────────────────────────────────────────────────────
@@ -245,9 +278,9 @@ export const MOTION = {
 // ─── Shadow ───────────────────────────────────────────────────────────────
 
 export const SHADOW = {
-  brand: `0 1px 2px ${withAlpha(ac.shadows.brand.hex, ac.shadows.brand.alpha)}`,
-  elevated: `0 4px 8px ${withAlpha(ac.shadows.elevated_outer.hex, ac.shadows.elevated_outer.alpha)}, 0 12px 32px ${withAlpha(ac.shadows.elevated_outer_deep.hex, ac.shadows.elevated_outer_deep.alpha)}`,
-  inset: `inset 0 2px 8px ${withAlpha(ac.shadows.inset_inner.hex, ac.shadows.inset_inner.alpha)}, inset 0 1px 3px ${withAlpha(ac.shadows.inset_inner_subtle.hex, ac.shadows.inset_inner_subtle.alpha)}`,
+  brand: `0 1px 2px ${withAlpha('#36312D', 0.08)}`,
+  elevated: `0 4px 8px ${withAlpha('#36312D', 0.06)}, 0 12px 32px ${withAlpha('#36312D', 0.08)}`,
+  inset: `inset 0 2px 8px ${withAlpha('#36312D', 0.04)}, inset 0 1px 3px ${withAlpha('#36312D', 0.06)}`,
 } as const;
 
 // ─── Decoration ─────────────────────────────────────────────────────────────
@@ -310,9 +343,13 @@ export const MASCOT = {
 // ─── Assets ───────────────────────────────────────────────────────────────
 
 export const ASSETS = {
-  logo: brandConfig.public_assets.logo,
-  mascots: brandConfig.public_assets.mascots,
-  icons: brandConfig.public_assets.icons.path,
+  logo: '/quilt-logo-white.png',
+  mascots: {
+    sitting: '/mascots/corgi-sitting.png',
+    wagging: '/mascots/corgi-wagging.png',
+    walking: '/mascots/corgi-walking.png',
+  },
+  icons: '/icons',
 } as const;
 
 // ─── Radius ───────────────────────────────────────────────────────────────
