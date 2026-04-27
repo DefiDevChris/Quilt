@@ -25,7 +25,7 @@ const createTemplateSchema = z.object({
   thumbnailSvg: z.string().max(200_000).optional(),
   templateData: z
     .object({
-      canvasJson: z.record(z.unknown()),
+      canvasJson: z.record(z.string(), z.unknown()),
       canvasWidth: z.number().positive(),
       canvasHeight: z.number().positive(),
       layoutConfig: z

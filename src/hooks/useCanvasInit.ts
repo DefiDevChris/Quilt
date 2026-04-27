@@ -87,6 +87,7 @@ export function useCanvasInit(
       useProjectStore.getState().setProject({
         id: project.id,
         name: project.name,
+        mode: project.mode,
         width: project.canvasWidth,
         height: project.canvasHeight,
         worktables: project.worktables,
