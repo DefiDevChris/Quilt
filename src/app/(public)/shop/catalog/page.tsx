@@ -72,7 +72,6 @@ export default async function CatalogPage() {
     db.select({ total: count() }).from(fabrics).where(eq(fabrics.isPurchasable, true)),
   ]);
 
-  const initialTotalPages = Math.ceil(total / 24);
   const formattedFabrics = initialFabrics.map((f) => ({
     ...f,
     pricePerYard: f.pricePerYard ?? null,
@@ -82,8 +81,10 @@ export default async function CatalogPage() {
     <CatalogClient
       initialFabrics={formattedFabrics as ShopFabric[]}
       initialTotal={total}
-      initialTotalPages={initialTotalPages}
-      shopEnabled={enabled}
+      initialPage={1}
+      initialLimit={24}
+      initialSort="name"
+      initialCategory=""
     />
   );
 }

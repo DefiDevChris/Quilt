@@ -38,18 +38,12 @@ All color references **must** go through CSS variables (Easter-spring light-blue
 --color-border-strong    #7A726C   hover / focus borders
 --color-primary          #7CB9E8   brand sky blue (buttons, links, focus rings)
 --color-primary-hover    #5AA0D5   primary hover state
-<<<<<<< HEAD
---color-primary-light    #EBF4FF   tinted primary backgrounds
---color-primary-dark     #3A7BC8   (legacy alias — prefer --color-primary-hover)
---color-accent-light     #F5EDE4   tinted accent backgrounds
-=======
 --color-secondary        #C5DFF3   pale sky — dividers, inactive tabs, tinted primary bg
 --color-accent           #FFE08A   buttercup — rare highlights, featured/new
 --color-accent-blush     #F6C6C8   blush — sparing community/warmth moments
 --color-success          #4CAF50
 --color-warning          #FFE08A   (aligned with accent/buttercup)
 --color-error            #EF5350
->>>>>>> ecc74e122bc821f9430c9372f3f4928a12183268
 ```
 
 **Removed legacy aliases** (do not use, previously aliased for migration):
