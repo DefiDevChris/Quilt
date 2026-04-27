@@ -10,15 +10,14 @@ import { useCanvasContext } from '@/contexts/CanvasContext';
 /**
  * QuiltSizePanel — left-rail panel for editing the live quilt dimensions.
  *
- * Replaces the full-screen NewProjectWizard step-2 modal when the user is
- * already inside the studio. Every slider writes directly to `useLayoutStore`;
+ * Every slider writes directly to `useLayoutStore`;
  * `LayoutAdjuster` (in src/components/fabrics/LayoutAdjuster.tsx) subscribes
  * to that store and repaints the canvas on every change, so the preview
  * updates in real time as the sliders move.
  *
  * Keeping this as a thin UI layer over layoutStore avoids duplicating the
  * size-math that lives in layoutStore.applyLayout() and prevents the two
- * sources of truth (wizard vs. store) from drifting apart.
+ * sources of truth from drifting apart.
  */
 interface QuiltSizePanelProps {
   onDismiss: () => void;

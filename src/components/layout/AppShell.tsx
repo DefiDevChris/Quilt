@@ -11,7 +11,6 @@ import { useCartStore } from '@/stores/cartStore';
 import { CartDrawer } from '@/components/shop/CartDrawer';
 import { ShoppingBag, Plus, Clock, Scissors, Camera, Settings } from 'lucide-react';
 import { logout } from '@/lib/logout';
-import { NewProjectWizard } from '@/components/projects/NewProjectWizard';
 
 const StarQuiltBlock = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -287,10 +286,6 @@ export function AppShell({
       </div>
 
       <CartDrawer />
-      <NewProjectWizard
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-      />
     </div>
   );
 }

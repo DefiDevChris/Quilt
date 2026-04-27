@@ -3,8 +3,7 @@
 /**
  * CommandPalette — Cmd+K / Ctrl+K searchable action palette.
  *
- * Replaces the desktop-era File / Edit / View HamburgerDrawer with a
- * centered modal containing a fuzzy-filterable list of every action a
+ * A centered modal containing a fuzzy-filterable list of every action a
  * user might reach for: Save, Export, Zoom, Yardage, Block / Fabric
  * libraries, etc.
  *
