@@ -37,17 +37,16 @@ export function applyLayoutConfig(
   store: LayoutStoreState,
   config: ApplyableLayoutConfig,
 ): void {
-  store.resetLayout();
   store.setLayoutType(config.layoutType);
   store.setRows(config.rows);
   store.setCols(config.cols);
   store.setBlockSize(config.blockSize);
   store.setSashing(config.sashing);
   store.setBorders(config.borders);
-  store.setHasCornerStones(config.hasCornerStones);
+  store.setHasCornerstones(config.hasCornerStones);
   store.setBindingWidth(config.bindingWidth);
   if (config.selectedPresetId !== undefined) {
-    store.setSelectedPresetId(config.selectedPresetId);
+    store.setSelectedPreset(config.selectedPresetId);
   }
   store.applyLayout();
 }
