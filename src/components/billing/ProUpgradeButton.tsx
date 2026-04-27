@@ -6,8 +6,8 @@ import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
 interface ProUpgradeButtonProps {
   /** Extra className for the button element */
   className?: string;
-  /** Visual variant: nav = compact pill, dashboard = card, studio = compact pill */
-  variant?: 'nav' | 'dashboard' | 'studio';
+  /** Visual variant: nav = compact pill, dashboard = card, studio = compact pill, standalone = full upgrade card on its own */
+  variant?: 'nav' | 'dashboard' | 'studio' | 'standalone';
 }
 
 /**
