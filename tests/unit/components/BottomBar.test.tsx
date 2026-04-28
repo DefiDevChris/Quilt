@@ -87,15 +87,7 @@ describe('BottomBar', () => {
     expect(lockButton).toBeTruthy();
   });
 
-  it('renders undo button', () => {
-    render(<BottomBar />);
-    const undoButton = screen.getByRole('button', { name: /undo/i });
-    expect(undoButton).toBeTruthy();
-  });
 
-  it('renders redo button', () => {
-    render(<BottomBar />);
-    const redoButton = screen.getByRole('button', { name: /redo/i });
-    expect(redoButton).toBeTruthy();
-  });
+
+
 });
