@@ -1,7 +1,7 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import Mascot from '@/components/landing/Mascot';
 
 interface BrandLogoProps {
   href?: string;
@@ -15,7 +15,13 @@ interface BrandLogoProps {
 export function BrandLogo({ href = '/', className = '' }: BrandLogoProps) {
   return (
     <Link href={href} className={`flex items-center gap-3 cursor-pointer group ${className}`}>
-      <Mascot size="xs" pose="sitting" />
+      <Image 
+        src="/logo.png" 
+        alt="QuiltCorgi" 
+        width={32} 
+        height={32} 
+        className="object-contain"
+      />
       <span className="font-sans text-2xl font-black tracking-tight text-[var(--color-text)] leading-none">
         QuiltCorgi
       </span>

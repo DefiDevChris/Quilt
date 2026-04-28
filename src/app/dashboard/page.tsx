@@ -19,7 +19,7 @@ function DashboardPageContent() {
   return (
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1fr_0.7fr] lg:grid-rows-3 gap-8 min-h-0 relative pb-8">
 
-        {/* 1. DESIGN - Quarter */}
+        {/* 1. DESIGN - Left Column, Row 1 */}
         <Link
           href="/studio"
           className="bg-[var(--color-primary)] text-white border border-[var(--color-primary)] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:opacity-95 cursor-pointer h-[280px]"
@@ -45,7 +45,29 @@ function DashboardPageContent() {
           </div>
         </Link>
 
-        {/* 3. SHOP - Right Column, Double Height */}
+        {/* 2. BLOG - Middle Column, Row 1 */}
+        <Link
+          href="/blog"
+          className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
+        >
+          <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
+            <Image src="/icons/quilt-book.png" alt="Blog" fill className="object-contain" />
+          </div>
+          <div className="relative z-10 flex flex-col h-full text-left">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
+              <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Editorial</span>
+            </div>
+            <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Blog</h3>
+            <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Read tutorials, expert tips, and daily inspiration from our community.</p>
+            <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
+              <span>Get Inspired</span>
+              <ChevronRight size={14} />
+            </div>
+          </div>
+        </Link>
+
+        {/* 3. SHOP - Right Column, Double Height (Rows 1-2) */}
         <Link
           href="/shop"
           className="lg:row-span-2 bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:opacity-95"
@@ -72,29 +94,7 @@ function DashboardPageContent() {
           </div>
         </Link>
 
-        {/* 4. BLOG - Quarter */}
-        <Link
-          href="/blog"
-          className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
-        >
-          <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
-            <Image src="/icons/quilt-book.png" alt="Blog" fill className="object-contain" />
-          </div>
-          <div className="relative z-10 flex flex-col h-full text-left">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
-              <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Editorial</span>
-            </div>
-            <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Blog</h3>
-            <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Read tutorials, expert tips, and daily inspiration from our community.</p>
-            <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
-              <span>Get Inspired</span>
-              <ChevronRight size={14} />
-            </div>
-          </div>
-        </Link>
-
-        {/* 5. PICTURE BLOCKS - Quarter */}
+        {/* 4. PICTURE BLOCKS - Left Column, Row 2 */}
         <Link
           href="/picture-my-blocks"
           className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
@@ -116,7 +116,7 @@ function DashboardPageContent() {
           </div>
         </Link>
 
-        {/* 6. UPLOAD BLOCKS/FABRICS - Quarter */}
+        {/* 5. UPLOAD BLOCKS/FABRICS - Middle Column, Row 2 */}
         <Link
           href="/uploads"
           className="bg-[var(--color-accent)] text-[var(--color-text)] border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:opacity-95 h-[280px]"
