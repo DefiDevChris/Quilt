@@ -10,6 +10,8 @@ export {
   blogPostLayoutEnum,
   mobileUploadStatusEnum,
   mobileUploadTypeEnum,
+  projectModeEnum,
+  gridGranularityEnum,
 } from './enums';
 export { users } from './users';
 export { projects } from './projects';

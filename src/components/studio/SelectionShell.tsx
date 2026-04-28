@@ -155,7 +155,7 @@ export function SelectionShell({ mode }: SelectionShellProps) {
       store.setCols(preset.config.cols ?? 3);
       store.setBlockSize(preset.config.blockSize ?? 6);
       if (preset.config.sashing != null) {
-        store.setSashing({ ...store.sashing, width: preset.config.sashing });
+        store.setSashing({ ...store.sashing, ...preset.config.sashing });
       }
       if (preset.config.borders) {
         store.setBorders(preset.config.borders);

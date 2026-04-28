@@ -3,7 +3,6 @@
 import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
 import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
-import { StudioSidebar } from '@/components/layout/StudioSidebar';
 import { BrandedPage } from '@/components/layout/BrandedPage';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -38,10 +37,7 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
       <ResponsiveShell>
         <BrandedPage showMascots mascotCount={1}>
           <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="flex gap-12">
-              <StudioSidebar />
-              <main className="flex-1 min-w-0">{children}</main>
-            </div>
+            <main className="min-w-0">{children}</main>
           </div>
         </BrandedPage>
       </ResponsiveShell>
