@@ -1,551 +1,473 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { UploadCloud, Image, Sparkles, Download, Info, X } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { UploadCloud, X, Plus } from 'lucide-react';
 import { COLORS, withAlpha } from '@/lib/design-system';
-import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
+import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
+import { useToast } from '@/components/ui/ToastProvider';
 
-interface BlockResult {
-  blockName: string;
-  confidence: number;
-  description: string;
-  difficulty: string;
-  stitchCount: number;
-  sizeOptions: string[];
-  history: string;
-  tips: string[];
+interface UploadedBlock {
+  id: string;
+  name: string;
+  imageUrl: string;
+  fabricJsData?: Record<string, unknown>;
 }
 
-interface AnalysisResult {
-  blocks: BlockResult[];
-  quiltPatternNotes: string;
-  recommendedProjects: string[];
-}
+export function PictureMyBlocksApp() {
+  const [blocks, setBlocks] = useState<UploadedBlock[]>([]);
+  const [draggedBlock, setDraggedBlock] = useState<UploadedBlock | null>(null);
+  const [gridMode, setGridMode] = useState<'grid' | 'on-point'>('grid');
+  const [across, setAcross] = useState(5);
+  const [long, setLong] = useState(5);
+  const [borders, setBorders] = useState(2);
+  const [sashing, setSashing] = useState(0);
+  const [selectedFabric, setSelectedFabric] = useState<{ id: string; imageUrl: string } | null>(null);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const { toast } = useToast();
 
-interface PromptSuggestion {
-  label: string;
-  prompt: string;
-}
-
-const PROMPT_SUGGESTIONS: PromptSuggestion[] = [
-  {
-    label: 'Identify pattern',
-    prompt: 'What quilt block patterns do you see in this image? Identify the block names, quilting patterns, and any repeating motifs.',
-  },
-  {
-    label: 'Analyze fabrics',
-    prompt: 'Analyze the fabrics and color palette in this quilt. What types of fabrics are used? Describe the color story.',
-  },
-  {
-    label: 'Estimate yardage',
-    prompt:
-      'Based on what you see in this quilt, estimate the yardage needed for each fabric if making a 60x80 inch quilt.',
-  },
-];
-
-interface PictureMyBlocksAppProps {
-  isPro: boolean;
-}
-
-export function PictureMyBlocksApp({ isPro }: PictureMyBlocksAppProps) {
-  const [image, setImage] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [dragOver, dragOverSet] = useState(false);
-  const [customPrompt, setCustomPrompt] = useState('');
-  const [analysisText, setAnalysisText] = useState<string | null>(null);
-  const [showInfo, setShowInfo] = useState(false);
-  const [usageCount, setUsageCount] = useState<number | null>(null);
-  const [maxUsage, setMaxUsage] = useState<number | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
+  // Load user's uploaded blocks from API
   useEffect(() => {
-    fetch('/api/analyze-quilt-usage')
+    fetch('/api/blocks')
       .then((r) => r.json())
-      .then((d) => {
-        setUsageCount(d.usageToday ?? 0);
-        setMaxUsage(d.maxUsage ?? 5);
+      .then((data) => {
+        if (data.data) {
+          setBlocks(data.data);
+        }
       })
       .catch(() => {});
   }, []);
 
-  const handleFileSelect = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) {
-      setError('Please upload an image file.');
-      return;
-    }
-    setImageFile(file);
-    setAnalysis(null);
-    setAnalysisText(null);
-    setError(null);
-    const reader = new FileReader();
-    reader.onload = (e) => setImage(e.target?.result as string);
-    reader.readAsDataURL(file);
+  const handleBlockDragStart = useCallback((e: React.DragEvent, block: UploadedBlock) => {
+    setDraggedBlock(block);
+    e.dataTransfer.setData('application/quiltcorgi-block-id', block.id);
+    e.dataTransfer.effectAllowed = 'copy';
+  }, []);
+
+  const handleFabricDragStart = useCallback((e: React.DragEvent, fabric: { id: string; imageUrl: string }) => {
+    setSelectedFabric(fabric);
+    e.dataTransfer.setData('application/quiltcorgi-fabric-id', fabric.id);
+    e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
   const handleDrop = useCallback(
-    (e: React.DragEvent) => {
+    async (e: React.DragEvent, cellIndex: number) => {
       e.preventDefault();
-      dragOverSet(false);
-      const file = e.dataTransfer.files[0];
-      if (file) handleFileSelect(file);
+      const blockId = e.dataTransfer.getData('application/quiltcorgi-block-id');
+      if (!blockId) return;
+
+      const block = blocks.find((b) => b.id === blockId);
+      if (!block) return;
+
+      // Update the cell with the dropped block
+      setCells((prev) => {
+        const newCells = [...prev];
+        newCells[cellIndex] = { ...newCells[cellIndex], block };
+        return newCells;
+      });
+
+      toast({
+        type: 'success',
+        title: 'Block placed',
+        description: `${block.name} has been added to the quilt.`,
+      });
     },
-    [handleFileSelect]
+    [blocks, toast]
   );
 
-  const handleAnalyze = useCallback(
-    async (prompt?: string) => {
-      if (!imageFile) return;
-      setIsAnalyzing(true);
-      setError(null);
-      setAnalysis(null);
-      setAnalysisText(null);
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, []);
+
+  // Calculate total cells based on across and long
+  const totalCells = across * long;
+
+  // Initialize cells array
+  const [cells, setCells] = useState<Array<{ block: UploadedBlock | null }>>([]);
+
+  useEffect(() => {
+    setCells(Array.from({ length: totalCells }, () => ({ block: null })));
+  }, [totalCells]);
+
+  const handleUploadBlock = useCallback(() => {
+    setShowUploadDialog(true);
+  }, []);
+
+  const handleFileSelect = useCallback(
+    async (file: File) => {
+      if (!file.type.startsWith('image/')) {
+        toast({
+          type: 'error',
+          title: 'Invalid file',
+          description: 'Please upload an image file.',
+        });
+        return;
+      }
 
       const formData = new FormData();
-      formData.append('image', imageFile);
-      if (prompt) formData.append('prompt', prompt);
+      formData.append('image', file);
+      formData.append('name', file.name.replace(/\.[^/.]+$/, ''));
 
       try {
-        const res = await fetch('/api/analyze-quilt', {
+        const res = await fetch('/api/blocks', {
           method: 'POST',
           body: formData,
         });
         const data = await res.json();
 
         if (!res.ok) {
-          setError(data.error ?? 'Analysis failed. Please try again.');
-          return;
+          throw new Error(data.error ?? 'Upload failed');
         }
 
-        if (data.analysis) {
-          setAnalysis(data.analysis);
-        } else if (data.text) {
-          setAnalysisText(data.text);
-        }
+        const newBlock: UploadedBlock = {
+          id: data.data.id,
+          name: data.data.name,
+          imageUrl: data.data.imageUrl,
+          fabricJsData: data.data.fabricJsData,
+        };
 
-        if (data.usageToday != null) setUsageCount(data.usageToday);
+        setBlocks((prev) => [...prev, newBlock]);
+        setShowUploadDialog(false);
+
+        toast({
+          type: 'success',
+          title: 'Block uploaded',
+          description: `${newBlock.name} has been added to your library.`,
+        });
       } catch {
-        setError('Something went wrong. Please try again.');
-      } finally {
-        setIsAnalyzing(false);
+        toast({
+          type: 'error',
+          title: 'Upload failed',
+          description: 'Something went wrong. Please try again.',
+        });
       }
     },
-    [imageFile]
+    [toast]
   );
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ background: `linear-gradient(180deg, ${COLORS.surface} 0%, ${COLORS.bg} 100%)` }}
-    >
-      <div className="max-w-5hl mx-auto px-4 pt-10">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <h1
-              className="text-4xl md:text-5xl font-bold"
-              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
-            >
-              Picture my Blocks
-            </h1>
-            <button
-              onClick={() => setShowInfo(!true)}
-              style={{ color: COLORS.textDim }}
-              title="About this tool"
-            >
-              <Info size={20} />
-            </button>
-          </div>
-          <p className="text-lg" style={{ color: COLORS.textDim }}>
-            Upload a quilt photo and AI identifies the block patterns for you.
-          </p>
-
-          {/* Usage Indicator */}
-          {usageCount !== null && maxUsage !== null && !isPro && (
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <span className="text-sm" style={{ color: COLORS.textDim }}>
-                {usageCount}/{maxUsage} analyses today
-              </span>
-              {usageCount >= maxUsage && !isPro && (
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full"
-                  style={{
-                    backgroundColor: withAlpha(COLORS.warning, 0.15),
-                    color: COLORS.warning,
-                  }}
-                >
-                  Daily limit reached
-                </span>
-              )}
-            </div>
-          )}
+    <div className="flex h-screen flex-col" style={{ background: COLORS.bg }}>
+      {/* Top Bar */}
+      <header
+        className="h-12 flex items-center justify-between px-4 border-b flex-shrink-0"
+        style={{
+          backgroundColor: COLORS.surface,
+          borderColor: withAlpha(COLORS.border, 0.15),
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[14px] text-[var(--color-text)]/70 hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path
+                d="M9 3L5 7L9 11"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Dashboard
+          </button>
+          <h1 className="font-semibold text-[15px]" style={{ color: COLORS.text }}>
+            Picture My Blocks
+          </h1>
         </div>
 
-        {/* Info Modal */}
-        {showInfo && (
-          <div
-            className="mb-8 rounded-xl p-6 border"
-            style={{
-              backgroundColor: withAlpha(COLORS.primary, 0.05),
-              borderColor: withAlpha(COLORS.primary, 0.2),
-            }}
-          >
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold" style={{ color: COLORS.text }}>
-                How Picture my Blocks Works
-              </h3>
-              <button onClick={() => setShowInfo(false)} style={{ color: COLORS.textDim }}>
-                <X size={16} />
-              </button>
-            </div>
-            <ul className="space-y-2 text-sm" style={{ color: COLORS.textDim }}>
-              <li>• Upload any quilt photo &amp; our AI identifies the block patterns</li>
-              <li>• Get block names, history, difficulty levels, and sewing tips</li>
-              <li>• Ask custom questions about the quilt image</li>
-              <li>• Free users get {maxUsage} analyses/day | Pro users get unlimited access</li>
-            </ul>
+        {/* Grid Controls */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium" style={{ color: COLORS.textDim }}>
+              Grid
+            </span>
+            <button
+              onClick={() => setGridMode('grid')}
+              className={`px-2 py-1 text-xs rounded ${
+                gridMode === 'grid'
+                  ? 'bg-primary/12 text-primary ring-1 ring-primary/30'
+                  : 'text-[var(--color-text-dim)]/50 hover:text-[var(--color-text)]'
+              }`}
+            >
+              On
+            </button>
+            <button
+              onClick={() => setGridMode('on-point')}
+              className={`px-2 py-1 text-xs rounded ${
+                gridMode === 'on-point'
+                  ? 'bg-primary/12 text-primary ring-1 ring-primary/30'
+                  : 'text-[var(--color-text-dim)]/50 hover:text-[var(--color-text)]'
+              }`}
+            >
+              Point
+            </button>
           </div>
-        )}
 
-        {/* Pro Upgrade Banner */}
-        {!isPro && usageCount !== null && maxUsage !== null && usageCount >= maxUsage && (
-          <div
-            className="mb-8 rounded-xl p-6 border text-center"
-            style={{
-              backgroundColor: withAlpha(COLORS.primary, 0.05),
-              borderColor: withAlpha(COLORS.primary, 0.2),
-            }}
-          >
-            <p className="font-semibold mb-2" style={{ color: COLORS.text }}>
-              You&apos;ve reached your daily limit
-            </p>
-            <p className="text-sm mb-4" style={{ color: COLORS.textDim }}>
-              Upgrade to Pro for unlimited analyses and more.
-            </p>
-            <ProUpgradeButton variant="standalone" />
+          <div className="flex items-center gap-2">
+            <label className="text-xs" style={{ color: COLORS.textDim }}>
+              Across
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              value={across}
+              onChange={(e) => setAcross(Math.max(1, Math.min(10, parseInt(e.target.value) || 1)))}
+              className="w-12 px-2 py-1 text-sm border rounded"
+              style={{
+                backgroundColor: COLORS.surface,
+                borderColor: withAlpha(COLORS.border, 0.6),
+                color: COLORS.text,
+              }}
+            />
           </div>
-         )}
 
-        {/* Upload Area */}
-        <div className="flex flex-col lg:flex-row gap-8 mb-8">
-          {/* Left: Image Uploader */}
-          <div className="lg:w-2/5 flex-shrink-0">
-            {image ? (
-              <div className="relative rounded-2xl overflow-hidden shadow-lg">
-                <img
-                  src={image}
-                  alt="Uploaded quilt"
-                  className="w-full object-cover max-h-[480px]"
-                  style={{ aspectRatio: '3/4' }}
-                />
-                <button
-                  onClick={() => {
-                    setImage(null);
-                    setImageFile(null);
-                    setAnalysis(null);
-                    setAnalysisText(null);
-                    setError(null);
-                  }}
-                  className="absolute top-3 right-3 rounded-full p-2.5 shadow-md"
-                  style={{
-                    backgroundColor: COLORS.surface,
-                    color: COLORS.text,
-                  }}
-                >
-                  <X size={16} />
-                </button>
+          <div className="flex items-center gap-2">
+            <label className="text-xs" style={{ color: COLORS.textDim }}>
+              Long
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              value={long}
+              onChange={(e) => setLong(Math.max(1, Math.min(10, parseInt(e.target.value) || 1)))}
+              className="w-12 px-2 py-1 text-sm border rounded"
+              style={{
+                backgroundColor: COLORS.surface,
+                borderColor: withAlpha(COLORS.border, 0.6),
+                color: COLORS.text,
+              }}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs" style={{ color: COLORS.textDim }}>
+              Borders (″)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="24"
+              value={borders}
+              onChange={(e) => setBorders(Math.max(0, Math.min(24, parseFloat(e.target.value) || 0)))}
+              className="w-14 px-2 py-1 text-sm border rounded"
+              style={{
+                backgroundColor: COLORS.surface,
+                borderColor: withAlpha(COLORS.border, 0.6),
+                color: COLORS.text,
+              }}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label className="text-xs" style={{ color: COLORS.textDim }}>
+              Sashing (″)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="12"
+              value={sashing}
+              onChange={(e) => setSashing(Math.max(0, Math.min(12, parseFloat(e.target.value) || 0)))}
+              className="w-14 px-2 py-1 text-sm border rounded"
+              style={{
+                backgroundColor: COLORS.surface,
+                borderColor: withAlpha(COLORS.border, 0.6),
+                color: COLORS.text,
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="w-20" /> {/* Spacer for balance */}
+      </header>
+
+      {/* Main Content Area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Panel - Blocks Library */}
+        <aside
+          className="w-[320px] flex-shrink-0 flex flex-col border-r overflow-hidden"
+          style={{
+            backgroundColor: COLORS.surface,
+            borderColor: withAlpha(COLORS.border, 0.15),
+          }}
+        >
+          <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: withAlpha(COLORS.border, 0.4) }}>
+            <h2 className="text-sm font-semibold" style={{ color: COLORS.text }}>
+              My Blocks
+            </h2>
+            <button
+              onClick={handleUploadBlock}
+              className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-primary/15 text-primary hover:bg-primary/25 transition-colors"
+            >
+              <Plus size={14} />
+              Upload
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-3">
+            {blocks.length === 0 ? (
+              <div className="text-center py-8">
+                <UploadCloud size={32} style={{ color: COLORS.textDim, opacity: 0.5 }} className="mx-auto mb-2" />
+                <p className="text-sm" style={{ color: COLORS.textDim }}>
+                  No blocks yet
+                </p>
+                <p className="text-xs mt-1" style={{ color: COLORS.textDim }}>
+                  Upload your first block to get started
+                </p>
               </div>
             ) : (
-              <div
-                className="flex flex-col items-center justify-center w-full rounded-2xl border-2 border-dashed cursor-pointer transition-colors max-h-[480px] py-16"
-                style={{
-                  borderColor: dragOver
-                    ? COLORS.primary
-                    : withAlpha(COLORS.border, 0.5),
-                  backgroundColor: dragOver
-                    ? withAlpha(COLORS.primary, 0.05)
-                    : 'transparent',
-                }}
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  dragOverSet(true);
-                }}
-                onDragLeave={() => dragOverSet(false)}
-                onDrop={handleDrop}
-              >
-                <div
-                  className="p-4 rounded-2xl mb-4"
-                  style={{ backgroundColor: withAlpha(COLORS.primary, 0.1) }}
-                >
-                  <UploadCloud size={32} style={{ color: COLORS.primary }} />
-                </div>
-                <p className="font-semibold mb-1" style={{ color: COLORS.text }}>
-                  Drop your quilt photo here
-                </p>
-                <p className="text-sm" style={{ color: COLORS.textDim }}>
-                  or click to browse
-                </p>
-                <p className="mt-3 text-xs" style={{ color: COLORS.textDim }}>
-                  JPEG, PNG, WEBP &amp; GIF supported
-                </p>
+              <div className="grid grid-cols-2 gap-2">
+                {blocks.map((block) => (
+                  <div
+                    key={block.id}
+                    draggable
+                    onDragStart={(e) => handleBlockDragStart(e, block)}
+                    className="aspect-square rounded-lg border cursor-grab active:cursor-grabbing overflow-hidden hover:shadow-md transition-shadow"
+                    style={{
+                      backgroundColor: COLORS.surface,
+                      borderColor: withAlpha(COLORS.border, 0.6),
+                    }}
+                  >
+                    <img src={block.imageUrl} alt={block.name} className="w-full h-full object-cover" />
+                  </div>
+                ))}
               </div>
             )}
+          </div>
+        </aside>
+
+        {/* Center Canvas */}
+        <main className="flex-1 overflow-auto p-8" style={{ backgroundColor: COLORS.bg }}>
+          <div
+            className="mx-auto border shadow-lg"
+            style={{
+              backgroundColor: selectedFabric?.imageUrl
+                ? undefined
+                : withAlpha(COLORS.border, 0.1),
+              backgroundImage: selectedFabric?.imageUrl ? `url(${selectedFabric.imageUrl})` : undefined,
+              backgroundSize: 'cover',
+              maxWidth: '100%',
+            }}
+          >
+            <div
+              className="grid gap-0"
+              style={{
+                gridTemplateColumns: `repeat(${across}, 1fr)`,
+                gap: sashing > 0 ? `${sashing * 4}px` : '0',
+                padding: borders > 0 ? `${borders * 4}px` : '0',
+              }}
+            >
+              {cells.map((cell, index) => (
+                <div
+                  key={index}
+                  onDrop={(e) => handleDrop(e, index)}
+                  onDragOver={handleDragOver}
+                  className={`aspect-square border-2 flex items-center justify-center transition-colors ${
+                    cell.block ? 'border-transparent' : 'border-dashed'
+                  }`}
+                  style={{
+                    borderColor: cell.block ? 'transparent' : withAlpha(COLORS.primary, 0.3),
+                    backgroundColor: cell.block ? 'transparent' : withAlpha(COLORS.primary, 0.05),
+                  }}
+                >
+                  {cell.block ? (
+                    <div className="w-full h-full relative group">
+                      <img
+                        src={cell.block.imageUrl}
+                        alt={cell.block.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        onClick={() => {
+                          setCells((prev) => {
+                            const newCells = [...prev];
+                            newCells[index] = { block: null };
+                            return newCells;
+                          });
+                        }}
+                        className="absolute top-1 right-1 p-1 rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="text-xs" style={{ color: COLORS.textDim }}>
+                      Drop block here
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
+
+        {/* Right Panel - Fabric Library */}
+        <aside
+          className="w-[320px] flex-shrink-0 flex flex-col border-l overflow-hidden"
+          style={{
+            backgroundColor: COLORS.surface,
+            borderColor: withAlpha(COLORS.border, 0.15),
+          }}
+        >
+          <div className="p-3 border-b" style={{ borderColor: withAlpha(COLORS.border, 0.4) }}>
+            <h2 className="text-sm font-semibold" style={{ color: COLORS.text }}>
+              Fabric Library
+            </h2>
+            <p className="text-xs mt-1" style={{ color: COLORS.textDim }}>
+              Drag fabrics to apply to borders and sashing
+            </p>
+          </div>
+          <div className="flex-1 overflow-y-auto p-3">
+            <FabricLibrary onFabricDragStart={handleFabricDragStart} />
+          </div>
+        </aside>
+      </div>
+
+      {/* Upload Dialog */}
+      {showUploadDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div
+            className="rounded-xl p-6 w-full max-w-md"
+            style={{ backgroundColor: COLORS.surface }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold" style={{ color: COLORS.text }}>
+                Upload Block
+              </h3>
+              <button onClick={() => setShowUploadDialog(false)} style={{ color: COLORS.textDim }}>
+                <X size={20} />
+              </button>
+            </div>
+            <div
+              className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer"
+              style={{
+                borderColor: withAlpha(COLORS.border, 0.5),
+              }}
+              onClick={() => document.getElementById('block-upload-input')?.click()}
+            >
+              <UploadCloud size={32} style={{ color: COLORS.primary }} className="mx-auto mb-2" />
+              <p className="text-sm font-medium" style={{ color: COLORS.text }}>
+                Click to upload or drag and drop
+              </p>
+              <p className="text-xs mt-1" style={{ color: COLORS.textDim }}>
+                PNG, JPG, or WEBP
+              </p>
+            </div>
             <input
-              ref={fileInputRef}
+              id="block-upload-input"
               type="file"
               accept="image/*"
-              className="sr-only"
+              className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) handleFileSelect(file);
               }}
             />
           </div>
-
-          {/* Right: Analysis Controls */}
-          <div className="flex-1">
-            {/* Analyze Button */}
-            <button
-              onClick={() => handleAnalyze()}
-              disabled={!imageFile || isAnalyzing || (usageCount != null && maxUsage != null && usageCount >= maxUsage && !isPro)}
-              className="wWfull rounded-xl py-4 font-semibold text-lg mb-6 flex items-center justify-center gap-2 transition-all shadow-md"
-              style={{
-                backgroundColor:
-                  !imageFile || isAnalyzing
-                    ? withAlpha(COLORS.primary, 0.4)
-                    : COLORS.primary,
-                color: COLORS.text,
-                cursor: !imageFile || isAnalyzing ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {isAnalyzing ? (
-                <>
-                  <div className="w-5 h-5 rounded-full animate-spin border-2 border-transparent border-t-white" />
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  <Sparkles size={20} />
-                  Identify Blocks
-                </>
-              )}
-            </button>
-
-            {/* Prompt Suggestions */}
-            {imageFile && (
-              <div className="mb-6">
-                <p className="text-xs font-medium mb-2 uppercase tracking-wider" style={{ color: COLORS.textDim }}>
-                  Quick Analyses
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {PROMPT_SUGGESTIONS.map((suggestion) => (
-                    <button
-                      key={suggestion.label}
-                      onClick={() => handleAnalyze(suggestion.prompt)}
-                      disabled={isAnalyzing}
-                      className="px-3 py-1.5 rounded-full text-sm border transition-colors"
-                      style={{
-                        backgroundColor: withAlpha(COLORS.primary, 0.08),
-                        borderColor: withAlpha(COLORS.primary, 0.3),
-                        color: COLORS.primary,
-                      }}
-                    >
-                      {suggestion.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Custom Question Input */}
-            {imageFile && (
-              <div className="space-y-3">
-                <p
-                  className="text-xs font-medium mb-2 uppercase tracking-wider"
-                  style={{ color: COLORS.textDim }}
-                >
-                  Or ask a custom question
-                </p>
-                <textarea
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
-                  placeholder="E.g. 'What sewing techniques would help me replicate this quilt?'"
-                  rows={3}
-                  className="w-full rounded-xl p-4 text-sm resize-none border transition-border"
-                  style={{
-                    backgroundColor: COLORS.surface,
-                    borderColor: withAlpha(COLORS.border, 0.6),
-                    color: COLORS.text,
-                  }}
-                />
-                <button
-                  onClick={() => {
-                    handleAnalyze(customPrompt || undefined);
-                  }}
-                  disabled={!imageFile || isAnalyzing || (usageCount != null && maxUsage != null && usageCount >= maxUsage && !isPro)}
-                  className="w-full py-3 rounded-xl font-medium transition-colors"
-                  style={{
-                    backgroundColor: withAlpha(COLORS.primary, 0.15),
-                    color: COLORS.primary,
-                  }}
-                >
-                  Ask AI
-                </button>
-              </div>
-            )}
-
-            {/* Error Display */}
-            {error && (
-              <div
-                className="rounded-xl p-4 border mt-4"
-                style={{
-                  backgroundColor: withAlpha(COLORS.error, 0.05),
-                  borderColor: withAlpha(COLORS.error, 0.2),
-                  color: COLORS.error,
-                }}
-              >
-                <p className="text-sm">{error}</p>
-              </div>
-            )}
-          </div>
         </div>
-
-        {/* Analysis Results */}
-        {(analysis || analysisText) && (
-          <div className="mb-16">
-            {analysisText && (
-              <div
-                className="rounded-xl p-6 mb-6 border"
-                style={{
-                  backgroundColor: COLORS.surface,
-                  borderColor: withAlpha(COLORS.border, 0.6),
-                }}
-              >
-                <h3 className="font-semibold mb-3" style={{ color: COLORS.text }}>
-                  Analysis Results
-                </h3>
-                <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: COLORS.text }}>
-                  {analysisText}
-                </p>
-              </div>
-            )}
-
-            {analysis && analysis.blocks.map((block, idx) => (
-              <div
-                key={idx}
-                className="rounded-xl p-6 mb-5 border"
-                style={{
-                  backgroundColor: COLORS.surface,
-                  borderColor: withAlpha(COLORS.border, 0.6),
-                }}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h2
-                      className="text-2xl font-bold mb-1"
-                      style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
-                    >
-                      {block.blockName}
-                    </h2>
-                    <span
-                      className="inline-block text-xs px-2 py-0.5 rounded-full mb-3"
-                      style={{
-                        backgroundColor: withAlpha(COLORS.primary, 0.1),
-                        color: COLORS.primary,
-                      }}
-                    >
-                      {Math.round(block.confidence * 100)}% confidence
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span
-                      className="text-xs px-3 py-1 rounded-full font-medium"
-                      style={{
-                        backgroundColor: withAlpha(COLORS.secondary, 0.2),
-                        color: COLORS.textDim,
-                      }}
-                    >
-                      {block.difficulty}
-                    </span>
-                  </div>
-                </div>
-
-                <p className="text-sm leading-relaxed mb-4" style={{ color: COLORS.textDim }}>
-                  {block.description}
-                </p>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <h4
-                      className="text-xs font-medium uppercase tracking-wider mb-2"
-                      style={{ color: COLORS.textDim }}
-                    >
-                      History & Background
-                    </h4>
-                    <p className="text-sm leading-relaxed" style={{ color: COLORS.text }}>
-                      {block.history}
-                    </p>
-                  </div>
-                  <div>
-                    <h4
-                      className="text-xs font-medium uppercase tracking-wider mb-2"
-                      style={{ color: COLORS.textDim }}
-                    >
-                      Sewing Tips
-                    </h4>
-                    <ul className="space-y-1">
-                      {block.tips.map((tip, i) => (
-                        <li key={i} className="text-sm flex items-start gap-2">
-                          <span style={{ color: COLORS.primary }}>•</span>
-                          <span style={{ color: COLORS.text }}>{tip}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {/* Export Button */}
-            <button
-              onClick={() => {
-                const blob = new Blob(
-                  [
-                    analysisText ||
-                      (analysis?.blocks || [])
-                        .map(
-                          (b) =>
-                            `# ${b.blockName}\nConfidence: ${Math.round(b.confidence * 100)}%\nDifficulty: ${b.difficulty}\nDescription: ${b.description}\nHistory: ${b.history}\nTips:\n${b.tips.map((t) => `- ${t}`).join('\n')}`
-                        )
-                        .join('\n\n---\n\n'),
-                  ],
-                  { type: 'text/plain' }
-                );
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'quilt-analysis.txt';
-                a.click();
-                URL.revokeObjectURL(url);
-              }}
-              className="flex items-center gap-2 text-sm font-medium transition-colors mt-6"
-              style={{ color: COLORS.textDim }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = COLORS.primary;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = COLORS.textDim;
-              }}
-            >
-              <Download size={16} />
-              Download Results
-            </button>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

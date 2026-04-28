@@ -4,19 +4,17 @@ import { PictureMyBlocksApp } from '@/components/picture-my-blocks/PictureMyBloc
 export const metadata: Metadata = {
   title: 'Picture my Blocks — QuiltCorgi',
   description:
-    'Take pictures of your finished quilt blocks, drop them into a layout, pick a background fabric, and see your quilt before you sew it.',
+    'Design a quilt with your uploaded blocks. Drag blocks onto a customizable grid and preview with fabrics.',
 };
 
 import PublicNav from '@/components/landing/PublicNav';
 
 export default function PictureMyBlocksPage() {
-  // The public page surfaces the free-tier behaviour. Pro detection is
-  // re-checked client-side once the user signs in.
   return (
     <div className="min-h-screen flex flex-col">
       <PublicNav />
       <main className="flex-1">
-        <PictureMyBlocksApp isPro={false} />
+        <PictureMyBlocksApp />
       </main>
     </div>
   );
