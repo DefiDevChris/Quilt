@@ -108,9 +108,9 @@ function DashboardPageContent() {
               <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Visualizer</span>
             </div>
             <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Picture My Blocks</h3>
-            <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Upload photos for automatic color matching and block visualization.</p>
+            <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Design a quilt with your uploaded blocks. Drag blocks onto a customizable grid and preview with fabrics.</p>
             <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
-              <span>Match Fabrics</span>
+              <span>Start Designing</span>
               <ChevronRight size={14} />
             </div>
           </div>
