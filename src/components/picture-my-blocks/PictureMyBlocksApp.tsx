@@ -30,11 +30,15 @@ export function PictureMyBlocksApp() {
     fetch('/api/blocks')
       .then((r) => r.json())
       .then((data) => {
-        if (data.data) {
+        if (data.data && Array.isArray(data.data)) {
           setBlocks(data.data);
+        } else {
+          setBlocks([]);
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        setBlocks([]);
+      });
   }, []);
 
   const handleBlockDragStart = useCallback((e: React.DragEvent, block: UploadedBlock) => {
