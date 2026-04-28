@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { useAuthStore } from '@/stores/authStore';
 import { useShopEnabled } from '@/hooks/useShopEnabled';
 import { SHADOW } from '@/lib/design-system';
+import Mascot from '@/components/landing/Mascot';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 
 export default function PublicNav() {
   const user = useAuthStore((s) => s.user);
@@ -23,57 +25,33 @@ export default function PublicNav() {
   }, []);
 
   return (
-    <header
-      className="sticky top-0 z-50 bg-surface transition-colors duration-150"
-      style={{
-        boxShadow: scrolled ? SHADOW.brand : 'none',
-        borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid transparent',
-      }}
-    >
-      <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12 py-3">
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/logo.png"
-            alt="QuiltCorgi Logo"
-            width={40}
-            height={40}
-            unoptimized
-            className="object-contain"
-          />
-          <span
-            className="text-2xl font-bold text-default"
-            style={{ fontFamily: 'var(--font-heading)' }}
-          >
-            QuiltCorgi
-          </span>
-        </Link>
+    <header className="sticky top-0 z-50 h-20 px-12 flex items-center justify-between shrink-0 bg-white border-b border-black/[0.04]">
+        <BrandLogo href="/" />
 
-        <div className="hidden lg:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-text)]/30">
           {shopEnabled && (
             <Link
               href="/shop"
-              className="text-dim hover:text-primary transition-colors duration-150 font-medium"
+              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
             >
               Shop
             </Link>
           )}
           <Link
             href="/design-studio"
-            className="text-dim hover:text-primary transition-colors duration-150 font-medium"
+            className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
           >
             Design Studio
           </Link>
           <Link
             href="/picture-my-blocks"
-            className="text-dim hover:text-primary transition-colors duration-150 font-medium"
+            className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
           >
             Picture my Blocks
           </Link>
           <a
             href="/blog"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-dim hover:text-primary transition-colors duration-150 font-medium"
+            className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
           >
             Blog
           </a>
@@ -81,25 +59,25 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="px-6 py-2 bg-primary text-default rounded-full font-semibold hover:bg-primary-dark transition-colors duration-150 whitespace-nowrap"
+              className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-1.5 text-[9px] uppercase tracking-[0.2em] font-bold text-black hover:bg-black/5 transition-colors"
             >
-              Go to Dashboard
+              Dashboard
             </Link>
           ) : (
-            <>
+            <div className="flex items-center gap-4">
               <Link
                 href="/auth/signin"
-                className="text-dim hover:text-primary transition-colors duration-150 font-medium"
+                className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth/signup"
-                className="px-6 py-2 bg-primary text-default rounded-full font-semibold hover:bg-primary-dark transition-colors duration-150 whitespace-nowrap"
+                className="flex items-center gap-2 rounded-full border border-black/10 bg-[var(--color-primary)] px-4 py-1.5 text-[9px] uppercase tracking-[0.2em] font-bold text-white hover:bg-[var(--color-primary)]/90 transition-colors"
               >
                 Start Designing
               </Link>
-            </>
+            </div>
           )}
         </div>
 
@@ -125,10 +103,9 @@ export default function PublicNav() {
               />
             )}
           </svg>
-        </button>
-      </nav>
+</button>
 
-      {menuOpen && (
+{menuOpen && (
         <div className="lg:hidden border-t border-default bg-surface px-6 py-4 space-y-3">
           {shopEnabled && (
             <Link

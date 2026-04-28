@@ -6,9 +6,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
+import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
 import { useShopEnabled } from '@/hooks/useShopEnabled';
 import { useCartStore } from '@/stores/cartStore';
 import { CartDrawer } from '@/components/shop/CartDrawer';
+import Mascot from '@/components/landing/Mascot';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 import { ShoppingBag, Plus, Clock, Scissors, Camera, Settings } from 'lucide-react';
 import { logout } from '@/lib/logout';
 
@@ -73,6 +76,7 @@ export function AppShell({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isProModalOpen, setIsProModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
@@ -107,35 +111,23 @@ export function AppShell({
   return (
     <div className="h-screen bg-[var(--color-bg)] text-black selection:bg-[var(--color-accent)] font-sans flex flex-col overflow-hidden antialiased relative">
       <header className="h-20 px-12 flex items-center justify-between shrink-0 bg-white border-b border-black/[0.04] z-50">
-        <Link href="/dashboard" className="flex items-center gap-3 cursor-pointer group">
-          <div className="w-10 h-10 flex items-center justify-center bg-[var(--color-bg)] rounded-lg text-[var(--color-primary)] transition-quilt">
-            <Image
-              src="/logo.png"
-              alt="QuiltCorgi"
-              width={32}
-              height={32}
-              className="object-contain"
-            />
-          </div>
-          <h1 className="font-sans text-2xl font-black tracking-tight text-black leading-none">
-            QuiltCorgi
-          </h1>
-        </Link>
+        <BrandLogo href="/dashboard" />
 
         <div className="flex items-center gap-10" ref={dropdownRef}>
-          <div className="hidden lg:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-black/30">
+          <div className="hidden lg:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-text)]/30">
             <Link
               href="/blog"
               className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
             >
               Blog
             </Link>
-            <Link
-              href="/projects"
+            <button
+              type="button"
+              onClick={() => setIsProModalOpen(true)}
               className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
             >
               QuiltCorgi Pro
-            </Link>
+            </button>
             <Link
               href="/settings"
               className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
@@ -165,23 +157,13 @@ export function AppShell({
                 aria-haspopup="true"
                 className="w-10 h-10 rounded-full bg-[var(--color-secondary)] border-2 border-white shadow-[var(--shadow-quilt)] overflow-hidden shrink-0 hover:opacity-80 transition-quilt"
               >
-                {user?.image ? (
-                  <Image
-                    src={user.image}
-                    alt={user.name}
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <Image
-                    src="/mascots&avatars/corgi1.png"
-                    alt="Default Avatar"
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-cover scale-110 translate-y-1"
-                  />
-                )}
+                <Image
+                  src="/mascots&avatars/corgi29.png"
+                  alt={user?.name || "User Avatar"}
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover scale-110 translate-y-1"
+                />
               </button>
 
               {dropdownOpen && (
@@ -192,13 +174,8 @@ export function AppShell({
                     </p>
                     <p className="text-xs text-black/40 truncate">{user?.email}</p>
                   </div>
-                  <Link
-                    href="/profile"
-                    className="block px-4 py-2 text-sm text-black/60 hover:bg-[var(--color-bg)] transition-quilt"
-                    onClick={() => setDropdownOpen(false)}
-                  >
-                    Profile
-                  </Link>
+
+
                   {user?.role === 'free' && (
                     <div className="px-4 py-2">
                       <ProUpgradeButton variant="nav" />
@@ -220,12 +197,6 @@ export function AppShell({
             </>
           ) : (
             <div className="flex items-center gap-4">
-              <Link
-                href="/auth/signin"
-                className="text-[11px] tracking-[0.15em] text-black/40 hover:text-black transition-quilt font-bold uppercase"
-              >
-                Sign In
-              </Link>
               <Link
                 href="/auth/signup"
                 className="bg-[var(--color-primary)] text-black px-5 py-2 rounded-full text-[11px] tracking-[0.1em] font-bold uppercase hover:opacity-90 transition-quilt shadow-[var(--shadow-quilt)]"
@@ -286,6 +257,7 @@ export function AppShell({
       </div>
 
       <CartDrawer />
+      {isProModalOpen && <ProUpgradeModal onClose={() => setIsProModalOpen(false)} />}
     </div>
   );
 }

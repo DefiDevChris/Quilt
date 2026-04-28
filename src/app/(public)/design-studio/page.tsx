@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Palette, Share2, Printer, Layers } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronRight, Play, Star, Sparkles, Layers, Palette, Share2, Printer } from 'lucide-react';
 import { COLORS } from '@/lib/design-system';
+import Mascot from '@/components/landing/Mascot';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'QuiltCorgi';
 
@@ -30,48 +32,29 @@ export default function DesignStudioLandingPage() {
         }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logo.png"
-              alt="QuiltCorgi Logo"
-              width={40}
-              height={40}
-              unoptimized
-              className="object-contain"
-            />
-            <span
-              className="text-2xl font-bold tracking-tight"
-              style={{ fontFamily: 'var(--font-heading)', color: COLORS.text }}
-            >
-              QuiltCorgi
-            </span>
-          </Link>
+          <BrandLogo href="/" />
 
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-black/40">
             <Link
               href="/shop"
-              className="text-sm font-semibold hover:text-[var(--color-primary)] transition-colors"
-              style={{ color: COLORS.textDim }}
+              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
             >
-              Shop Fabrics
+              Shop
             </Link>
             <Link
               href="/help"
-              className="text-sm font-semibold hover:text-[var(--color-primary)] transition-colors"
-              style={{ color: COLORS.textDim }}
+              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
             >
               Guides
             </Link>
-            <div className="mx-2 h-4 w-px bg-[var(--color-border)]" />
             <Link
               href="/auth/signin"
-              className="text-sm font-semibold hover:text-[var(--color-primary)] transition-colors"
-              style={{ color: COLORS.textDim }}
+              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
             >
               Sign In
             </Link>
-            <Link href="/auth/signup" className="btn-primary-sm">
-              Start Designing
+            <Link href="/auth/signup" className="bg-[var(--color-primary)] text-white px-5 py-2 rounded-full text-[10px] uppercase tracking-[0.2em] font-black hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[var(--color-primary)]/20">
+              Get Started
             </Link>
           </nav>
         </div>

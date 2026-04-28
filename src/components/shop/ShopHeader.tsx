@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, User, ShoppingBag, Menu, X, Palette } from 'lucide-react';
 import { COLORS } from '@/lib/design-system';
 import { useCartStore } from '@/stores/cartStore';
+import { BrandLogo } from '@/components/layout/BrandLogo';
 import Mascot from '@/components/landing/Mascot';
 
 const navLinks = [
@@ -38,17 +40,7 @@ export default function ShopHeader() {
         <div className="flex justify-between items-center gap-8">
           {/* Logo */}
           <div className="flex items-center shrink-0">
-            <Link
-              href="/shop"
-              className="flex items-center gap-2 text-4xl font-bold"
-              style={{
-                fontFamily: 'var(--font-heading)',
-                color: COLORS.primary,
-              }}
-            >
-              <Mascot size="xs" pose="sitting" />
-              QuiltCorgi
-            </Link>
+            <BrandLogo href="/shop" />
           </div>
 
           {/* Search Bar */}

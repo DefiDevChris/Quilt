@@ -163,12 +163,12 @@ export function PictureMyBlocksApp({ isPro }: PictureMyBlocksAppProps) {
           </p>
 
           {/* Usage Indicator */}
-          {usageCount !== null && maxUsage !== null && !(isPro && maxUsage === Math.max) && (
+          {usageCount !== null && maxUsage !== null && !isPro && (
             <div className="mt-4 flex items-center justify-center gap-2">
               <span className="text-sm" style={{ color: COLORS.textDim }}>
                 {usageCount}/{maxUsage} analyses today
               </span>
-              {usageCount >= maxUsage && !(isPro && maxUsage === Math.max) && (
+              {usageCount >= maxUsage && !isPro && (
                 <span
                   className="text-xs px-2 py-0.5 rounded-full"
                   style={{
@@ -515,7 +515,7 @@ export function PictureMyBlocksApp({ isPro }: PictureMyBlocksAppProps) {
                 const blob = new Blob(
                   [
                     analysisText ||
-                      analysis.blocks
+                      (analysis?.blocks || [])
                         .map(
                           (b) =>
                             `# ${b.blockName}\nConfidence: ${Math.round(b.confidence * 100)}%\nDifficulty: ${b.difficulty}\nDescription: ${b.description}\nHistory: ${b.history}\nTips:\n${b.tips.map((t) => `- ${t}`).join('\n')}`

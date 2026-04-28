@@ -106,6 +106,15 @@
            hover:border-[var(--color-primary-hover)] hover:bg-[var(--color-surface)];
   }
 
+  .btn-secondary-sm {
+    @apply inline-flex items-center justify-center px-3 py-1.5
+           rounded-lg font-medium text-xs
+           bg-[var(--color-secondary)] text-[var(--color-text)]
+           border border-[var(--color-border)]
+           transition-colors duration-150
+           hover:border-[var(--color-primary-hover)] hover:bg-[var(--color-surface)];
+  }
+
   .btn-ghost {
     @apply inline-flex items-center justify-center px-3 py-1.5
            rounded-lg text-sm text-[var(--color-text-dim)]

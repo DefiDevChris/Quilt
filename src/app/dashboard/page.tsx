@@ -39,61 +39,39 @@ function DashboardPageContent() {
 
         <div className="relative z-10 text-left">
           <div className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-white cursor-pointer transition-quilt">
-            <span>Begin Draft</span>
+            <span>Start Designing</span>
             <ChevronRight size={14} />
           </div>
         </div>
       </Link>
 
-      {/* 2. TEMPLATES - Balanced Quarter */}
-      <Link
-        href="/templates"
-        className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
-      >
-        <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
-          <Image src="/icons/template.png" alt="Templates" fill className="object-contain" />
-        </div>
-        <div className="relative z-10 flex flex-col h-full text-left">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
-            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Blueprints</span>
-          </div>
-          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Templates</h3>
-          <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Hand-picked blueprints to spark your next masterpiece.</p>
-          <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
-            <span>Browse Work</span>
-            <ChevronRight size={14} />
-          </div>
-        </div>
-      </Link>
 
       {/* 3. SHOP - Right Side, Double Height */}
-      {shopEnabled && (
-        <Link
-          href="/shop"
-          className="lg:row-span-2 bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5"
-        >
-          <div className="absolute bottom-4 right-4 w-32 h-32 text-[var(--color-primary)]/20 pointer-events-none">
-            <Image src="/icons/quilt-01-spool-Photoroom.png" alt="Shop" fill className="object-contain" />
-          </div>
+      <Link
+        href="/shop"
+        className="lg:row-span-2 bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:opacity-95"
+      >
+        <div className="absolute inset-0 z-0">
+          <Image src="/images/shop/STOREIMG3.png" alt="Shop" fill className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+        </div>
 
-          <div className="relative z-10 text-left">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
-              <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Marketplace</span>
-            </div>
-            <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Shop</h3>
-            <p className="font-sans text-black/50 text-sm max-w-[240px]">Curated fabrics, exclusive patterns, and premium studio supplies from artisans around the world.</p>
+        <div className="relative z-10 text-left">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-px bg-white/30"></div>
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-white/70">Marketplace</span>
           </div>
+          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-white">Shop</h3>
+          <p className="font-sans text-white/80 text-sm max-w-[240px]">Curated fabrics, exclusive patterns, and premium studio supplies from artisans around the world.</p>
+        </div>
 
-          <div className="relative z-10 text-left">
-            <div className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
-              <span>Explore Vault</span>
-              <ChevronRight size={14} />
-            </div>
+        <div className="relative z-10 text-left mt-auto pt-12">
+          <div className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-white cursor-pointer transition-quilt group-hover:gap-4">
+            <span>Shop Fabrics</span>
+            <ChevronRight size={14} />
           </div>
-        </Link>
-      )}
+        </div>
+      </Link>
 
       {/* 4. BLOG - Quarter */}
       <Link
@@ -111,7 +89,7 @@ function DashboardPageContent() {
           <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Blog</h3>
           <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Read tutorials, expert tips, and daily inspiration from our community.</p>
           <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
-            <span>Read Journal</span>
+            <span>Get Inspired</span>
             <ChevronRight size={14} />
           </div>
         </div>
@@ -133,7 +111,7 @@ function DashboardPageContent() {
           <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Picture My Blocks</h3>
           <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Upload photos for automatic color matching and block visualization.</p>
           <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
-            <span>Match Swatches</span>
+            <span>Match Fabrics</span>
             <ChevronRight size={14} />
           </div>
         </div>
