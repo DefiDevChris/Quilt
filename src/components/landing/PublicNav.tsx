@@ -28,7 +28,7 @@ export default function PublicNav() {
     <header className="sticky top-0 z-50 h-20 px-12 flex items-center justify-between shrink-0 bg-white border-b border-black/[0.04]">
         <BrandLogo href="/" />
 
-        <div className="hidden lg:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-text)]/30">
+        <div className="hidden lg:flex items-center gap-8 font-sans text-xs uppercase tracking-[0.25em] font-bold text-[var(--color-text)]/30">
           {shopEnabled && (
             <Link
               href="/shop"
@@ -57,12 +57,12 @@ export default function PublicNav() {
           </a>
 
           {isAuthenticated ? (
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-1.5 text-[9px] uppercase tracking-[0.2em] font-bold text-black hover:bg-black/5 transition-colors"
-            >
-              Dashboard
-            </Link>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 rounded-full border border-black/10 bg-[var(--color-primary)] px-5 py-2 text-xs uppercase tracking-[0.15em] font-bold text-white hover:bg-[var(--color-primary-hover)] transition-colors duration-150"
+              >
+                Dashboard
+              </Link>
           ) : (
             <div className="flex items-center gap-4">
               <Link
@@ -73,7 +73,7 @@ export default function PublicNav() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="flex items-center gap-2 rounded-full border border-black/10 bg-[var(--color-primary)] px-4 py-1.5 text-[9px] uppercase tracking-[0.2em] font-bold text-white hover:bg-[var(--color-primary)]/90 transition-colors"
+                className="flex items-center gap-2 rounded-full border border-black/10 bg-[var(--color-primary)] px-5 py-2 text-xs uppercase tracking-[0.15em] font-bold text-white hover:bg-[var(--color-primary)]/90 transition-colors"
               >
                 Start Designing
               </Link>
