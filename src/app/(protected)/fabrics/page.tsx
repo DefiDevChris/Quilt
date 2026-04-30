@@ -68,9 +68,9 @@ export default function FabricsPage() {
       const data: FabricsResponse = await res.json();
       if (cancelled) return;
 
-      setFabrics(data.data.fabrics);
-      setTotalPages(data.data.totalPages);
-      setTotal(data.data.total);
+      setFabrics(data.data.fabrics ?? []);
+      setTotalPages(data.data.totalPages ?? 1);
+      setTotal(data.data.total ?? 0);
     } catch {
       if (!cancelled) setFabrics([]);
     } finally {
@@ -86,8 +86,8 @@ export default function FabricsPage() {
     <>
       <PageHeader
         label="Collection"
-        title="My Fabrics"
-        description={`${total} ${total === 1 ? 'fabric' : 'fabrics'} in your personal collection`}
+        title="My Uploads"
+        description={`${total ?? 0} ${total === 1 ? 'item' : 'items'} in your personal collection`}
         action={
           <button
             onClick={() => setUploadDialogOpen(true)}
@@ -111,10 +111,10 @@ export default function FabricsPage() {
         }
       />
 
-      <div className="max-w-5xl">
+      <div className="w-full">
 
       {/* Search + Color filter */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
         <div className="md:col-span-3 relative group">
           <Search
             className="absolute left-5 top-1/2 -translate-y-1/2 transition-colors"
@@ -185,8 +185,8 @@ export default function FabricsPage() {
 
       {/* Grid */}
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          {Array.from({ length: 12 }, (_, i) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+          {Array.from({ length: 18 }, (_, i) => (
             <div
               key={i}
               className="aspect-square rounded-lg animate-pulse border"
@@ -228,7 +228,7 @@ export default function FabricsPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
           {fabrics.map((fabric) => {
             const imgSrc = fabric.thumbnailUrl ?? fabric.imageUrl;
             return (

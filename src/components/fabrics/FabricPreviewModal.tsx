@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { X, ExternalLink, ShoppingBag, Plus, Minus } from 'lucide-react';
-import { useCartStore } from '@/stores/cartStore';
-import { useShopEnabled } from '@/hooks/useShopEnabled';
+import { X, ExternalLink } from 'lucide-react';
 import type { FabricListItem } from '@/types/fabric';
 
 interface FabricPreviewModalProps {
@@ -11,15 +9,7 @@ interface FabricPreviewModalProps {
   onClose: () => void;
 }
 
-/**
- * Preview modal for any fabric in the studio.
- * Shows large swatch, metadata, and if purchasable: price + shop actions.
- */
 export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps) {
-  const addItem = useCartStore((s) => s.addItem);
-  const setDrawerOpen = useCartStore((s) => s.setDrawerOpen);
-  const shopEnabled = useShopEnabled();
-  const [quantity, setQuantity] = useState(0.5);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,22 +21,8 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  const isPurchasable = fabric.isPurchasable && shopEnabled;
+  const hasAffiliate = fabric.isActive && fabric.affiliateDeeplink;
   const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : null;
-
-  const handleAddToCart = () => {
-    if (!fabric.shopifyVariantId || !fabric.inStock) return;
-    addItem({
-      fabricId: fabric.id,
-      shopifyVariantId: fabric.shopifyVariantId,
-      quantityInYards: quantity,
-      pricePerYard: fabric.pricePerYard ?? 0,
-      fabricName: fabric.name,
-      fabricImageUrl: fabric.thumbnailUrl ?? fabric.imageUrl,
-    });
-    setDrawerOpen(true);
-    onClose();
-  };
 
   return (
     <>
@@ -63,7 +39,6 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
         tabIndex={-1}
         className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-sm bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg overflow-hidden shadow-[0_1px_2px_rgba(54,49,45,0.08)] outline-none"
       >
-        {/* Close */}
         <button
           type="button"
           onClick={onClose}
@@ -73,7 +48,6 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
           <X size={16} />
         </button>
 
-        {/* Large Swatch */}
         <div className="aspect-square w-full">
           {fabric.hex ? (
             <div className="w-full h-full" style={{ backgroundColor: fabric.hex }} />
@@ -86,7 +60,6 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
           )}
         </div>
 
-        {/* Info */}
         <div className="p-5 space-y-3">
           <div>
             <h3
@@ -103,74 +76,42 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
             )}
           </div>
 
-          {/* Price + Stock (purchasable only) */}
-          {isPurchasable && (
+          {hasAffiliate && price && (
             <div className="flex items-center gap-3">
-              {price && <span className="text-xl font-bold text-[var(--color-text)]">{price}</span>}
+              <span className="text-xl font-bold text-[var(--color-text)]">{price}</span>
+              {fabric.retailerName && (
+                <span className="text-xs text-[var(--color-text-dim)]">via {fabric.retailerName}</span>
+              )}
             </div>
           )}
 
-          {/* Quantity selector (purchasable + in stock) */}
-          {isPurchasable && fabric.inStock && fabric.shopifyVariantId && (
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-[var(--color-text-dim)]">Quantity:</span>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  aria-label="Decrease quantity"
-                  onClick={() => setQuantity(Math.max(0.25, quantity - 0.25))}
-                  disabled={quantity <= 0.25}
-                  className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 disabled:opacity-50 transition-colors duration-150 focus:outline-2 focus:outline-[var(--color-primary)]"
-                >
-                  <Minus size={14} />
-                </button>
-                <span className="text-sm font-medium text-[var(--color-text)] min-w-[3.5rem] text-center">
-                  {quantity} yd{quantity !== 1 ? 's' : ''}
-                </span>
-                <button
-                  type="button"
-                  aria-label="Increase quantity"
-                  onClick={() => setQuantity(quantity + 0.25)}
-                  className="w-7 h-7 rounded-full bg-[var(--color-bg)] flex items-center justify-center text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 transition-colors duration-150 focus:outline-2 focus:outline-[var(--color-primary)]"
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Actions */}
           <div className="flex gap-2 pt-1">
-            {isPurchasable && (
+            {hasAffiliate ? (
               <a
-                href="/shop"
+                href={fabric.affiliateDeeplink!}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-bg)] text-sm font-medium text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 transition-colors duration-150"
+                rel="sponsored noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-primary)] text-[var(--color-text-on-primary)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors duration-150 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
               >
                 <ExternalLink size={14} />
-                View in Store
+                Buy at {fabric.retailerName ?? 'Retailer'}
               </a>
-            )}
-            {isPurchasable && fabric.inStock && fabric.shopifyVariantId ? (
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-primary)] text-[var(--color-text)] text-[16px] leading-[24px] hover:bg-[var(--color-primary)] transition-colors duration-150 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
-              >
-                <ShoppingBag size={14} />
-                Add to Shopping List
-              </button>
-            ) : !isPurchasable ? (
+            ) : (
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-2.5 rounded-full bg-[var(--color-bg)] text-[16px] leading-[24px] text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 transition-colors duration-150"
+                className="flex-1 py-2.5 rounded-full bg-[var(--color-bg)] text-sm text-[var(--color-text-dim)] hover:bg-[var(--color-primary)]/10 transition-colors duration-150"
               >
                 Close
               </button>
-            ) : null}
+            )}
           </div>
+
+          {hasAffiliate && (
+            <p className="text-[10px] text-[var(--color-text-dim)] leading-tight">
+              Affiliate link — QuiltCorgi may earn a commission at no extra cost to you.
+            </p>
+          )}
         </div>
       </div>
     </>

@@ -38,15 +38,7 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid setting data');
     }
 
-    const { key, value, confirm } = parsed.data;
-
-    if (key === 'shop_enabled' && value === true) {
-      if (confirm !== 'ENABLE SHOP') {
-        return validationErrorResponse(
-          'To enable the shop, include confirm: "ENABLE SHOP" in the request body'
-        );
-      }
-    }
+    const { key, value } = parsed.data;
 
     await db
       .insert(siteSettings)

@@ -15,21 +15,24 @@ export default function SettingsPage() {
         title="Settings"
         description="Manage your profile, billing, and account."
       />
-      <div className="max-w-2xl space-y-0">
-        <ProfileEditForm />
-        <hr style={{ borderColor: COLORS.border }} />
-        <Suspense
-          fallback={
-            <div className="space-y-4 py-8">
-              <div className="h-6 rounded-lg w-32" style={{ backgroundColor: COLORS.border }} />
-              <div className="h-24 rounded-lg" style={{ backgroundColor: COLORS.border }} />
-            </div>
-          }
-        >
-          <BillingSection />
-        </Suspense>
-        <hr style={{ borderColor: COLORS.border }} />
-        <DeleteAccountSection />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <section className="lg:col-span-5">
+          <ProfileEditForm />
+        </section>
+        <section className="lg:col-span-7 space-y-10">
+          <Suspense
+            fallback={
+              <div className="space-y-4 py-8">
+                <div className="h-6 rounded-lg w-32" style={{ backgroundColor: COLORS.border }} />
+                <div className="h-24 rounded-lg" style={{ backgroundColor: COLORS.border }} />
+              </div>
+            }
+          >
+            <BillingSection />
+          </Suspense>
+          <hr style={{ borderColor: COLORS.border }} />
+          <DeleteAccountSection />
+        </section>
       </div>
     </>
   );

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuthStore } from '@/stores/authStore';
-import { useShopEnabled } from '@/hooks/useShopEnabled';
 import { SHADOW } from '@/lib/design-system';
 import Mascot from '@/components/landing/Mascot';
 import { BrandLogo } from '@/components/layout/BrandLogo';
@@ -12,7 +11,6 @@ import { BrandLogo } from '@/components/layout/BrandLogo';
 export default function PublicNav() {
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = !!user;
-  const shopEnabled = useShopEnabled();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -29,28 +27,26 @@ export default function PublicNav() {
         <BrandLogo href="/" />
 
         <div className="hidden lg:flex items-center gap-8 font-sans text-xs uppercase tracking-[0.25em] font-bold text-[var(--color-text)]/30">
-          {shopEnabled && (
-            <Link
-              href="/shop"
-              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-            >
-              Shop
-            </Link>
-          )}
-          <Link
+      <Link
             href="/design-studio"
             className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
           >
             Design Studio
           </Link>
-          <Link
-            href="/picture-my-blocks"
-            className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-          >
-            Picture my Blocks
-          </Link>
-          <a
-            href="/blog"
+        <Link
+          href="/fabrics"
+          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+        >
+          Fabrics
+        </Link>
+        <Link
+          href="/picture-my-blocks"
+          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+        >
+          Picture my Blocks
+        </Link>
+        <a
+          href="/blog"
             className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
           >
             Blog
@@ -107,29 +103,27 @@ export default function PublicNav() {
 
 {menuOpen && (
         <div className="lg:hidden border-t border-default bg-surface px-6 py-4 space-y-3">
-          {shopEnabled && (
-            <Link
-              href="/shop"
-              className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
-              onClick={() => setMenuOpen(false)}
-            >
-              Shop
-            </Link>
-          )}
-          <Link
+        <Link
             href="/design-studio"
             className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
             onClick={() => setMenuOpen(false)}
           >
             Design Studio
           </Link>
-          <Link
-            href="/picture-my-blocks"
-            className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
-            onClick={() => setMenuOpen(false)}
-          >
-            Picture my Blocks
-          </Link>
+        <Link
+          href="/fabrics"
+          className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
+          onClick={() => setMenuOpen(false)}
+        >
+          Fabrics
+        </Link>
+        <Link
+          href="/picture-my-blocks"
+          className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
+          onClick={() => setMenuOpen(false)}
+        >
+          Picture my Blocks
+        </Link>
           <a
             href="/blog"
             target="_blank"

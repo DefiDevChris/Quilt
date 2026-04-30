@@ -4,7 +4,6 @@ import { useState, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useShopEnabled } from '@/hooks/useShopEnabled';
 import { ChevronRight } from 'lucide-react';
 
 const MobileUploadsPanel = dynamic(
@@ -14,10 +13,9 @@ const MobileUploadsPanel = dynamic(
 
 function DashboardPageContent() {
   const [showMobileUploads, setShowMobileUploads] = useState(false);
-  const shopEnabled = useShopEnabled();
 
   return (
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1fr_0.7fr] lg:grid-rows-3 gap-8 min-h-0 relative pb-8">
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1fr_1fr] lg:grid-rows-2 gap-8 min-h-0 relative pb-8">
 
         {/* 1. DESIGN - Left Column, Row 1 */}
         <Link
@@ -67,34 +65,29 @@ function DashboardPageContent() {
           </div>
         </Link>
 
-        {/* 3. SHOP - Right Column, Double Height (Rows 1-2) */}
-        <Link
-          href="/shop"
-          className="lg:row-span-2 bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:opacity-95"
-        >
-          <div className="absolute inset-0 z-0">
-            <Image src="/images/shop/STOREIMG3.png" alt="Shop" fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+      {/* 3. FABRIC LIBRARY - Right Column, Row 1 */}
+      <Link
+        href="/fabrics"
+        className="bg-[var(--color-secondary)] border border-[var(--color-primary)]/20 shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/10 h-[280px]"
+      >
+        <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
+          <Image src="/icons/quilt-01-spool-Photoroom.png" alt="Fabrics" fill className="object-contain" />
+        </div>
+        <div className="relative z-10 flex flex-col h-full text-left">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Library</span>
           </div>
-
-          <div className="relative z-10 text-left">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-px bg-white/30"></div>
-              <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-white/70">Marketplace</span>
-            </div>
-            <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-white">Shop</h3>
-            <p className="font-sans text-white/80 text-sm max-w-[240px]">Curated fabrics, exclusive patterns, and premium studio supplies from artisans around the world.</p>
+          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-[var(--color-text)]">Fabric Library</h3>
+          <p className="font-sans text-[var(--color-text-dim)] text-sm mb-auto max-w-[240px]">Browse curated quilting fabrics with shop links. Find the perfect print for your next project.</p>
+          <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
+            <span>Browse Fabrics</span>
+            <ChevronRight size={14} />
           </div>
+        </div>
+      </Link>
 
-          <div className="relative z-10 text-left mt-auto pt-12">
-            <div className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-white cursor-pointer transition-quilt group-hover:gap-4">
-              <span>Shop Fabrics</span>
-              <ChevronRight size={14} />
-            </div>
-          </div>
-        </Link>
-
-        {/* 4. PICTURE BLOCKS - Left Column, Row 2 */}
+      {/* 4. PICTURE BLOCKS - Left Column, Row 2 */}
         <Link
           href="/picture-my-blocks"
           className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
@@ -118,7 +111,7 @@ function DashboardPageContent() {
 
         {/* 5. UPLOAD BLOCKS/FABRICS - Middle Column, Row 2 */}
         <Link
-          href="/uploads"
+          href="/fabrics"
           className="bg-[var(--color-accent)] text-[var(--color-text)] border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:opacity-95 h-[280px]"
         >
           <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-text)]/10 pointer-events-none">

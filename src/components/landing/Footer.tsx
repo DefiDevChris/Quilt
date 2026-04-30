@@ -48,9 +48,9 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="hover:text-primary transition-colors duration-150">
-                  Shop
-                </Link>
+        <Link href="/fabrics" className="hover:text-primary transition-colors duration-150">
+          Fabric Library
+        </Link>
               </li>
             </ul>
           </div>

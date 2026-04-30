@@ -9,7 +9,7 @@ import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLeftPanelStore } from '@/stores/leftPanelStore';
 import { LAYOUT_TYPE_CARDS } from '@/lib/layout-type-cards';
 import { LAYOUT_PRESETS, getLayoutPreset } from '@/lib/layout-library';
-import { LayoutThumbnail, getPresetThumbnail } from '@/lib/layout-thumbnail';
+import { LayoutThumbnail } from '@/lib/layout-thumbnail';
 import { computeLayoutSize } from '@/lib/layout-size-utils';
 import { QUILT_TEMPLATES } from '@/lib/templates';
 import { TemplateThumbnail } from '@/lib/template-thumbnail';
@@ -33,7 +33,6 @@ interface SelectionShellProps {
   mode: 'template' | 'layout' | 'free-form';
 }
 
-type LayoutBrowserView = 'families' | 'presets';
 type TemplateCategoryFilter = TemplateCategory | 'all';
 type TemplateSubTab = 'library' | 'my-templates';
 
@@ -49,10 +48,33 @@ function getFamilyPresets(family: LayoutType) {
   return LAYOUT_PRESETS.filter((p) => p.category === family);
 }
 
+/**
+ * Default preset id for a layout family. Prefers the family card's
+ * `defaultPresetId` (curated choice) and falls back to the first preset in
+ * `LAYOUT_PRESETS`. Used as the seed config when the user picks a family
+ * in the flat family list — there is no longer a drill-down preset picker.
+ */
 function getDefaultPreset(family: LayoutType): string {
+  const card = LAYOUT_TYPE_CARDS.find((c) => c.id === family);
+  if (card?.defaultPresetId) return card.defaultPresetId;
   const presets = getFamilyPresets(family);
   return presets[0]?.id ?? '';
 }
+
+/**
+ * Flat list of layout families surfaced in the left rail — mirrors the
+ * cards rendered by `LayoutFamilyList`. Kept as a module constant so the
+ * default-selection logic and the renderer can't drift out of sync.
+ */
+const LAYOUT_FAMILIES: Array<{ type: LayoutType; cardIndex: number }> = [
+  { type: 'grid', cardIndex: 0 },
+  { type: 'sashing', cardIndex: 1 },
+  { type: 'on-point', cardIndex: 2 },
+  { type: 'medallion', cardIndex: 4 },
+  { type: 'strippy', cardIndex: 3 },
+];
+
+const DEFAULT_LAYOUT_FAMILY: LayoutType = 'grid';
 
 /* ── Free-form size presets ── */
 interface FreeformSizePreset {
@@ -78,10 +100,17 @@ export function SelectionShell({ mode }: SelectionShellProps) {
   const { getCanvas } = useCanvasContext();
 
   // Layout-mode state
-  const [selectedFamily, setSelectedFamily] = useState<LayoutType | null>(null);
-  const [browserView, setBrowserView] = useState<LayoutBrowserView>('families');
-  const [selectedPresetId, setSelectedPresetId] = useState<string | null>(null);
-  const [showConfig, setShowConfig] = useState(false);
+  //
+  // The left rail now shows a flat list of all layout families with the
+  // selected one highlighted (no drill-down into a preset grid). A family
+  // is always selected so the right rail can render layout settings from
+  // the moment the shell mounts — hence `selectedFamily` defaults to
+  // `'grid'` and `selectedPresetId` follows from the family's curated
+  // default preset.
+  const [selectedFamily, setSelectedFamily] = useState<LayoutType>(DEFAULT_LAYOUT_FAMILY);
+  const [selectedPresetId, setSelectedPresetId] = useState<string>(() =>
+    getDefaultPreset(DEFAULT_LAYOUT_FAMILY)
+  );
 
   // Template-mode state
   const [templateSubTab, setTemplateSubTab] = useState<TemplateSubTab>('library');
@@ -135,40 +164,87 @@ export function SelectionShell({ mode }: SelectionShellProps) {
   // before the slide-and-fade transition completed.
 
   /* ── Layout handlers ── */
-  const handleFamilyClick = useCallback((family: LayoutType) => {
-    setSelectedFamily(family);
-    setBrowserView('presets');
-    const defaultId = getDefaultPreset(family);
-    if (defaultId) {
-      setSelectedPresetId(defaultId);
+
+  /**
+   * Apply a preset's seed config into the layout store so the right panel
+   * sliders + the canvas fence renderer pick it up. Called whenever the
+   * user changes layout family.
+   */
+  const applyPreset = useCallback((presetId: string) => {
+    const preset = getLayoutPreset(presetId);
+    if (!preset) return;
+    const store = useLayoutStore.getState();
+    store.setLayoutType(preset.category);
+    store.setRows(preset.config.rows ?? 3);
+    store.setCols(preset.config.cols ?? 3);
+    store.setBlockSize(preset.config.blockSize ?? 6);
+    if (preset.config.sashing != null) {
+      store.setSashing({ ...store.sashing, ...preset.config.sashing });
     }
+    if (preset.config.borders) {
+      store.setBorders(preset.config.borders);
+    }
+    if (preset.config.bindingWidth != null) {
+      store.setBindingWidth(preset.config.bindingWidth);
+    }
+    if (preset.config.hasCornerstones != null) {
+      store.setHasCornerstones(preset.config.hasCornerstones);
+    }
+    store.setPreviewMode(true);
   }, []);
 
-  const handlePresetClick = useCallback((presetId: string) => {
-    setSelectedPresetId(presetId);
-    setShowConfig(true);
-    const preset = getLayoutPreset(presetId);
-    if (preset) {
-      const store = useLayoutStore.getState();
-      store.setLayoutType(preset.category);
-      store.setRows(preset.config.rows ?? 3);
-      store.setCols(preset.config.cols ?? 3);
-      store.setBlockSize(preset.config.blockSize ?? 6);
-      if (preset.config.sashing != null) {
-        store.setSashing({ ...store.sashing, ...preset.config.sashing });
+  const handleFamilyClick = useCallback(
+    (family: LayoutType) => {
+      if (family === selectedFamily) return;
+      const defaultId = getDefaultPreset(family);
+      setSelectedFamily(family);
+      setSelectedPresetId(defaultId);
+      applyPreset(defaultId);
+    },
+    [applyPreset, selectedFamily]
+  );
+
+  // Seed the layout store on first mount so the right panel sliders and
+  // the canvas fence reflect the default-selected family immediately
+  // — instead of waiting for the user to click anything.
+  useEffect(() => {
+    if (mode !== 'layout') return;
+    applyPreset(selectedPresetId);
+    // Intentionally only on mount / mode-switch — subsequent applies are
+    // driven by `handleFamilyClick`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
+
+  // ── Live canvas-size sync (layout mode) ──
+  //
+  // "The layout IS the grid": while the user is dragging rows/cols/sashing
+  // sliders we keep the project's canvas dimensions glued to the layout's
+  // computed finished size, so the gridded backdrop never exceeds the
+  // fence and re-fits to screen as the layout grows or shrinks. This
+  // subscribes directly to `useLayoutStore` so we don't trigger a re-render
+  // of SelectionShell on every slider tick — only the canvas updates.
+  useEffect(() => {
+    if (mode !== 'layout') return;
+    const unsub = useLayoutStore.subscribe((state) => {
+      const size = computeLayoutSize({
+        type: state.layoutType as LayoutType,
+        rows: state.rows,
+        cols: state.cols,
+        blockSize: state.blockSize,
+        sashingWidth: state.sashing.width,
+        borders: state.borders,
+        bindingWidth: state.bindingWidth,
+      });
+      const ps = useProjectStore.getState();
+      if (ps.canvasWidth === size.width && ps.canvasHeight === size.height) return;
+      ps.setCanvasDimensions(size.width, size.height);
+      const canvas = getCanvas();
+      if (canvas) {
+        useCanvasStore.getState().centerAndFitViewport(canvas, size.width, size.height);
       }
-      if (preset.config.borders) {
-        store.setBorders(preset.config.borders);
-      }
-      if (preset.config.bindingWidth != null) {
-        store.setBindingWidth(preset.config.bindingWidth);
-      }
-      if (preset.config.hasCornerstones != null) {
-        store.setHasCornerstones(preset.config.hasCornerstones);
-      }
-      store.setPreviewMode(true);
-    }
-  }, []);
+    });
+    return unsub;
+  }, [mode, getCanvas]);
 
   /* ── Template handlers ── */
   const handleSystemTemplateClick = useCallback((template: QuiltTemplate) => {
@@ -272,21 +348,12 @@ export function SelectionShell({ mode }: SelectionShellProps) {
         transition={railTransition}
         className="w-[280px] h-full flex-shrink-0 bg-[var(--color-surface)] border-r border-[var(--color-border)] flex flex-col overflow-hidden pointer-events-auto"
       >
-        {mode === 'layout' &&
-          (browserView === 'families' ? (
-            <LayoutFamiliesCatalog onFamilyClick={handleFamilyClick} />
-          ) : (
-            <LayoutPresetsCatalog
-              family={selectedFamily}
-              selectedPresetId={selectedPresetId}
-              onPresetClick={handlePresetClick}
-              onBack={() => {
-                setBrowserView('families');
-                setSelectedFamily(null);
-                setSelectedPresetId(null);
-              }}
-            />
-          ))}
+        {mode === 'layout' && (
+          <LayoutFamiliesCatalog
+            selectedFamily={selectedFamily}
+            onFamilyClick={handleFamilyClick}
+          />
+        )}
 
         {mode === 'template' && (
           <TemplateCatalog
@@ -325,7 +392,11 @@ export function SelectionShell({ mode }: SelectionShellProps) {
         transition={railTransition}
         className="w-[320px] h-full flex-shrink-0 bg-[var(--color-bg)] border-l border-[var(--color-border)] flex flex-col overflow-hidden pointer-events-auto"
       >
-        {mode === 'layout' && showConfig && selectedPresetId ? (
+        {mode === 'layout' ? (
+          /* Right rail is always populated in layout mode now: a default
+           * family is selected on mount, so the user sees layout settings
+           * (sliders, finished size, Start Designing) immediately instead
+           * of an empty "select a preset" placeholder. */
           <LayoutConfigPanel presetId={selectedPresetId} onCommit={handleCommit} />
         ) : mode === 'template' && selectedTemplateId ? (
           <TemplateConfigPanel templateId={selectedTemplateId} onCommit={handleCommit} />
@@ -348,9 +419,7 @@ export function SelectionShell({ mode }: SelectionShellProps) {
         ) : (
           <div className="flex-1 flex items-center justify-center p-6">
             <p className="text-[13px] text-[var(--color-text-dim)] text-center">
-              {mode === 'layout'
-                ? 'Select a layout preset to configure settings'
-                : 'Choose a template to get started'}
+              Choose a template to get started
             </p>
           </div>
         )}
@@ -363,15 +432,24 @@ export function SelectionShell({ mode }: SelectionShellProps) {
 /* Layout Families Catalog                                            */
 /* ────────────────────────────────────────────────────────────────── */
 
-function LayoutFamiliesCatalog({ onFamilyClick }: { onFamilyClick: (family: LayoutType) => void }) {
-  const layoutFamilies: Array<{ type: LayoutType; card: typeof LAYOUT_TYPE_CARDS[0] }> = [
-    { type: 'grid', card: LAYOUT_TYPE_CARDS[0] },
-    { type: 'sashing', card: LAYOUT_TYPE_CARDS[1] },
-    { type: 'on-point', card: LAYOUT_TYPE_CARDS[2] },
-    { type: 'medallion', card: LAYOUT_TYPE_CARDS[4] },
-    { type: 'strippy', card: LAYOUT_TYPE_CARDS[3] },
-  ];
-
+/**
+ * Flat list of all layout families (Grid, Sashing, On-Point, Medallion,
+ * Strip). The currently selected family is highlighted with the primary
+ * accent and the "applied" thumbnail tint; clicking a different card
+ * swaps the family and seeds the right-rail config from that family's
+ * curated default preset.
+ *
+ * No drill-down preset picker — preset selection has been folded into
+ * the family selection so the user always sees layout settings on the
+ * right and the canvas fence updates immediately.
+ */
+function LayoutFamiliesCatalog({
+  selectedFamily,
+  onFamilyClick,
+}: {
+  selectedFamily: LayoutType;
+  onFamilyClick: (family: LayoutType) => void;
+}) {
   return (
     <>
       <div className="flex items-center px-4 py-3 border-b border-[var(--color-border)]/50 flex-shrink-0">
@@ -379,105 +457,39 @@ function LayoutFamiliesCatalog({ onFamilyClick }: { onFamilyClick: (family: Layo
       </div>
       <div className="flex-1 overflow-y-auto p-3">
         <div className="grid grid-cols-1 gap-3">
-          {layoutFamilies.map(({ type, card }) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() => onFamilyClick(type)}
-              className="flex items-start gap-3 p-3 rounded-lg bg-[var(--color-bg)] border border-[var(--color-border)]/30 hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-surface)] transition-colors text-left"
-            >
-              <div className="w-14 h-14 flex-shrink-0 rounded-md overflow-hidden bg-[var(--color-bg)]">
-                <LayoutThumbnail type={type} rows={3} cols={3} className="w-full h-full" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-[14px] font-semibold text-[var(--color-text)] truncate">
-                  {card.name}
-                </h3>
-                <p className="text-[12px] text-[var(--color-text-dim)] line-clamp-2 mt-0.5">
-                  {card.description}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    </>
-  );
-}
-
-/* ────────────────────────────────────────────────────────────────── */
-/* Layout Presets Catalog                                              */
-/* ────────────────────────────────────────────────────────────────── */
-
-function LayoutPresetsCatalog({
-  family,
-  selectedPresetId,
-  onPresetClick,
-  onBack,
-}: {
-  family: LayoutType | null;
-  selectedPresetId: string | null;
-  onPresetClick: (presetId: string) => void;
-  onBack: () => void;
-}) {
-  if (!family) return null;
-
-  const presets = getFamilyPresets(family);
-  const card = LAYOUT_TYPE_CARDS.find((c) => c.id === family);
-
-  return (
-    <>
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--color-border)]/50 flex-shrink-0">
-        <button
-          type="button"
-          onClick={onBack}
-          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-dim)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)]/30 transition-colors"
-          aria-label="Back to families"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M10 12L6 8L10 4"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-        <h2 className="text-[16px] font-semibold text-[var(--color-text)] flex-1">
-          {card?.name ?? 'Presets'}
-        </h2>
-      </div>
-      <div className="flex-1 overflow-y-auto p-3">
-        <div className="grid grid-cols-2 gap-3">
-          {presets.map((preset) => (
-            <button
-              key={preset.id}
-              type="button"
-              onClick={() => onPresetClick(preset.id)}
-              className={`flex flex-col items-center p-2 rounded-lg border transition-colors duration-150 ${
-                selectedPresetId === preset.id
-                  ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
-                  : 'border-[var(--color-border)]/30 hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-bg)]'
-              }`}
-            >
-              <div className="w-full aspect-square rounded-md overflow-hidden bg-[var(--color-bg)] mb-2">
-                <div
-                  className="w-full h-full"
-                  dangerouslySetInnerHTML={{ __html: getPresetThumbnail(preset.id) }}
-                />
-              </div>
-              <span
-                className={`text-[12px] font-medium ${
-                  selectedPresetId === preset.id
-                    ? 'text-[var(--color-primary)]'
-                    : 'text-[var(--color-text)]'
+          {LAYOUT_FAMILIES.map(({ type, cardIndex }) => {
+            const card = LAYOUT_TYPE_CARDS[cardIndex];
+            const isSelected = type === selectedFamily;
+            return (
+              <button
+                key={type}
+                type="button"
+                onClick={() => onFamilyClick(type)}
+                aria-pressed={isSelected}
+                className={`flex items-start gap-3 p-3 rounded-lg border transition-colors text-left ${
+                  isSelected
+                    ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5'
+                    : 'border-[var(--color-border)]/30 bg-[var(--color-bg)] hover:border-[var(--color-primary)]/50 hover:bg-[var(--color-surface)]'
                 }`}
               >
-                {preset.name}
-              </span>
-            </button>
-          ))}
+                <div className="w-14 h-14 flex-shrink-0 rounded-md overflow-hidden bg-[var(--color-bg)]">
+                  <LayoutThumbnail type={type} rows={3} cols={3} className="w-full h-full" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3
+                    className={`text-[14px] font-semibold truncate ${
+                      isSelected ? 'text-[var(--color-primary)]' : 'text-[var(--color-text)]'
+                    }`}
+                  >
+                    {card.name}
+                  </h3>
+                  <p className="text-[12px] text-[var(--color-text-dim)] line-clamp-2 mt-0.5">
+                    {card.description}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
     </>

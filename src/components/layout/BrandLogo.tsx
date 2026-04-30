@@ -10,7 +10,7 @@ interface BrandLogoProps {
 
 /**
  * Standardized QuiltCorgi logo and wordmark.
- * Used in AppShell, PublicNav, ShopHeader, and other branded layouts.
+ * Used in AppShell, PublicNav, and other branded layouts.
  */
 export function BrandLogo({ href = '/', className = '' }: BrandLogoProps) {
   return (
