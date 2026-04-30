@@ -272,9 +272,8 @@ export const adminCreateFabricSchema = z.object({
 });
 
 export const adminUpdateSettingSchema = z.object({
-  key: z.literal('shop_enabled'),
+  key: z.string().min(1).max(100),
   value: z.boolean(),
-  confirm: z.string().optional(),
 });
 
 // --- Mobile Upload Schemas ---

@@ -34,12 +34,12 @@ export const fabrics = pgTable(
     ppi: numeric('ppi', { precision: 10, scale: 4 }),
     calibrated: boolean('calibrated').notNull().default(false),
     isDefault: boolean('isDefault').notNull().default(false),
-    isPurchasable: boolean('isPurchasable').notNull().default(false),
-    shopifyProductId: varchar('shopifyProductId', { length: 255 }),
-    shopifyVariantId: varchar('shopifyVariantId', { length: 255 }),
-    pricePerYard: numeric('pricePerYard', { precision: 10, scale: 2 }),
-    description: text('description'),
-    inStock: boolean('inStock').notNull().default(false),
+  retailerId: uuid('retailerId'),
+  affiliateUrl: text('affiliateUrl'),
+  affiliateDeeplink: text('affiliateDeeplink'),
+  pricePerYard: numeric('pricePerYard', { precision: 10, scale: 2 }),
+  description: text('description'),
+  isActive: boolean('isActive').notNull().default(true),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updatedAt', { mode: 'date', withTimezone: true })
       .notNull()

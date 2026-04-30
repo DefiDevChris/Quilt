@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import { StudioTopBar } from '@/components/studio/StudioTopBar';
 import { Toolbar } from '@/components/studio/Toolbar';
@@ -10,12 +10,24 @@ import { BottomBar } from '@/components/studio/BottomBar';
 import { StudioDropZone } from '@/components/studio/StudioDropZone';
 import { BlockBuilderWorktable } from '@/components/studio/BlockBuilderWorktable';
 import { YardagePanel } from '@/components/studio/YardagePanel';
+import { SelectionShell } from '@/components/studio/SelectionShell';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { saveProject } from '@/lib/save-project';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useTemplateHydration } from '@/hooks/useTemplateHydration';
 import type { Project } from '@/types/project';
+
+// Width of the SelectionShell rails. Kept in sync with `SelectionShell.tsx`
+// so the Toolbar / ContextPanel wrappers can expand to match while the rails
+// are visible — that's what keeps the canvas centered between the rails
+// during the configuring phase instead of being clipped by them.
+const SELECTION_LEFT_RAIL_PX = 280;
+const TOOLBAR_PX = 88;
+// SelectionShell right rail and the ContextPanel are both 320px wide, so the
+// right edge of the canvas <main> already aligns with the SelectionShell's
+// right config rail — no width animation needed for the right column.
+const CONTEXT_PANEL_PX = 320;
 
 /**
  * StudioLayout
@@ -133,15 +145,21 @@ export function StudioLayout({ project, configuring = false }: StudioLayoutProps
        * canvas inside StudioDropZone is the constant anchor that the spec
        * requires to stay visually continuous across phases.
        */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="relative flex flex-1 overflow-hidden">
+        {/* Toolbar wrapper widens from 88px → 280px during configuring so the
+         * SelectionShell's left catalog rail (280px) sits flush over a
+         * spacer of the same width, and the canvas <main> below ends up
+         * centered between the two rails instead of being clipped on the
+         * left. */}
         <motion.div
           initial={false}
           animate={{
+            width: configuring ? SELECTION_LEFT_RAIL_PX : TOOLBAR_PX,
             opacity: configuring ? 0 : 1,
-            x: configuring ? -16 : 0,
           }}
           transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1], delay: configuring ? 0 : 0.18 }}
-          className="flex"
+          className="flex shrink-0 overflow-hidden"
+          style={{ width: configuring ? SELECTION_LEFT_RAIL_PX : TOOLBAR_PX }}
         >
           <Toolbar />
         </motion.div>
@@ -154,20 +172,35 @@ export function StudioLayout({ project, configuring = false }: StudioLayoutProps
           )}
         </main>
 
+        {/* ContextPanel is already 320px wide — same as the right rail —
+         * so we only need to fade it; no width animation required. */}
         <motion.div
           initial={false}
           animate={{
             opacity: configuring ? 0 : 1,
-            x: configuring ? 16 : 0,
           }}
           transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1], delay: configuring ? 0 : 0.18 }}
-          className="flex"
+          className="flex shrink-0"
+          style={{ width: CONTEXT_PANEL_PX }}
         >
           <ContextPanel
             onBlockDragStart={handleBlockDragStart}
             onFabricDragStart={handleFabricDragStart}
           />
         </motion.div>
+
+        {/* SelectionShell rails sit on top of (and replace) the Toolbar and
+         * ContextPanel during the configuring phase. Mounted INSIDE the
+         * work-area row so `absolute inset-0` covers only the canvas band —
+         * not the StudioTopBar, worktable tabs, or BottomBar. Previously
+         * the shell was a sibling of StudioLayout and overlaid the entire
+         * studio area, which is what hid the "Quilt" / "Block Builder" tabs
+         * and the project title behind the catalog rail. */}
+        <AnimatePresence>
+          {configuring && (
+            <SelectionShell key="selection-shell" mode={projectMode} />
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ── Bottom bar ── */}

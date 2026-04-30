@@ -14,13 +14,12 @@ export const dynamic = 'force-dynamic';
 
 const patchFabricSchema = z.object({
   pricePerYard: z.coerce.number().min(0).optional(),
-  inStock: z.boolean().optional(),
-  isPurchasable: z.boolean().optional(),
-  shopifyProductId: z.string().max(255).nullable().optional(),
-  shopifyVariantId: z.string().max(255).nullable().optional(),
+  isActive: z.boolean().optional(),
+  retailerId: z.string().uuid().nullable().optional(),
+  affiliateUrl: z.string().url().nullable().optional(),
+  affiliateDeeplink: z.string().url().nullable().optional(),
 });
 
-// PATCH - Update shop fields for a fabric
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
@@ -40,17 +39,17 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (data.pricePerYard !== undefined) {
       updates.pricePerYard = String(data.pricePerYard);
     }
-    if (data.inStock !== undefined) {
-      updates.inStock = data.inStock;
+    if (data.isActive !== undefined) {
+      updates.isActive = data.isActive;
     }
-    if (data.isPurchasable !== undefined) {
-      updates.isPurchasable = data.isPurchasable;
+    if (data.retailerId !== undefined) {
+      updates.retailerId = data.retailerId;
     }
-    if (data.shopifyProductId !== undefined) {
-      updates.shopifyProductId = data.shopifyProductId;
+    if (data.affiliateUrl !== undefined) {
+      updates.affiliateUrl = data.affiliateUrl;
     }
-    if (data.shopifyVariantId !== undefined) {
-      updates.shopifyVariantId = data.shopifyVariantId;
+    if (data.affiliateDeeplink !== undefined) {
+      updates.affiliateDeeplink = data.affiliateDeeplink;
     }
 
     if (Object.keys(updates).length === 0) {
@@ -69,7 +68,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   }
 }
 
-// DELETE - Remove a fabric
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

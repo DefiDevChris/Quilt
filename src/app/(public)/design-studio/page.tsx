@@ -35,12 +35,12 @@ export default function DesignStudioLandingPage() {
           <BrandLogo href="/" />
 
           <nav className="hidden md:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-black/40">
-            <Link
-              href="/shop"
-              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-            >
-              Shop
-            </Link>
+        <Link
+          href="/fabrics"
+          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+        >
+          Fabrics
+        </Link>
             <Link
               href="/help"
               className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"

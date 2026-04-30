@@ -95,11 +95,16 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   version: 1,
 
   setProject: ({ id, name, mode, width, height, worktables, version }) =>
+    // NOTE: intentionally does NOT set `modeSelected`. That flag is owned by
+    // `StudioClient` (true for projects already saved with a chosen mode,
+    // false for fresh projects where the user still needs to pick). If we
+    // forced it true here, fresh projects would briefly show the
+    // ProjectModeModal and then dismiss it the moment `useCanvasInit`
+    // hydrated the store — i.e. the "modal flashes for ~1s on load" bug.
     set({
       projectId: id,
       projectName: name,
       mode: mode ?? 'layout',
-      modeSelected: true,
       canvasWidth: width,
       canvasHeight: height,
       // Hydrating an existing project — anchor the scale base on whatever

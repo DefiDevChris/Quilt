@@ -11,9 +11,9 @@ import PublicNav from '@/components/landing/PublicNav';
 
 export default function PictureMyBlocksPage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col overflow-hidden">
       <PublicNav />
-      <main className="flex-1">
+      <main className="flex-1 min-h-0 overflow-hidden">
         <PictureMyBlocksApp />
       </main>
     </div>

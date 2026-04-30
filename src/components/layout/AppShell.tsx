@@ -7,12 +7,9 @@ import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
 import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
-import { useShopEnabled } from '@/hooks/useShopEnabled';
-import { useCartStore } from '@/stores/cartStore';
-import { CartDrawer } from '@/components/shop/CartDrawer';
 import Mascot from '@/components/landing/Mascot';
 import { BrandLogo } from '@/components/layout/BrandLogo';
-import { ShoppingBag, Plus, Clock, Scissors, Camera, Settings } from 'lucide-react';
+import { Plus, Clock, Scissors, Settings, Folder, Images } from 'lucide-react';
 import { logout } from '@/lib/logout';
 
 const StarQuiltBlock = ({ className }: { className?: string }) => (
@@ -69,9 +66,6 @@ export function AppShell({
   variant?: AppShellVariant;
 }) {
   const user = useAuthStore((s) => s.user);
-  const shopEnabled = useShopEnabled();
-  const cartItems = useCartStore((s) => s.items);
-  const toggleCartDrawer = useCartStore((s) => s.toggleDrawer);
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -138,16 +132,6 @@ export function AppShell({
 
           {isAuthenticated ? (
             <>
-              {shopEnabled && cartItems.length > 0 && (
-                <button
-                  type="button"
-                  onClick={toggleCartDrawer}
-                  className="relative p-1.5 text-black/40 hover:text-[var(--color-primary)] transition-quilt"
-                  aria-label="Shopping cart"
-                >
-                  <ShoppingBag size={20} />
-                </button>
-              )}
 
               <button
                 type="button"
@@ -225,8 +209,9 @@ export function AppShell({
               <nav className="flex-1 space-y-2">
                 <p className="font-sans text-[9px] uppercase tracking-[0.5em] font-bold text-black/20 mb-6 px-6">Workbench</p>
                 <SidebarNavItem icon={Clock} label="Recent" href="/dashboard" active={isActive('/dashboard')} />
-                <SidebarNavItem icon={Scissors} label="Fabrics" href="/fabrics" active={isActive('/fabrics')} />
-                <SidebarNavItem icon={Camera} label="Uploads" href="/picture-my-blocks" active={isActive('/picture-my-blocks')} />
+                <SidebarNavItem icon={Folder} label="My Projects" href="/projects" active={isActive('/projects')} />
+                <SidebarNavItem icon={Images} label="Project Gallery" href="/gallery" active={isActive('/gallery')} />
+                <SidebarNavItem icon={Scissors} label="My Uploads" href="/fabrics" active={isActive('/fabrics')} />
                 <SidebarNavItem icon={Settings} label="Settings" href="/settings" active={isActive('/settings')} />
               </nav>
 
@@ -249,14 +234,13 @@ export function AppShell({
           {isStudio ? (
             <div className="flex-1 relative z-10 min-h-0 w-full">{children}</div>
           ) : (
-            <div className="flex-1 relative z-10 min-h-0 max-w-6xl mx-auto w-full">
+            <div className="flex-1 relative z-10 min-h-0 max-w-7xl mx-auto w-full">
               {children}
             </div>
           )}
         </main>
       </div>
 
-      <CartDrawer />
       {isProModalOpen && <ProUpgradeModal onClose={() => setIsProModalOpen(false)} />}
     </div>
   );
