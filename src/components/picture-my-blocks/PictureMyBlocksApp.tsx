@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { UploadCloud, X, Plus } from 'lucide-react';
 import { COLORS, withAlpha } from '@/lib/design-system';
 import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
@@ -24,6 +24,44 @@ export function PictureMyBlocksApp() {
   const [selectedFabric, setSelectedFabric] = useState<{ id: string; imageUrl: string } | null>(null);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const { toast } = useToast();
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [canvasScale, setCanvasScale] = useState(1);
+  
+  // Calculate scale to fit quilt on canvas without vertical scrolling
+  useEffect(() => {
+    const updateScale = () => {
+      if (!canvasRef.current) return;
+      
+      const availableHeight = window.innerHeight - 48 - 32; // header height + padding
+      const availableWidth = window.innerWidth - 640 - 64; // side panels + margins
+      
+      const quiltElement = canvasRef.current.firstElementChild as HTMLElement;
+      if (!quiltElement) return;
+      
+      // Force a render to measure the natural size
+      const naturalWidth = quiltElement.scrollWidth;
+      const naturalHeight = quiltElement.scrollHeight;
+      
+      if (naturalHeight === 0 || naturalWidth === 0) return;
+      
+      // Calculate scale to fit both width and height
+      const heightScale = availableHeight / naturalHeight;
+      const widthScale = availableWidth / naturalWidth;
+      
+      // Use the smaller scale to ensure it fits in both dimensions
+      const newScale = Math.min(heightScale, widthScale, 1); // Don't scale up, only down
+      
+      setCanvasScale(newScale);
+    };
+    
+    updateScale();
+    
+    // Update on resize and when dimensions change
+    window.addEventListener('resize', updateScale);
+    setTimeout(updateScale, 100); // Delay to allow DOM to render
+    
+    return () => window.removeEventListener('resize', updateScale);
+  }, [across, long, borders, sashing]);
 
   // Load user's uploaded blocks from API
   useEffect(() => {
@@ -343,8 +381,9 @@ export function PictureMyBlocksApp() {
         </aside>
 
         {/* Center Canvas */}
-        <main className="flex-1 overflow-auto p-8" style={{ backgroundColor: COLORS.bg }}>
+        <main className="flex-1 overflow-hidden p-8 flex items-center justify-center" style={{ backgroundColor: COLORS.bg }}>
           <div
+            ref={canvasRef}
             className="mx-auto border shadow-lg"
             style={{
               backgroundColor: selectedFabric?.imageUrl
@@ -353,6 +392,8 @@ export function PictureMyBlocksApp() {
               backgroundImage: selectedFabric?.imageUrl ? `url(${selectedFabric.imageUrl})` : undefined,
               backgroundSize: 'cover',
               maxWidth: '100%',
+              transform: `scale(${canvasScale})`,
+              transformOrigin: 'center center',
             }}
           >
             <div
