@@ -109,7 +109,29 @@ function DashboardPageContent() {
           </div>
         </Link>
 
-        {/* 5. UPLOAD BLOCKS/FABRICS - Middle Column, Row 2 */}
+        {/* 5. PHOTO TO QUILT - Middle Column, Row 2 */}
+      <Link
+        href="/photo-to-quilt"
+        className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
+      >
+        <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
+          <Image src="/icons/quilt-mobile-uploads.png" alt="Photo to Quilt" fill className="object-contain" />
+        </div>
+        <div className="relative z-10 flex flex-col h-full text-left">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
+            <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Converter</span>
+          </div>
+          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Photo to Quilt</h3>
+          <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Turn any photo into a quilt pattern. Background removed automatically, ready-to-sew blocks generated.</p>
+          <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
+            <span>Convert Now</span>
+            <ChevronRight size={14} />
+          </div>
+        </div>
+      </Link>
+
+      {/* 6. UPLOAD BLOCKS/FABRICS - Middle Column, Row 2 (pushed to new row area) */}
         <Link
           href="/my-fabrics"
           className="bg-[var(--color-accent)] text-[var(--color-text)] border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:opacity-95 h-[280px]"
