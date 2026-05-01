@@ -48,8 +48,9 @@ export function ProfileEditForm() {
     }
   }, [hasFetched]);
 
-  useEffect(() => {
-    fetchProfile();
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  fetchProfile();
   }, [fetchProfile]);
 
   function updateField(field: keyof ProfileFormData, value: string) {

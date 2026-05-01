@@ -26,18 +26,5 @@ export default async function StudioIndexPage() {
     redirect(`/studio/${latest.id}`);
   }
 
-  const [newProject] = await db
-    .insert(projects)
-    .values({
-      userId: session.user.id,
-      name: 'Untitled Quilt',
-      mode: 'layout',
-      unitSystem: 'imperial',
-      canvasWidth: 48,
-      canvasHeight: 48,
-      gridSettings: { enabled: true, size: 1, snapToGrid: true },
-    })
-    .returning({ id: projects.id });
-
-  redirect(`/studio/${newProject.id}`);
+  redirect('/studio/new');
 }

@@ -4,8 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Search } from 'lucide-react';
 import type { FabricListItem } from '@/types/fabric';
 import { FabricBrowseCard } from '@/components/fabrics/FabricBrowseCard';
-import { COLOR_FAMILIES, FABRIC_MANUFACTURERS } from '@/lib/constants';
-import { FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
+import { COLOR_FAMILIES, FABRIC_MANUFACTURERS, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 
 interface Pagination {
   page: number;

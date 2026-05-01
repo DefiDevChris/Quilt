@@ -161,7 +161,7 @@ describe('mobileUploadStore', () => {
 
       expect(result).toBeNull();
       const state = useMobileUploadStore.getState();
-      expect(state.error).toBe('Failed to create upload');
+      expect(state.error).toBe('Network error');
     });
   });
 

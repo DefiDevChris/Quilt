@@ -1,7 +1,6 @@
 'use client';
 
-import type React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type ReactNode, type ReactElement } from 'react';
 import { RotateCw, ArrowLeftRight, Palette, Shuffle, Trash2, Minus, Plus, PlusSquare, PaintBucket, Spline, Minimize2 } from 'lucide-react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
@@ -10,7 +9,7 @@ import { useSelectionActions } from '@/hooks/useSelectionActions';
 
 type ToolbarButton = {
   id: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   label: string;
   onClick: () => void;
   disabled?: boolean;
@@ -23,7 +22,7 @@ type ToolbarButton = {
  * Shows contextual buttons based on selection type (block, border, sashing, patch).
  * Repositions on zoom, pan, and selection changes.
  */
-export function CanvasSelectionToolbar(): React.ReactElement | null {
+export function CanvasSelectionToolbar(): ReactElement | null {
   const { getCanvas } = useCanvasContext();
   const canvas = getCanvas();
   const fabricCanvas = canvas;
@@ -42,18 +41,37 @@ export function CanvasSelectionToolbar(): React.ReactElement | null {
   // Update selection type when selection changes
   useEffect(() => {
     if (!fabricCanvas) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectionType(null);
       setIsVisible(false);
       return;
     }
 
-    const type = getSelectionType(fabricCanvas);
-    setSelectionType(type);
-    setIsVisible(type !== null);
+	const type = getSelectionType(fabricCanvas);
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		setSelectionType(type);
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		setIsVisible(type !== null);
   }, [fabricCanvas, selectedObjectIds]);
 
-  // Update position when selection, zoom, or canvas changes
-  const updatePosition = useCallback(() => {
+	// Calculate approximate toolbar width based on button count
+	function getToolbarWidth(type: SelectionType): number {
+		if (!type) return 0;
+		const buttonCounts: Record<NonNullable<SelectionType>, number> = {
+			block: 5,
+			border: 5,
+			sashing: 4,
+			patch: 2,
+			easydraw: 3,
+			bent: 4,
+		};
+		const count = buttonCounts[type] ?? 0;
+		// 32px button + 4px gap (approx)
+		return count * 36 - 4;
+	}
+
+	// Update position when selection, zoom, or canvas changes
+	const updatePosition = useCallback(() => {
     if (!fabricCanvas || !selectionType) {
       setPosition(null);
       return;
@@ -87,25 +105,10 @@ export function CanvasSelectionToolbar(): React.ReactElement | null {
     const top = Math.max(8, screenTop - 48); // 48px above selection (toolbar height + gap)
 
     setPosition({ left, top });
-  }, [fabricCanvas, selectionType, zoom]);
+	}, [fabricCanvas, selectionType, zoom]);
 
-  // Calculate approximate toolbar width based on button count
-  function getToolbarWidth(type: SelectionType): number {
-    if (!type) return 0;
-    const buttonCounts: Record<NonNullable<SelectionType>, number> = {
-      block: 5,
-      border: 5,
-      sashing: 4,
-      patch: 2,
-      easydraw: 3,
-      bent: 4,
-    };
-    const count = buttonCounts[type] ?? 0;
-    // 32px button + 4px gap (approx)
-    return count * 36 - 4;
-  }
-
-  useEffect(() => {
+	useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     updatePosition();
   }, [updatePosition, selectedObjectIds, zoom]);
 

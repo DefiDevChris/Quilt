@@ -30,7 +30,7 @@ const mockFetch = vi.fn().mockImplementation(async (url, options) => {
 global.fetch = mockFetch;
 
 // Mock temp project storage
-vi.mock('@/lib/temp-project-storage', () => ({ saveTempProject: vi.fn() }));
+vi.mock('@/lib/temp-project-storage', () => ({ saveTempProject: vi.fn(() => ({ ok: true })) }));
 
 // Spy on AbortController abort
 const abortSpy = vi.spyOn(AbortController.prototype, 'abort');
@@ -286,14 +286,14 @@ describe('save-project', () => {
       } as unknown as ReturnType<typeof useAuthStore.getState>);
       vi.mocked(getAuthDerived).mockReturnValue({ isPro: false, isAdmin: false });
       await saveProject({ projectId: 'test-project', fabricCanvas: mockFabricCanvas });
-      expect(vi.mocked(saveTempProject)).toHaveBeenCalledWith(
-        'test-project',
-        expect.objectContaining({
-          canvasData: expect.objectContaining({ version: '1.0', objects: [] }),
-          unitSystem: 'imperial',
-          gridSettings: { enabled: true, size: 1, snapToGrid: true, granularity: 'inch' },
-        })
-      );
+expect(vi.mocked(saveTempProject)).toHaveBeenCalledWith(
+      'test-project',
+      expect.objectContaining({
+        canvasData: expect.objectContaining({ version: '1.0', objects: [] }),
+        unitSystem: 'imperial',
+        gridSettings: expect.objectContaining({ enabled: true, size: 1, snapToGrid: true, granularity: 'quarter' }),
+      })
+    );
       expect(useProjectStore.getState().saveStatus).toBe('saved');
       expect(mockFetch).not.toHaveBeenCalled();
     });

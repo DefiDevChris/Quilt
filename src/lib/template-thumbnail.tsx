@@ -5,8 +5,7 @@
  * Uses the layout thumbnail generator for the underlying layout config.
  */
 
-import type { QuiltTemplate } from '@/lib/templates';
-import { QUILT_TEMPLATES } from '@/lib/templates';
+import { QUILT_TEMPLATES, type QuiltTemplate } from '@/lib/templates';
 
 interface TemplateThumbnailProps {
   template: QuiltTemplate;

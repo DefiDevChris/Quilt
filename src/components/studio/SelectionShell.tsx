@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { useProjectStore } from '@/stores/projectStore';
+import { useProjectStore, type ProjectMode } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLeftPanelStore } from '@/stores/leftPanelStore';
@@ -11,10 +11,9 @@ import { LAYOUT_TYPE_CARDS } from '@/lib/layout-type-cards';
 import { LAYOUT_PRESETS, getLayoutPreset } from '@/lib/layout-library';
 import { LayoutThumbnail } from '@/lib/layout-thumbnail';
 import { computeLayoutSize } from '@/lib/layout-size-utils';
-import { QUILT_TEMPLATES } from '@/lib/templates';
+import { QUILT_TEMPLATES, type QuiltTemplate, type TemplateCategory } from '@/lib/templates';
 import { TemplateThumbnail } from '@/lib/template-thumbnail';
 import type { LayoutType } from '@/lib/layout-utils';
-import type { QuiltTemplate, TemplateCategory } from '@/lib/templates';
 import type { UserLayoutTemplate } from '@/types/layoutTemplate';
 
 interface SelectionShellProps {
@@ -30,7 +29,7 @@ interface SelectionShellProps {
    * here). Free-form Phase 1 has NO binding-width slider — binding is a
    * Phase 2 concern in free-form, deferred to a later iteration.
    */
-  mode: 'template' | 'layout' | 'free-form';
+  mode: ProjectMode;
 }
 
 type TemplateCategoryFilter = TemplateCategory | 'all';
@@ -501,11 +500,6 @@ function LayoutFamiliesCatalog({
 /* ────────────────────────────────────────────────────────────────── */
 
 function LayoutConfigPanel({ presetId, onCommit }: { presetId: string; onCommit: () => void }) {
-  const preset = getLayoutPreset(presetId);
-  if (!preset) return null;
-
-  const card = LAYOUT_TYPE_CARDS.find((c) => c.id === preset.category);
-
   const rows = useLayoutStore((s) => s.rows);
   const cols = useLayoutStore((s) => s.cols);
   const blockSize = useLayoutStore((s) => s.blockSize);
@@ -523,6 +517,11 @@ function LayoutConfigPanel({ presetId, onCommit }: { presetId: string; onCommit:
   const addBorder = useLayoutStore((s) => s.addBorder);
   const updateBorder = useLayoutStore((s) => s.updateBorder);
   const removeBorder = useLayoutStore((s) => s.removeBorder);
+
+  const preset = getLayoutPreset(presetId);
+  if (!preset) return null;
+
+  const card = LAYOUT_TYPE_CARDS.find((c) => c.id === preset.category);
 
   const size = computeLayoutSize({
     type: preset.category,
@@ -972,11 +971,11 @@ function UserTemplateCard({
 /* ────────────────────────────────────────────────────────────────── */
 
 function TemplateConfigPanel({ templateId, onCommit }: { templateId: string; onCommit: () => void }) {
-  const template = QUILT_TEMPLATES.find((t) => t.id === templateId);
-  if (!template) return null;
-
   const bindingWidth = useLayoutStore((s) => s.bindingWidth);
   const setBindingWidth = useLayoutStore((s) => s.setBindingWidth);
+
+  const template = QUILT_TEMPLATES.find((t) => t.id === templateId);
+  if (!template) return null;
 
   return (
     <>

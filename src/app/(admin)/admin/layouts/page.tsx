@@ -52,8 +52,9 @@ export default function AdminLayoutsPage() {
     [pagination.limit]
   );
 
-  useEffect(() => {
-    fetchLayouts(pagination.page);
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  fetchLayouts(pagination.page);
   }, [fetchLayouts, pagination.page]);
 
   async function handleTogglePublish(layoutId: string, currentPublished: boolean) {

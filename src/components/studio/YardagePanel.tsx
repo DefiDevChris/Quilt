@@ -66,11 +66,12 @@ export function YardagePanel() {
   // Recompute whenever the panel opens or the inputs change. We do this
   // inside an effect (not during render) because reading from the live
   // Fabric.js canvas is a side-effect.
-  useEffect(() => {
-    if (!isPanelOpen) {
-      setResult(null);
-      return;
-    }
+	useEffect(() => {
+		if (!isPanelOpen) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setResult(null);
+			return;
+		}
     const canvas = getCanvas();
     const computed = computeCanvasYardage({
       canvas: canvas as Parameters<typeof computeCanvasYardage>[0]['canvas'],

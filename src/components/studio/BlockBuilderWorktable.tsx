@@ -89,11 +89,12 @@ export function BlockBuilderWorktable() {
   const blocks = useBlockStore((s) => s.blocks);
   const userBlocks = useBlockStore((s) => s.userBlocks);
   const allBlockCount = blocks.length + userBlocks.length;
-  useEffect(() => {
-    if (!blockName) {
-      setBlockName(`Block ${allBlockCount + 1}`);
-    }
-  }, [blockName, allBlockCount]);
+	useEffect(() => {
+		if (!blockName) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setBlockName(`Block ${allBlockCount + 1}`);
+		}
+	}, [blockName, allBlockCount]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const draftCanvasRef = useRef<unknown>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);

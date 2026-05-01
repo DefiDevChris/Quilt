@@ -11,8 +11,9 @@ import {
   reBendSegment,
   segmentToSvgPath,
   closestPointOnSegment,
+  type Point,
+  type Segment,
 } from '@/lib/easydraw-engine';
-import type { Point, Segment } from '@/lib/easydraw-engine';
 import { CANVAS, COLORS } from '@/lib/design-system';
 import type { CanvasGridSettings } from '@/types/grid';
 
