@@ -46,6 +46,12 @@ export default function PublicNav() {
           Picture my Blocks
         </Link>
         <Link
+          href="/photo-to-quilt"
+          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+        >
+          Photo to Quilt
+        </Link>
+        <Link
           href="/blog"
           className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
         >
@@ -124,7 +130,14 @@ export default function PublicNav() {
         >
           Picture my Blocks
         </Link>
-          <a
+        <Link
+          href="/photo-to-quilt"
+          className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
+          onClick={() => setMenuOpen(false)}
+        >
+          Photo to Quilt
+        </Link>
+        <a
             href="/blog"
             target="_blank"
             rel="noopener noreferrer"
