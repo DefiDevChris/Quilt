@@ -8,6 +8,13 @@
       "when": 1777333344314,
       "tag": "0000_colorful_mercury",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777333344315,
+      "tag": "0001_add_scratch_mode",
+      "breakpoints": true
     }
   ]
 }

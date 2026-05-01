@@ -8,9 +8,8 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { useLeftPanelStore } from '@/stores/leftPanelStore';
-import { QUILT_TEMPLATES } from '@/lib/templates';
+import { QUILT_TEMPLATES, type QuiltTemplate, type TemplateCategory } from '@/lib/templates';
 import { TemplateThumbnail } from '@/lib/template-thumbnail';
-import type { QuiltTemplate, TemplateCategory } from '@/lib/templates';
 
 interface TemplatesPanelProps {
   onDismiss: () => void;

@@ -211,7 +211,7 @@ export function AppShell({
                 <SidebarNavItem icon={Clock} label="Recent" href="/dashboard" active={isActive('/dashboard')} />
                 <SidebarNavItem icon={Folder} label="My Projects" href="/projects" active={isActive('/projects')} />
                 <SidebarNavItem icon={Images} label="Project Gallery" href="/gallery" active={isActive('/gallery')} />
-                <SidebarNavItem icon={Scissors} label="My Uploads" href="/fabrics" active={isActive('/fabrics')} />
+                <SidebarNavItem icon={Scissors} label="My Uploads" href="/my-fabrics" active={isActive('/my-fabrics')} />
                 <SidebarNavItem icon={Settings} label="Settings" href="/settings" active={isActive('/settings')} />
               </nav>
 

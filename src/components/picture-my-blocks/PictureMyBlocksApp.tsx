@@ -25,9 +25,18 @@ export function PictureMyBlocksApp() {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const { toast } = useToast();
   const canvasRef = useRef<HTMLDivElement>(null);
-  const [canvasScale, setCanvasScale] = useState(1);
-  
-  // Calculate scale to fit quilt on canvas without vertical scrolling
+const [canvasScale, setCanvasScale] = useState(1);
+	const [cells, setCells] = useState<Array<{ block: UploadedBlock | null }>>([]);
+
+	// Calculate total cells based on across and long
+	const totalCells = across * long;
+
+	// Initialize cells array
+	useEffect(() => {
+		setCells(Array.from({ length: totalCells }, () => ({ block: null })));
+	}, [totalCells]);
+
+	// Calculate scale to fit quilt on canvas without vertical scrolling
   useEffect(() => {
     const updateScale = () => {
       if (!canvasRef.current) return;
@@ -92,9 +101,9 @@ export function PictureMyBlocksApp() {
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
-  const handleFabricDragStart = useCallback((e: React.DragEvent, fabric: { id: string; imageUrl: string }) => {
-    setSelectedFabric(fabric);
-    e.dataTransfer.setData('application/quiltcorgi-fabric-id', fabric.id);
+  const handleFabricDragStart = useCallback((e: React.DragEvent, fabricId: string) => {
+    setSelectedFabric({ id: fabricId, imageUrl: fabricId });
+    e.dataTransfer.setData('application/quiltcorgi-fabric-id', fabricId);
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
 
@@ -108,11 +117,9 @@ export function PictureMyBlocksApp() {
       if (!block) return;
 
       // Update the cell with the dropped block
-      setCells((prev) => {
-        const newCells = [...prev];
-        newCells[cellIndex] = { ...newCells[cellIndex], block };
-        return newCells;
-      });
+        setCells((prev) =>
+        prev.map((c, i) => (i === cellIndex ? { ...c, block } : c)),
+      );
 
       toast({
         type: 'success',

@@ -15,7 +15,7 @@ function DashboardPageContent() {
   const [showMobileUploads, setShowMobileUploads] = useState(false);
 
   return (
-    <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1fr_1fr] lg:grid-rows-2 gap-8 min-h-0 relative pb-8">
+    <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1fr_0.75fr] lg:grid-rows-2 gap-8 min-h-0 relative pb-8">
 
         {/* 1. DESIGN - Left Column, Row 1 */}
         <Link
@@ -65,10 +65,10 @@ function DashboardPageContent() {
           </div>
         </Link>
 
-      {/* 3. FABRIC LIBRARY - Right Column, Row 1 */}
+      {/* 3. BROWSE FABRICS - Right Column, Rows 1-2 */}
       <Link
         href="/fabrics"
-        className="bg-[var(--color-secondary)] border border-[var(--color-primary)]/20 shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/10 h-[280px]"
+        className="bg-[var(--color-secondary)] border border-[var(--color-primary)]/20 shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/10 lg:row-span-2"
       >
         <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
           <Image src="/icons/quilt-01-spool-Photoroom.png" alt="Fabrics" fill className="object-contain" />
@@ -78,7 +78,7 @@ function DashboardPageContent() {
             <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
             <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Library</span>
           </div>
-          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-[var(--color-text)]">Fabric Library</h3>
+          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-[var(--color-text)]">Browse Fabrics</h3>
           <p className="font-sans text-[var(--color-text-dim)] text-sm mb-auto max-w-[240px]">Browse curated quilting fabrics with shop links. Find the perfect print for your next project.</p>
           <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
             <span>Browse Fabrics</span>
@@ -111,7 +111,7 @@ function DashboardPageContent() {
 
         {/* 5. UPLOAD BLOCKS/FABRICS - Middle Column, Row 2 */}
         <Link
-          href="/fabrics"
+          href="/my-fabrics"
           className="bg-[var(--color-accent)] text-[var(--color-text)] border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:opacity-95 h-[280px]"
         >
           <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-text)]/10 pointer-events-none">

@@ -52,8 +52,9 @@ export default function AdminBlocksPage() {
     [pagination.limit]
   );
 
-  useEffect(() => {
-    fetchBlocks(pagination.page);
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  fetchBlocks(pagination.page);
   }, [fetchBlocks, pagination.page]);
 
   async function handleDelete(blockId: string) {

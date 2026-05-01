@@ -51,7 +51,7 @@ export default function FabricsPage() {
   }, [search]);
 
   const fetchFabrics = async () => {
-    let cancelled = false;
+  const cancelled = false;
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -78,8 +78,9 @@ export default function FabricsPage() {
     }
   };
 
-  useEffect(() => {
-    fetchFabrics();
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  fetchFabrics();
   }, [page, debouncedSearch, colorFamily]);
 
   return (

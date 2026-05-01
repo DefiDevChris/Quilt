@@ -6,8 +6,7 @@ import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { cursorForTool } from '@/lib/canvas-utils';
 import { snapToGridCorner } from '@/lib/snap-utils';
-import { createSegment, segmentToSvgPath } from '@/lib/easydraw-engine';
-import type { Point } from '@/lib/easydraw-engine';
+import { createSegment, segmentToSvgPath, type Point } from '@/lib/easydraw-engine';
 import type { CanvasGridSettings } from '@/types/grid';
 import { CANVAS, COLORS } from '@/lib/design-system';
 

@@ -12,12 +12,18 @@ export interface FabricPreset {
 
 export type { Worktable } from '@/types/project';
 
+export type ProjectMode = 'free-form' | 'layout' | 'template' | 'scratch';
+
 interface ProjectStoreState {
   projectId: string | null;
   projectName: string;
-  mode: 'free-form' | 'layout' | 'template';
+  mode: ProjectMode;
   /** True after user explicitly selects a mode in the mode-selection modal */
   modeSelected: boolean;
+  /** True after user picks "Use a Template" or "Build Your Own" in the new-design flow */
+  creationPathChosen: boolean;
+  /** True when project hasn't been persisted to DB yet (new /studio/new flow) */
+  isPending: boolean;
   saveStatus: SaveStatus;
   canvasWidth: number;
   canvasHeight: number;
@@ -42,14 +48,16 @@ interface ProjectStoreState {
   setProject: (data: {
     id: string;
     name: string;
-    mode?: 'free-form' | 'layout' | 'template';
+    mode?: ProjectMode;
     width: number;
     height: number;
     worktables?: Worktable[];
     version?: number;
   }) => void;
   setProjectName: (name: string) => void;
-  setMode: (mode: 'free-form' | 'layout' | 'template') => void;
+  setMode: (mode: ProjectMode) => void;
+  setCreationPathChosen: (chosen: boolean) => void;
+  setIsPending: (pending: boolean) => void;
   setSaveStatus: (status: SaveStatus) => void;
   setDirty: (dirty: boolean) => void;
   setHasContent: (has: boolean) => void;
@@ -81,6 +89,8 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   projectName: 'Untitled Quilt',
   mode: 'layout',
   modeSelected: false,
+  creationPathChosen: false,
+  isPending: false,
   saveStatus: 'saved',
   canvasWidth: DEFAULT_CANVAS_WIDTH,
   canvasHeight: DEFAULT_CANVAS_HEIGHT,
@@ -121,13 +131,12 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
 
   setProjectName: (projectName) => set({ projectName }),
   setMode: (mode) => {
-    // Mode is chosen once at project start and locked for the life of the
-    // project. Once modeSelected is true the user cannot change modes —
-    // they must create a new project instead.
     const { modeSelected: alreadySelected, mode: currentMode } = get();
     if (alreadySelected && currentMode !== mode) return;
     set({ mode, modeSelected: true, isDirty: true });
   },
+  setCreationPathChosen: (creationPathChosen) => set({ creationPathChosen }),
+  setIsPending: (isPending) => set({ isPending }),
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setDirty: (isDirty) => set({ isDirty }),
   setHasContent: (hasContent) => set({ hasContent }),
@@ -208,6 +217,8 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
       projectName: 'Untitled Quilt',
       mode: 'layout',
       modeSelected: false,
+      creationPathChosen: false,
+      isPending: false,
       saveStatus: 'saved',
       canvasWidth: DEFAULT_CANVAS_WIDTH,
       canvasHeight: DEFAULT_CANVAS_HEIGHT,

@@ -2,11 +2,12 @@ import { computeCanvasGeometry } from '@/lib/canvas-utils';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
 import { CANVAS, FENCE, GRID } from '@/lib/design-system';
 import type { UnitSystem } from '@/types/canvas';
+import type { ProjectMode } from '@/stores/projectStore';
 import type { FenceArea } from '@/types/fence';
 
 interface GridRenderOptions {
   gridSettings: { enabled: boolean; size: number; granularity?: string };
-  mode: 'free-form' | 'layout' | 'template';
+  mode: ProjectMode;
   unitSystem: UnitSystem;
   quiltWidth: number;
   quiltHeight: number;

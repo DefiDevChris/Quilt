@@ -25,13 +25,11 @@ interface UseSelectToolOptions {
 }
 
 export function useSelectTool({ patches, gridSize, setSelectedPatchId }: UseSelectToolOptions) {
-  // We keep the latest patches/gridSize in refs so the event handlers don't
-  // need to be re-registered on the fabric canvas every time a segment is
-  // drawn — otherwise we'd thrash canvas listeners during active drawing.
   const patchesRef = useRef(patches);
-  patchesRef.current = patches;
   const gridSizeRef = useRef(gridSize);
-  gridSizeRef.current = gridSize;
+
+  useEffect(() => { patchesRef.current = patches; }, [patches]);
+  useEffect(() => { gridSizeRef.current = gridSize; }, [gridSize]);
 
   const onMouseDown = useCallback(
     (pointer: { x: number; y: number }, _c: MinimalCanvas) => {

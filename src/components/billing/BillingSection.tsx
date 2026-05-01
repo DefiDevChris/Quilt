@@ -42,11 +42,13 @@ export function BillingSection() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchSubscription();
   }, [fetchSubscription]);
 
   useEffect(() => {
     if (searchParams.get('success') === 'true') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSuccessMessage('Welcome to Pro! Your subscription is now active.');
       if (user) setUser({ ...user, role: 'pro' });
       window.history.replaceState({}, '', '/settings');

@@ -45,12 +45,12 @@ export default function PublicNav() {
         >
           Picture my Blocks
         </Link>
-        <a
+        <Link
           href="/blog"
-            className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-          >
-            Blog
-          </a>
+          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+        >
+          Blog
+        </Link>
 
           {isAuthenticated ? (
               <Link

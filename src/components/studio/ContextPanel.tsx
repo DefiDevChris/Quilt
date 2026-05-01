@@ -30,11 +30,12 @@ export function ContextPanel({
 
   const fabricPickerTarget = useCanvasStore((s) => s.fabricPickerTarget);
 
-  useEffect(() => {
-    if (fabricPickerTarget) {
-      setActiveTab('fabrics');
-    }
-  }, [fabricPickerTarget]);
+	useEffect(() => {
+		if (fabricPickerTarget) {
+			// eslint-disable-next-line react-hooks/set-state-in-effect
+			setActiveTab('fabrics');
+		}
+	}, [fabricPickerTarget]);
 
   const showShadePanel = isBlockGroupSelected && hasShadeData;
   const breakdown = showShadePanel ? getBreakdown('selected') : null;

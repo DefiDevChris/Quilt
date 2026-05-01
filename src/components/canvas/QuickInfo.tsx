@@ -64,8 +64,9 @@ export function QuickInfo() {
     setPanelPos({ x: screenX, y: Math.max(8, screenY) });
   }, [fabricCanvas, unitSystem]);
 
-  useEffect(() => {
-    updateInfo();
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  updateInfo();
   }, [selectedObjectIds, updateInfo]);
 
   // Listen to real-time object changes

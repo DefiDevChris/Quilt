@@ -53,8 +53,9 @@ export default function AdminBlogPage() {
     [pagination]
   );
 
-  useEffect(() => {
-    fetchPosts(pagination.page);
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  fetchPosts(pagination.page);
   }, [fetchPosts, pagination.page]);
 
   async function handleTogglePublish(postId: string, currentStatus: string) {

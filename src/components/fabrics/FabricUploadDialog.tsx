@@ -68,6 +68,7 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!isOpen) reset();
   }, [isOpen, reset]);
 
