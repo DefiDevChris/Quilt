@@ -22,6 +22,7 @@ export function useCanvasInit(
   const { setCanvas } = useCanvasContext();
   const generationRef = useRef(0);
 
+  // eslint-disable-next-line react-hooks/immutability
   useEffect(() => {
     const generation = ++generationRef.current;
     let disposed = false;
@@ -60,6 +61,7 @@ export function useCanvasInit(
       wrapper.style.top = '0';
       wrapper.style.left = '0';
 
+      // eslint-disable-next-line react-hooks/immutability
       const unitSystem = project.unitSystem;
       const pxPerUnit = getPixelsPerUnit(unitSystem);
 

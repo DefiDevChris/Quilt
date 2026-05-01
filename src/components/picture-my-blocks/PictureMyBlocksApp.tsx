@@ -33,6 +33,7 @@ const [canvasScale, setCanvasScale] = useState(1);
 
 	// Initialize cells array
 	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
 		setCells(Array.from({ length: totalCells }, () => ({ block: null })));
 	}, [totalCells]);
 
@@ -134,16 +135,6 @@ const [canvasScale, setCanvasScale] = useState(1);
     e.preventDefault();
     e.dataTransfer.dropEffect = 'copy';
   }, []);
-
-  // Calculate total cells based on across and long
-  const totalCells = across * long;
-
-  // Initialize cells array
-  const [cells, setCells] = useState<Array<{ block: UploadedBlock | null }>>([]);
-
-  useEffect(() => {
-    setCells(Array.from({ length: totalCells }, () => ({ block: null })));
-  }, [totalCells]);
 
   const handleUploadBlock = useCallback(() => {
     setShowUploadDialog(true);
