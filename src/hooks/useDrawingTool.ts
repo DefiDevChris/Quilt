@@ -51,6 +51,7 @@ export function useDrawingTool() {
     });
   }, []);
 
+  // eslint-disable-next-line react-hooks/immutability
   useEffect(() => {
     if (!fabricCanvas) return;
 

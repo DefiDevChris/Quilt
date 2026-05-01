@@ -51,6 +51,7 @@ export function useEasyDrawTool() {
     });
   }, []);
 
+  // eslint-disable-next-line react-hooks/immutability
   useEffect(() => {
     if (!fabricCanvas || activeTool !== 'easydraw') return;
 

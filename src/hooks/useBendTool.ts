@@ -69,6 +69,7 @@ export function useBendTool() {
     });
   }, []);
 
+  // eslint-disable-next-line react-hooks/immutability
   useEffect(() => {
     if (!fabricCanvas || activeTool !== 'bend') return;
 

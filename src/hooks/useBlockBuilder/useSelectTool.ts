@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { findPatchAtPoint } from '@/lib/blockbuilder-utils';
 import type { Patch, MinimalCanvas } from './types';
 
