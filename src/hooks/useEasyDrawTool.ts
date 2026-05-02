@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
@@ -21,8 +20,7 @@ import { CANVAS } from '@/lib/design-system';
  * restoring normal pointer interaction.
  */
 export function useEasyDrawTool() {
-  const { getCanvas } = useCanvasContext();
-  const fabricCanvas = getCanvas();
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
 
   const stateRef = useRef<{

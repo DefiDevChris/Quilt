@@ -5,7 +5,7 @@ import { csrfGuard } from './lib/csrf';
 
 const COGNITO_REGION = process.env.COGNITO_REGION ?? process.env.AWS_REGION ?? 'us-east-1';
 
-// Lazy initialization to avoid race with instrumentation.ts secrets loading
+// Lazy initialization of user pool ID
 function getUserPoolId(): string {
   const id = process.env.COGNITO_USER_POOL_ID ?? '';
   if (!id && process.env.NODE_ENV === 'production') {
@@ -25,10 +25,10 @@ function logAudit(event: string, details: Record<string, string>) {
   console.log(JSON.stringify(logEntry));
 }
 
-const protectedRoutes = ['/dashboard', '/studio', '/profile', '/settings', '/admin'];
+const protectedRoutes = ['/dashboard', '/studio', '/settings', '/admin'];
 const authRoutes = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/auth/verify-email'];
 
-// Lazy initialization of JWKS to avoid race with instrumentation.ts secrets loading
+// Lazy initialization of JWKS
 function getJwks() {
   const userPoolId = getUserPoolId();
   if (!userPoolId) return null;
@@ -38,7 +38,7 @@ function getJwks() {
 
 async function verifyIdToken(
   token: string,
-): Promise<{ sub: string; email: string; groups: string[] } | null> {
+): Promise<{ sub: string; groups: string[] } | null> {
   const jwks = getJwks();
   if (!jwks) return null;
   const userPoolId = getUserPoolId();
@@ -56,7 +56,6 @@ async function verifyIdToken(
       : [];
     return {
       sub: payload.sub as string,
-      email: (payload.email as string) ?? '',
       groups,
     };
   } catch {
@@ -131,7 +130,6 @@ export const config = {
     '/api/:path*',
     '/dashboard/:path*',
     '/studio/:path*',
-    '/profile/:path*',
     '/settings/:path*',
     '/admin/:path*',
     '/auth/:path*',

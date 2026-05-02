@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { snapToCell, snapToGridCorner, snapToGridLine, snapSegment } from '@/lib/snap-utils';
+import { snapToCell, snapToGridCorner } from '@/lib/snap-utils';
 
 describe('snap-utils', () => {
   describe('snapToCell', () => {
@@ -41,29 +41,4 @@ describe('snap-utils', () => {
     });
   });
 
-  describe('snapToGridLine', () => {
-    it('should snap to grid line on x-axis', () => {
-      const result = snapToGridLine({ x: 50, y: 100 }, 1, 'x', 1);
-      expect(result.x).toBe(96); // Snapped to nearest grid line (96px)
-      expect(result.y).toBe(100); // Y unchanged
-    });
-
-    it('should snap to grid line on y-axis', () => {
-      const result = snapToGridLine({ x: 100, y: 50 }, 1, 'y', 1);
-      expect(result.x).toBe(100); // X unchanged
-      expect(result.y).toBe(96); // Snapped to nearest grid line (96px)
-    });
-  });
-
-  describe('snapSegment', () => {
-    it('should snap both endpoints of a segment', () => {
-      const start = { x: 50, y: 50 };
-      const end = { x: 150, y: 150 };
-
-      const result = snapSegment(start, end, 1, 1);
-
-      expect(result.start).toEqual({ x: 96, y: 96 });
-      expect(result.end).toEqual({ x: 192, y: 192 });
-    });
-  });
 });

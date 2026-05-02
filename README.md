@@ -43,7 +43,7 @@ Full spec lives in `brand_config.json` (authoritative) → `src/lib/design-syste
 
 **Typography**: Noto Sans (headings), Montserrat (body)
 
-**Shape**: `rounded-full` for buttons/CTAs/tabs/pills, `rounded-lg` (8px) for cards/containers/inputs/dialogs.
+**Shape**: `rounded-full` for buttons/CTAs/tabs/pills. `rounded-lg` for cards/containers/inputs/dialogs. `rounded-full` for avatars/badges only.
 
 **Shadow**: `0 1px 2px rgba(54, 49, 45, 0.08)` — single subtle shadow system-wide.
 
@@ -88,7 +88,6 @@ npm run db:migrate       # Run pending migrations
 npm run db:push          # Push schema directly (no migration file)
 npm run db:studio        # Open Drizzle Studio web UI
 npm run db:seed:blog     # Seed blog posts
-npm run db:seed:layouts  # Seed layout templates (8 defaults)
 ```
 
 ## Project Structure

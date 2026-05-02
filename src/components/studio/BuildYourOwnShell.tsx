@@ -161,7 +161,7 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
                   }`}
                 >
                   <span
-                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white transition-transform duration-150 ${
+                    className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-[var(--color-surface)] transition-transform duration-150 ${
                       sashing.width > 0 ? 'translate-x-4' : ''
                     }`}
                   />

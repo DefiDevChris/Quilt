@@ -2,17 +2,24 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
-import { SHADOW } from '@/lib/design-system';
-import Mascot from '@/components/landing/Mascot';
 import { BrandLogo } from '@/components/layout/BrandLogo';
+
+const NAV_LINKS = [
+  { href: '/design-studio', label: 'Design Studio' },
+  { href: '/fabrics', label: 'Fabrics' },
+  { href: '/picture-my-blocks', label: 'Picture my Blocks' },
+  { href: '/photo-to-quilt', label: 'Photo to Quilt' },
+  { href: '/blog', label: 'Blog' },
+] as const;
 
 export default function PublicNav() {
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = !!user;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     function handleScroll() {
@@ -22,130 +29,86 @@ export default function PublicNav() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  return (
-    <header className="sticky top-0 z-50 h-20 px-12 flex items-center justify-between shrink-0 bg-white border-b border-black/[0.04]">
-        <BrandLogo href="/" />
+  const visibleLinks = NAV_LINKS.filter(
+    (link) => !pathname.startsWith(link.href)
+  );
 
-        <div className="hidden lg:flex items-center gap-8 font-sans text-xs uppercase tracking-[0.25em] font-bold text-[var(--color-text)]/30">
-      <Link
-            href="/design-studio"
+  return (
+    <header className="sticky top-0 z-50 h-20 px-12 flex items-center justify-between shrink-0 bg-[var(--color-surface)] border-b border-[var(--color-text)]/[0.04]">
+      <BrandLogo href="/" />
+
+      <div className="hidden lg:flex items-center gap-8 font-sans text-xs uppercase tracking-[0.25em] font-bold text-[var(--color-text)]/30">
+        {visibleLinks.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
             className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
           >
-            Design Studio
+            {link.label}
           </Link>
-        <Link
-          href="/fabrics"
-          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-        >
-          Fabrics
-        </Link>
-        <Link
-          href="/picture-my-blocks"
-          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-        >
-          Picture my Blocks
-        </Link>
-        <Link
-          href="/photo-to-quilt"
-          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-        >
-          Photo to Quilt
-        </Link>
-        <Link
-          href="/blog"
-          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-        >
-          Blog
-        </Link>
+        ))}
 
-          {isAuthenticated ? (
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 rounded-full border border-black/10 bg-[var(--color-primary)] px-5 py-2 text-xs uppercase tracking-[0.15em] font-bold text-white hover:bg-[var(--color-primary-hover)] transition-colors duration-150"
-              >
-                Dashboard
-              </Link>
+        {isAuthenticated ? (
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-2 rounded-full border border-black/10 bg-[var(--color-primary)] px-5 py-2 text-xs uppercase tracking-[0.15em] font-bold text-white hover:bg-[var(--color-primary-hover)] transition-colors duration-150"
+          >
+            Dashboard
+          </Link>
+        ) : (
+          <div className="flex items-center gap-4">
+            <Link
+              href="/auth/signin"
+              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/auth/signup"
+              className="flex items-center gap-2 rounded-full border border-black/10 bg-[var(--color-primary)] px-5 py-2 text-xs uppercase tracking-[0.15em] font-bold text-white hover:bg-[var(--color-primary)]/90 transition-colors"
+            >
+              Start Designing
+            </Link>
+          </div>
+        )}
+      </div>
+
+      <button
+        className="lg:hidden p-2 text-default"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Toggle navigation menu"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {menuOpen ? (
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           ) : (
-            <div className="flex items-center gap-4">
-              <Link
-                href="/auth/signin"
-                className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="flex items-center gap-2 rounded-full border border-black/10 bg-[var(--color-primary)] px-5 py-2 text-xs uppercase tracking-[0.15em] font-bold text-white hover:bg-[var(--color-primary)]/90 transition-colors"
-              >
-                Start Designing
-              </Link>
-            </div>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           )}
-        </div>
+        </svg>
+      </button>
 
-        <button
-          className="lg:hidden p-2 text-default"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle navigation menu"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {menuOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
-</button>
-
-{menuOpen && (
+      {menuOpen && (
         <div className="lg:hidden border-t border-default bg-surface px-6 py-4 space-y-3">
-        <Link
-            href="/design-studio"
-            className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
-            onClick={() => setMenuOpen(false)}
-          >
-            Design Studio
-          </Link>
-        <Link
-          href="/fabrics"
-          className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
-          onClick={() => setMenuOpen(false)}
-        >
-          Fabrics
-        </Link>
-        <Link
-          href="/picture-my-blocks"
-          className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
-          onClick={() => setMenuOpen(false)}
-        >
-          Picture my Blocks
-        </Link>
-        <Link
-          href="/photo-to-quilt"
-          className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
-          onClick={() => setMenuOpen(false)}
-        >
-          Photo to Quilt
-        </Link>
-        <a
-            href="/blog"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
-            onClick={() => setMenuOpen(false)}
-          >
-            Blog
-          </a>
+          {visibleLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="block text-dim font-medium py-2 hover:text-primary transition-colors duration-150"
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
           {isAuthenticated ? (
             <Link
               href="/dashboard"

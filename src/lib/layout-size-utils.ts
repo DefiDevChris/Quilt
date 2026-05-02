@@ -6,7 +6,7 @@
  * drag-drop handler to ensure consistent sizing across all code paths.
  */
 
-import type { BorderConfig, SashingConfig } from '@/lib/layout-utils';
+import type { BorderConfig } from '@/lib/layout-utils';
 
 export interface LayoutSizeOptions {
   type: string;
@@ -73,20 +73,4 @@ export function computeLayoutSize(opts: LayoutSizeOptions): LayoutSizeResult {
     perimeter: Math.round(perimeter * 100) / 100,
     bindingYardage,
   };
-}
-
-/**
- * Compute size from a SashingConfig (used when sashing is an object, not just width).
- */
-export function computeLayoutSizeWithSashing(opts: {
-  type: string;
-  rows: number;
-  cols: number;
-  blockSize: number;
-  sashing: SashingConfig;
-  borders: BorderConfig[];
-  bindingWidth: number;
-}): LayoutSizeResult {
-  const { sashing, ...rest } = opts;
-  return computeLayoutSize({ ...rest, sashingWidth: sashing.width });
 }

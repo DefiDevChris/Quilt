@@ -1,12 +1,7 @@
 import Link from 'next/link';
-import { Metadata } from 'next';
 import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
 import Mascot from '@/components/landing/Mascot';
-
-export const metadata: Metadata = {
-  title: 'Page Not Found',
-};
 
 export default function NotFound() {
   return (

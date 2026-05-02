@@ -7,7 +7,6 @@ import { useProjectStore } from '@/stores/projectStore';
 import { NewDesignModal } from '@/components/studio/NewDesignModal';
 import { BuildYourOwnShell } from '@/components/studio/BuildYourOwnShell';
 import { TemplateGalleryModal } from '@/components/studio/TemplateGalleryModal';
-import { CanvasProvider } from '@/contexts/CanvasContext';
 import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/lib/constants/canvas';
 import type { Project } from '@/types/project';
 
@@ -70,7 +69,7 @@ export function NewStudioClient() {
   const configuring = phase === 'build-your-own';
 
   return (
-    <CanvasProvider>
+    <>
       {phase === 'choose-path' && (
         <NewDesignModal
           onBuildYourOwn={handleBuildYourOwn}
@@ -90,6 +89,6 @@ export function NewStudioClient() {
       )}
 
       <StudioLayout project={SYNTHETIC_PROJECT} configuring={configuring} />
-    </CanvasProvider>
+    </>
   );
 }

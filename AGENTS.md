@@ -46,7 +46,7 @@ text-[var(--color-primary)]   not text-blue-500
 **Banned Tailwind classes:**
 `rounded-xl` `rounded-2xl` `rounded-3xl` `bg-white` `text-black` `shadow-elevation-*` `shadow-lg` `transition-all` `hover:scale-*` `hover:shadow-lg` `hover:-translate-*` `active:translate-*`
 
-Use `rounded-lg` (standard), `rounded-full` (avatars/badges only), `shadow-elevated`, `transition-colors duration-150`.
+Use `rounded-full` (buttons), `rounded-lg` (cards/inputs/dialogs), `rounded-full` (avatars/badges only), `shadow-elevated`, `transition-colors duration-150`.
 
 **Buttons:** `btn-primary` or `btn-secondary` (defined in `globals.css`).
 **Cards:** `card` utility class.

@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import { cognitoSignIn } from '@/lib/cognito';
 import { setAuthCookies, setRoleCookie } from '@/lib/cognito-session';
 import { db } from '@/lib/db';
-import { users, userProfiles } from '@/db/schema';
+import { users } from '@/db/schema';
 import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 import { validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
 
@@ -13,21 +13,6 @@ const signinSchema = z.object({
   email: z.string().email().max(255),
   password: z.string().min(1),
 });
-
-async function ensureUserProfile(userId: string, email: string): Promise<void> {
-  const [existing] = await db
-    .select({ id: userProfiles.id })
-    .from(userProfiles)
-    .where(eq(userProfiles.userId, userId))
-    .limit(1);
-  if (existing) return;
-
-  const displayName = email.split('@')[0].slice(0, 60) || 'Quilter';
-  await db
-    .insert(userProfiles)
-    .values({ userId, displayName })
-    .onConflictDoNothing({ target: userProfiles.userId });
-}
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
@@ -62,8 +47,6 @@ export async function POST(request: NextRequest) {
       cookieStore.set('qc_dev_user_id', existing.id, { httpOnly: true, path: '/', maxAge: 86400 });
       cookieStore.set('qc_user_role', existing.role, { httpOnly: true, path: '/', maxAge: 86400 });
 
-      await ensureUserProfile(existing.id, email);
-
       return Response.json({ success: true });
     }
 
@@ -76,8 +59,6 @@ export async function POST(request: NextRequest) {
       .from(users)
       .where(eq(users.email, email))
       .limit(1);
-
-    let userId: string;
 
     if (!existing) {
       // First sign-in: create user record synced from Cognito
@@ -96,21 +77,10 @@ export async function POST(request: NextRequest) {
         })
         .onConflictDoNothing({ target: users.email });
 
-      // Re-query to get the user ID (insert may have been a no-op on conflict)
-      const [created] = await db
-        .select({ id: users.id })
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
-
-      userId = created!.id;
       await setRoleCookie('free');
     } else {
-      userId = existing.id;
       await setRoleCookie(existing.role);
     }
-
-    await ensureUserProfile(userId, email);
 
     return Response.json({ success: true });
   } catch (err) {

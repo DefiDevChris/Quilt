@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useLeftPanelStore } from '@/stores/leftPanelStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
+import { useCanvasStore } from '@/stores/canvasStore';
 import type { QuiltTemplate } from '@/lib/templates';
 import type { UserLayoutTemplate } from '@/types/layoutTemplate';
 
@@ -55,7 +55,7 @@ function parsePreviewCache(raw: string | null): ParsedTemplate {
  * drop blocks/fabrics with the existing drop pipeline.
  */
 export function useTemplateHydration(): void {
-  const { getCanvas } = useCanvasContext();
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const projectMode = useProjectStore((s) => s.mode);
   const layoutLocked = useLayoutStore((s) => s.layoutLocked);
   const previewCache = useLeftPanelStore((s) => s.previewCache);
@@ -73,7 +73,7 @@ export function useTemplateHydration(): void {
     const parsed = parsePreviewCache(previewCache);
     if (!parsed) return;
 
-    const canvas = getCanvas();
+    const canvas = fabricCanvas;
     if (!canvas) return;
 
     hydratedRef.current = true;
@@ -133,5 +133,5 @@ export function useTemplateHydration(): void {
       useLeftPanelStore.getState().applyPreview();
       useProjectStore.getState().setHasContent(true);
     }
-  }, [projectMode, layoutLocked, previewCache, getCanvas]);
+  }, [projectMode, layoutLocked, previewCache, fabricCanvas]);
 }

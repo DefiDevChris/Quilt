@@ -65,8 +65,9 @@ Never use raw hex codes in `className` attributes. Never use `bg-white`, `text-b
 
 ### Radius
 
-`rounded-lg` is the standard radius for cards, modals, buttons, and inputs.  
-`rounded-full` is allowed for avatars/badges only.  
+`rounded-full` is the standard radius for buttons.  
+`rounded-lg` is the standard radius for cards, modals, and inputs.  
+`rounded-full` is also allowed for avatars/badges only.  
 **Banned:** `rounded-xl`, `rounded-2xl`, `rounded-3xl`.
 
 ### Shadows
@@ -125,7 +126,7 @@ All transitions **must** be `transition-colors duration-150`.
 
 | Banned | Use instead |
 |--------|-------------|
-| `rounded-xl / 2xl / 3xl` | `rounded-lg` |
+| `rounded-xl / 2xl / 3xl` | `rounded-full` |
 | `bg-white` / `text-black` | CSS variable equivalents |
 | `shadow-elevation-*` | `shadow-elevated` |
 | `transition-all` | `transition-colors duration-150` |

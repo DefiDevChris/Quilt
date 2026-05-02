@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { COLORS, withAlpha } from '@/lib/design-system';
+import { PaginationInfo } from './types';
 
 interface LayoutTemplate {
   id: string;
@@ -12,13 +13,6 @@ interface LayoutTemplate {
   isPublished: boolean;
   templateData: Record<string, unknown>;
   createdAt: string;
-}
-
-interface PaginationInfo {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
 }
 
 export default function AdminLayoutsPage() {
@@ -255,7 +249,7 @@ useEffect(() => {
               <div className="flex gap-2">
                 <button
                   onClick={() =>
-                    setPagination((prev) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
+                    setPagination((prev: PaginationInfo) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
                   }
                   disabled={pagination.page === 1}
                   className="px-3 py-1.5 rounded-full border border-default text-sm font-medium text-dim hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
@@ -264,7 +258,7 @@ useEffect(() => {
                 </button>
                 <button
                   onClick={() =>
-                    setPagination((prev) => ({
+                    setPagination((prev: PaginationInfo) => ({
                       ...prev,
                       page: Math.min(prev.totalPages, prev.page + 1),
                     }))

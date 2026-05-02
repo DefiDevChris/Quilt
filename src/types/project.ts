@@ -3,7 +3,7 @@
  * `project.canvasData.initialSetup`. The studio bootstrap reads it on
  * first mount, hydrates the relevant stores, and then clears it.
  */
-export type InitialSetupConfig = {
+type InitialSetupConfig = {
   kind: 'layout';
   presetId: string;
   blockSize: number;
@@ -40,4 +40,3 @@ export interface Project {
   updatedAt: Date;
 }
 
-export type { GridSettings } from './grid';

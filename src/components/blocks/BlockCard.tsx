@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import type { BlockListItem } from '@/types/block';
-import { COLORS } from '@/lib/design-system';
+
 
 interface BlockCardProps {
   block: BlockListItem;

@@ -9,7 +9,6 @@
 
 import { useCallback, useRef, useMemo, useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import {
   findPatchesByShade,
@@ -67,8 +66,7 @@ function patchKey(obj: unknown): string {
 }
 
 export function useShadeAssignment() {
-  const { getCanvas } = useCanvasContext();
-  const fabricCanvas = getCanvas();
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const selectedObjectIds = useCanvasStore((s) => s.selectedObjectIds);
   const activeWorktable = useCanvasStore((s) => s.activeWorktable);
   const shadeViewActive = useCanvasStore((s) => s.shadeViewActive);

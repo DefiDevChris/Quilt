@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { CanvasProvider } from '@/contexts/CanvasContext';
 import type { Project } from '@/types/project';
 
 const StudioLayout = dynamic(
@@ -103,13 +102,13 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const phase = layoutLocked ? ('designing' as const) : ('configuring' as const);
 
   return (
-    <CanvasProvider>
+    <>
       {/* Studio chrome (top bar, toolbar, canvas, context panel, bottom bar)
        * is mounted as soon as we have a project — even during the configuring
        * phase. The SelectionShell rails are rendered INSIDE StudioLayout's
        * work-area row so they overlay only the canvas band, not the top bar,
        * worktable tabs, or bottom bar. */}
       <StudioLayout project={project} configuring={phase === 'configuring'} />
-    </CanvasProvider>
+    </>
   );
 }

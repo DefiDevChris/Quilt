@@ -37,7 +37,6 @@ interface PrintlistStoreState {
   removeItem: (shapeId: string) => void;
   updateQuantity: (shapeId: string, quantity: number) => void;
   updateSeamAllowance: (shapeId: string, seamAllowance: number) => void;
-  toggleSeamAllowance: (shapeId: string) => void;
   syncItemSvg: (shapeId: string, svgData: string) => void;
   setPaperSize: (size: PaperSize) => void;
   clear: () => void;
@@ -45,7 +44,6 @@ interface PrintlistStoreState {
 
   loadFromServer: (projectId: string) => Promise<void>;
   saveToServer: (projectId: string) => Promise<void>;
-  setProjectId: (id: string) => void;
   reset: () => void;
 }
 
@@ -94,13 +92,6 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
       ),
     })),
 
-  toggleSeamAllowance: (shapeId) =>
-    set((state) => ({
-      items: state.items.map((i) =>
-        i.shapeId === shapeId ? { ...i, seamAllowanceEnabled: !i.seamAllowanceEnabled } : i
-      ),
-    })),
-
   syncItemSvg: (shapeId, svgData) =>
     set((state) => ({
       items: state.items.map((i) => (i.shapeId === shapeId ? { ...i, svgData } : i)),
@@ -111,8 +102,6 @@ export const usePrintlistStore = create<PrintlistStoreState>((set, get) => ({
   clear: () => set({ items: [], paperSize: 'letter', projectId: null, lastSaveError: null }),
 
   togglePanel: () => set((state) => ({ isPanelOpen: !state.isPanelOpen })),
-
-  setProjectId: (id) => set({ projectId: id }),
 
   loadFromServer: async (projectId: string) => {
     printlistAbortController?.abort();

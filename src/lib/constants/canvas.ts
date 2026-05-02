@@ -37,20 +37,6 @@ export const DEFAULT_WASTE_MARGIN = 0.1;
 /** Reference image overlay opacity */
 export const REFERENCE_IMAGE_DEFAULT_OPACITY = 0.5;
 
-/** Text tool defaults */
-export const TEXT_DEFAULT_FONT_SIZE = 24;
-export const TEXT_DEFAULT_FONT_FAMILY = 'Manrope';
-export const TEXT_FONTS = [
-  'Manrope',
-  'Georgia',
-  'Times New Roman',
-  'Courier New',
-  'Palatino',
-  'Garamond',
-  'Trebuchet MS',
-  'Verdana',
-] as const;
-
 /** Standard quilt size presets in inches */
 export const QUILT_SIZE_PRESETS: readonly {
   readonly label: string;

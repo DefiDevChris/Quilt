@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { COLORS, withAlpha } from '@/lib/design-system';
 
 export default function AdminLibrariesPage() {
   const [activeTab, setActiveTab] = useState<'fabrics' | 'blocks'>('fabrics');

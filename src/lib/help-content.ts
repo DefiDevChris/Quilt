@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-// --- Schemas ---
-
 export const FaqCategorySchema = z.enum([
   'getting-started',
   'design-tools',
@@ -22,24 +20,11 @@ export const FaqEntrySchema = z.object({
 
 export type FaqEntry = z.infer<typeof FaqEntrySchema>;
 
-export const ShortcutCategorySchema = z.enum(['tools', 'editing', 'panels', 'canvas']);
-
-export type ShortcutCategory = z.infer<typeof ShortcutCategorySchema>;
-
-export const KeyboardShortcutSchema = z.object({
-  key: z.string(),
-  label: z.string(),
-  description: z.string(),
-  category: ShortcutCategorySchema,
-});
-
-export type KeyboardShortcut = z.infer<typeof KeyboardShortcutSchema>;
-
-export const SHORTCUT_CATEGORY_LABELS: Readonly<Record<ShortcutCategory, string>> = {
-  tools: 'Tools',
-  editing: 'Editing',
-  panels: 'Panels',
-  canvas: 'Canvas',
+export type KeyboardShortcut = {
+  readonly key: string;
+  readonly label: string;
+  readonly description: string;
+  readonly category: 'tools' | 'editing' | 'panels' | 'canvas';
 };
 
 // --- Keyboard Shortcuts ---
@@ -219,10 +204,6 @@ export function searchFaq(query: string): readonly FaqEntry[] {
       entry.title.toLowerCase().includes(lowerQuery) ||
       entry.content.toLowerCase().includes(lowerQuery)
   );
-}
-
-export function getFaqByCategory(category: FaqCategory): readonly FaqEntry[] {
-  return FAQ_ENTRIES.filter((entry) => entry.category === category);
 }
 
 export const FAQ_CATEGORY_LABELS: Readonly<Record<FaqCategory, string>> = {

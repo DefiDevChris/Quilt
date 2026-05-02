@@ -30,10 +30,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   const [post] = await db
     .select({
-      id: blogPosts.id,
       title: blogPosts.title,
       content: blogPosts.content,
-      excerpt: blogPosts.excerpt,
       featuredImageUrl: blogPosts.featuredImageUrl,
       category: blogPosts.category,
       publishedAt: blogPosts.publishedAt,

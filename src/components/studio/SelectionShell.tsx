@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore, type ProjectMode } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLeftPanelStore } from '@/stores/leftPanelStore';
 import { LAYOUT_TYPE_CARDS } from '@/lib/layout-type-cards';
 import { LAYOUT_PRESETS, getLayoutPreset } from '@/lib/layout-library';
@@ -96,7 +95,7 @@ const FREEFORM_DIM_MIN = 12;
 const FREEFORM_DIM_MAX = 144;
 
 export function SelectionShell({ mode }: SelectionShellProps) {
-  const { getCanvas } = useCanvasContext();
+  const getCanvas = () => useCanvasStore.getState().fabricCanvas;
 
   // Layout-mode state
   //

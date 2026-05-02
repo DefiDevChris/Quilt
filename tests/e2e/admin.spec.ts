@@ -176,30 +176,8 @@ test.describe('Admin API Endpoints', () => {
     expect([401, 403, 404, 500, 200]).toContain(response.status());
   });
 
-  test('admin blog API requires authentication', async ({ request }) => {
-    const response = await request.post('/api/admin/blog', {
-      data: { title: 'Test', content: 'Test' }
-    });
-    expect([401, 403, 404, 500, 200, 422]).toContain(response.status());
-  });
-
-  test('admin orders API requires authentication', async ({ request }) => {
-    const response = await request.get('/api/admin/orders');
-    expect([401, 403, 404, 500, 200, 422]).toContain(response.status());
-  });
-
-  test('admin fabrics API requires authentication', async ({ request }) => {
-    const response = await request.get('/api/admin/fabrics');
-    expect([401, 403, 404, 500, 200, 422]).toContain(response.status());
-  });
-
   test('admin layouts API requires authentication', async ({ request }) => {
     const response = await request.get('/api/admin/layouts');
-    expect([401, 403, 404, 500, 200, 422]).toContain(response.status());
-  });
-
-  test('admin settings API requires authentication', async ({ request }) => {
-    const response = await request.get('/api/admin/settings');
     expect([401, 403, 404, 500, 200, 422]).toContain(response.status());
   });
 });

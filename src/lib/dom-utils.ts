@@ -24,51 +24,6 @@ export function isInputElement(target: EventTarget | null): boolean {
 }
 
 /**
- * Get the active element, safely handling shadow DOM.
- *
- * @param root - The root element to search from (default: document)
- * @returns The active element, or null if none
- */
-export function getActiveElement(root?: Document | ShadowRoot): Element | null {
-  if (typeof window === 'undefined') return null;
-  if (!root) root = document;
-  const activeElement = root.activeElement;
-
-  if (!activeElement) {
-    return null;
-  }
-
-  // If the active element has a shadow root, recurse into it
-  if (activeElement.shadowRoot) {
-    return getActiveElement(activeElement.shadowRoot) ?? activeElement;
-  }
-
-  return activeElement;
-}
-
-/**
- * Check if the currently focused element is an input element.
- * Useful for global keyboard event handlers.
- *
- * @returns true if the currently focused element is an input
- *
- * @example
- * window.addEventListener('keydown', (e) => {
- *   if (isActiveElementInput()) return;
- *   // Handle global keyboard shortcut...
- * });
- */
-export function isActiveElementInput(): boolean {
-  const activeElement = getActiveElement();
-
-  if (!(activeElement instanceof HTMLElement)) {
-    return false;
-  }
-
-  return isInputElement(activeElement);
-}
-
-/**
  * Download a PDF blob to the user's device.
  *
  * @param pdfBytes - The PDF data as Uint8Array

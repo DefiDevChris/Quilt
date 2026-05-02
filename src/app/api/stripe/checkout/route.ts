@@ -85,8 +85,8 @@ export async function POST(request: Request) {
           quantity: 1,
         },
       ],
-      success_url: `${appUrl}/profile?success=true`,
-      cancel_url: `${appUrl}/profile?canceled=true`,
+      success_url: `${appUrl}/settings?success=true`,
+      cancel_url: `${appUrl}/settings?canceled=true`,
       metadata: { userId: session.user.id },
     });
 

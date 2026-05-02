@@ -4,11 +4,10 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   BLOCK_OVERLAYS,
   LAYOUT_OVERLAYS,
-  type BlockOverlay,
   type LayoutOverlay,
 } from '@/lib/quilt-overlay-registry';
 
-import { COLORS, COLORS_HOVER } from '@/lib/design-system';
+
 
 interface RecommendedDimensionsModalProps {
   onSelect: (width: number, height: number) => void;

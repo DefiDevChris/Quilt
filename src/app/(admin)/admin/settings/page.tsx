@@ -1,7 +1,5 @@
 'use client';
 
-import { COLORS, withAlpha } from '@/lib/design-system';
-
 export default function AdminSettingsPage() {
   return (
     <div className="space-y-6">

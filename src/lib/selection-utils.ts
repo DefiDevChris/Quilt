@@ -81,23 +81,6 @@ export function getSelectionType(canvas: unknown): SelectionType {
 }
 
 /**
- * Check if the selection is a multi-selection (ActiveSelection).
- *
- * @param canvas - The Fabric.js canvas instance (or null)
- * @returns true if multiple objects are selected
- */
-export function isMultiSelection(canvas: unknown): boolean {
-  if (!canvas) return false;
-
-  const c = canvas as {
-    getActiveObjects?: () => unknown[];
-  };
-
-  const objects = c.getActiveObjects?.();
-  return Array.isArray(objects) && objects.length > 1;
-}
-
-/**
  * Get the bounding rect of the active selection in canvas coordinates.
  *
  * @param canvas - The Fabric.js canvas instance (or null)

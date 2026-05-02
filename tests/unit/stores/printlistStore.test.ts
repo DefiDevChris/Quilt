@@ -138,11 +138,6 @@ describe('printlistStore', () => {
     expect(usePrintlistStore.getState().isPanelOpen).toBe(false);
   });
 
-  it('sets project id', () => {
-    usePrintlistStore.getState().setProjectId('proj-123');
-    expect(usePrintlistStore.getState().projectId).toBe('proj-123');
-  });
-
   it('enforces minimum quantity of 1 for negative values', () => {
     usePrintlistStore.getState().addItem({
       shapeId: 'shape-1',
@@ -195,21 +190,6 @@ describe('printlistStore', () => {
         unitSystem: 'imperial',
       });
       expect(usePrintlistStore.getState().items[0].quantity).toBe(9999);
-    });
-  });
-
-  describe('toggleSeamAllowance', () => {
-    it('toggles seam allowance enabled', () => {
-      usePrintlistStore.getState().addItem({
-        shapeId: 'shape-1',
-        shapeName: 'A',
-        svgData: '<path/>',
-        quantity: 1,
-        unitSystem: 'imperial',
-      });
-      expect(usePrintlistStore.getState().items[0].seamAllowanceEnabled).toBe(true);
-      usePrintlistStore.getState().toggleSeamAllowance('shape-1');
-      expect(usePrintlistStore.getState().items[0].seamAllowanceEnabled).toBe(false);
     });
   });
 
@@ -333,7 +313,6 @@ describe('printlistStore', () => {
         unitSystem: 'imperial',
       });
       usePrintlistStore.getState().setPaperSize('a4');
-      usePrintlistStore.getState().setProjectId('proj-1');
 
       usePrintlistStore.getState().reset();
 

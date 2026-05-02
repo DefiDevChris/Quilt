@@ -27,13 +27,6 @@ const mockCanvas = {
   wrapperEl: document.createElement('div'),
 };
 
-const mockGetCanvas = vi.fn(() => mockCanvas);
-
-vi.mock('@/contexts/CanvasContext', () => ({
-  useCanvasContext: () => ({
-    getCanvas: mockGetCanvas,
-  }),
-}));
 
 vi.mock('fabric', () => ({
   Path: vi.fn(function (pathData: string, options: object) {
@@ -63,6 +56,7 @@ describe('useBendTool', () => {
       zoom: 1,
       strokeColor: '#000',
       strokeWidth: 2,
+      fabricCanvas: mockCanvas,
     });
     useProjectStore.setState({
       mode: 'free-form',

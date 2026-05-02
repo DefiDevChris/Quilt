@@ -1,7 +1,7 @@
 'use client';
 
 import { Component, type ReactNode } from 'react';
-import { COLORS } from '@/lib/design-system';
+
 
 interface CanvasErrorBoundaryProps {
   children: ReactNode;

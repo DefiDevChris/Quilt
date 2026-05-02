@@ -76,8 +76,8 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
   const isAuthenticated = !!user;
 
   const homeActive = pathname === '/' || pathname.startsWith('/dashboard');
-  const profileActive = isAuthenticated
-    ? pathname.startsWith('/profile')
+  const settingsActive = isAuthenticated
+    ? pathname.startsWith('/settings')
     : pathname.startsWith('/auth/signin');
 
   return (
@@ -131,24 +131,24 @@ export function MobileBottomNav({ onFabPress }: MobileBottomNavProps) {
         </div>
       </button>
 
-      {/* Profile / Sign In */}
+      {/* Settings / Sign In */}
       <Link
-        href={isAuthenticated ? '/profile' : '/auth/signin'}
-        aria-current={profileActive ? 'page' : undefined}
+        href={isAuthenticated ? '/settings' : '/auth/signin'}
+        aria-current={settingsActive ? 'page' : undefined}
         className="flex flex-col items-center gap-1 min-w-[48px] py-1"
       >
         {isAuthenticated ? (
-          <ProfileIcon active={profileActive} />
+          <ProfileIcon active={settingsActive} />
         ) : (
-          <SignInIcon active={profileActive} />
+          <SignInIcon active={settingsActive} />
         )}
         <span
           className="text-[14px] leading-[20px] font-semibold"
           style={{
-            color: profileActive ? 'var(--color-primary)' : 'var(--color-border)',
+            color: settingsActive ? 'var(--color-primary)' : 'var(--color-border)',
           }}
         >
-          {isAuthenticated ? 'Profile' : 'Sign In'}
+          {isAuthenticated ? 'Settings' : 'Sign In'}
         </span>
       </Link>
     </nav>

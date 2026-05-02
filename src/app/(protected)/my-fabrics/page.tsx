@@ -51,7 +51,6 @@ export default function FabricsPage() {
   }, [search]);
 
   const fetchFabrics = async () => {
-  const cancelled = false;
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -66,15 +65,13 @@ export default function FabricsPage() {
       if (!res.ok) throw new Error('Failed to fetch');
 
       const data: FabricsResponse = await res.json();
-      if (cancelled) return;
-
       setFabrics(data.data.fabrics ?? []);
       setTotalPages(data.data.totalPages ?? 1);
       setTotal(data.data.total ?? 0);
     } catch {
-      if (!cancelled) setFabrics([]);
+      setFabrics([]);
     } finally {
-      if (!cancelled) setLoading(false);
+      setLoading(false);
     }
   };
 

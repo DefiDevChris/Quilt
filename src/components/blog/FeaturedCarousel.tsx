@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, animate, PanInfo } from 'framer-motion';
 import Link from 'next/link';
-import { COLORS, MOTION, CANVAS } from '@/lib/design-system';
+import { COLORS, CANVAS } from '@/lib/design-system';
 
 export interface BlogPost {
   id: string;

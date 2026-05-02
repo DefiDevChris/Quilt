@@ -1,16 +1,8 @@
-interface SkeletonProps {
-  className?: string;
-}
-
-export function Skeleton({ className = '' }: SkeletonProps) {
-  return <div className={`animate-pulse bg-[var(--color-border)] rounded-full ${className}`} />;
-}
-
 interface SkeletonCardProps {
   className?: string;
 }
 
-export function SkeletonCard({ className = '' }: SkeletonCardProps) {
+function SkeletonCard({ className = '' }: SkeletonCardProps) {
   return (
     <div className={`rounded-lg overflow-hidden bg-[var(--color-bg)] ${className}`}>
       <div className="h-40 bg-[var(--color-border)] animate-pulse" />
@@ -44,16 +36,4 @@ export function SkeletonGrid({ count = 6, columns = 3 }: SkeletonGridProps) {
   );
 }
 
-interface SkeletonRowProps {
-  width?: string;
-  height?: string;
-}
 
-export function SkeletonRow({ width = '100%', height = '16px' }: SkeletonRowProps) {
-  return (
-    <div
-      style={{ width, height }}
-      className="animate-pulse bg-[var(--color-border)] rounded-full"
-    />
-  );
-}

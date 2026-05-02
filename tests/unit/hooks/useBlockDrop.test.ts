@@ -1,18 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useBlockDrop } from '@/hooks/useBlockDrop';
-import { useCanvasContext } from '@/contexts/CanvasContext';
+import { useCanvasStore } from '@/stores/canvasStore';
 
 // Mock the required dependencies
 vi.mock('@/stores/canvasStore', () => ({
-  useCanvasStore: vi.fn(() => ({
-    pushUndoState: vi.fn(() => true),
-    setActiveTool: vi.fn(),
-    getState: vi.fn(() => ({
-      gridSettings: { size: 1, granularity: 'inch', snapToGrid: true },
-      zoom: 1,
-    })),
-  })),
+  useCanvasStore: vi.fn((selector) =>
+    selector({
+      pushUndoState: vi.fn(() => true),
+      setActiveTool: vi.fn(),
+      fabricCanvas: {},
+    } as any)
+  ),
 }));
 
 vi.mock('@/stores/projectStore', () => {
@@ -31,12 +30,6 @@ vi.mock('@/stores/layoutStore', () => ({
     getState: vi.fn(() => ({
       blockSize: 12,
     })),
-  })),
-}));
-
-vi.mock('@/contexts/CanvasContext', () => ({
-  useCanvasContext: vi.fn(() => ({
-    getCanvas: vi.fn(() => ({})),
   })),
 }));
 
@@ -74,10 +67,13 @@ describe('useBlockDrop', () => {
         toJSON: vi.fn(() => ({})),
       };
 
-      const mockContext = {
-        getCanvas: vi.fn(() => mockCanvas),
-      };
-      vi.mocked(useCanvasContext).mockReturnValue(mockContext as any);
+      vi.mocked(useCanvasStore).mockImplementation((selector) =>
+        selector({
+          pushUndoState: vi.fn(() => true),
+          setActiveTool: vi.fn(),
+          fabricCanvas: mockCanvas,
+        } as any)
+      );
 
       // Mock fetch for block data
       global.fetch = vi.fn(() =>

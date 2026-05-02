@@ -14,7 +14,6 @@ import { SelectionShell } from '@/components/studio/SelectionShell';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { saveProject } from '@/lib/save-project';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useTemplateHydration } from '@/hooks/useTemplateHydration';
 import type { Project } from '@/types/project';
 
@@ -66,7 +65,7 @@ interface StudioLayoutProps {
 }
 
 export function StudioLayout({ project, configuring = false }: StudioLayoutProps) {
-  const { getCanvas } = useCanvasContext();
+  const getCanvas = () => useCanvasStore.getState().fabricCanvas;
   const isSaving = useRef(false);
 
   const projectMode = useProjectStore((s) => s.mode);

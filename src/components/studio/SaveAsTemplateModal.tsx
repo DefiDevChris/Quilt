@@ -3,9 +3,9 @@
 import { useState, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { useToast } from '@/components/ui/ToastProvider';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
+import { useCanvasStore } from '@/stores/canvasStore';
 import type { TemplateDataPayload } from '@/types/layoutTemplate';
 
 interface SaveAsTemplateModalProps {
@@ -34,7 +34,7 @@ const CATEGORY_OPTIONS: { value: string; label: string }[] = [
  * POSTs to `/api/templates`. On success the modal closes and a toast confirms.
  */
 export function SaveAsTemplateModal({ isOpen, onClose }: SaveAsTemplateModalProps) {
-  const { getCanvas } = useCanvasContext();
+  const getCanvas = () => useCanvasStore.getState().fabricCanvas;
   const projectName = useProjectStore((s) => s.projectName);
 
   const [name, setName] = useState(projectName || 'My Template');
