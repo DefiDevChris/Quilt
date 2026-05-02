@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { cognitoForgotPassword, cognitoConfirmForgotPassword } from '@/lib/cognito';
 import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
-import { validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import { validationErrorResponse, errorResponse } from '@/lib/api-responses';
 
 const initiateSchema = z.object({
   email: z.string().email(),

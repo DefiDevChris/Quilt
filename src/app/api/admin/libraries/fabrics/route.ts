@@ -51,9 +51,6 @@ export async function POST(request: NextRequest) {
 
     return Response.json({ success: true, data: inserted });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return validationErrorResponse(error.issues[0]?.message ?? 'Invalid fabric data');
-    }
     console.error('Failed to create system fabric', error);
     return errorResponse('Failed to create system fabric', 'INTERNAL_ERROR', 500);
   }

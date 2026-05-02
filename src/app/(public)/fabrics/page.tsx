@@ -3,21 +3,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search } from 'lucide-react';
 import type { FabricListItem } from '@/types/fabric';
+import type { PaginationInfo } from '@/types/api';
 import { FabricBrowseCard } from '@/components/fabrics/FabricBrowseCard';
 import { COLOR_FAMILIES, FABRIC_MANUFACTURERS, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
 
-interface Pagination {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
-
 export default function FabricLibraryPage() {
   const [fabrics, setFabrics] = useState<FabricListItem[]>([]);
-  const [pagination, setPagination] = useState<Pagination>({
+  const [pagination, setPagination] = useState<PaginationInfo>({
     page: 1,
     limit: FABRICS_PAGINATION_DEFAULT_LIMIT,
     total: 0,

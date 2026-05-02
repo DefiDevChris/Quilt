@@ -6,7 +6,7 @@ import { cognitoSignUp } from '@/lib/cognito';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';
 import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
-import { validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import { validationErrorResponse, errorResponse } from '@/lib/api-responses';
 
 const signupSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255),

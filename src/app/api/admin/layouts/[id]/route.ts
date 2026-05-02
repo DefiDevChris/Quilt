@@ -15,16 +15,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const { id } = await params;
     const body = await request.json();
 
-    const [existing] = await db
-      .select({ id: layoutTemplates.id })
-      .from(layoutTemplates)
-      .where(eq(layoutTemplates.id, id))
-      .limit(1);
-
-    if (!existing) {
-      return notFoundResponse('Layout not found');
-    }
-
     const updateData: Record<string, unknown> = {};
     if (body.name !== undefined) updateData.name = body.name;
     if (body.category !== undefined) updateData.category = body.category;
@@ -38,6 +28,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       .set(updateData)
       .where(eq(layoutTemplates.id, id))
       .returning();
+
+    if (!updated) {
+      return notFoundResponse('Layout not found');
+    }
 
     return Response.json({ success: true, data: updated });
   } catch (err) { console.error('[admin/layouts/[id]]', err);
@@ -54,16 +48,6 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-
-    const [existing] = await db
-      .select({ id: layoutTemplates.id })
-      .from(layoutTemplates)
-      .where(eq(layoutTemplates.id, id))
-      .limit(1);
-
-    if (!existing) {
-      return notFoundResponse('Layout not found');
-    }
 
     const [deleted] = await db
       .delete(layoutTemplates)

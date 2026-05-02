@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { eq, and, ilike, count, asc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema';
-import { validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import { validationErrorResponse, errorResponse } from '@/lib/api-responses';
 import {
   FABRICS_PAGINATION_DEFAULT_LIMIT,
   FABRICS_PAGINATION_MAX_LIMIT,

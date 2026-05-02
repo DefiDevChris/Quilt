@@ -152,18 +152,15 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid input');
     }
 
-    const {
-      name,
-      mode,
-      unitSystem,
-      canvasWidth: bodyWidth,
-      canvasHeight: bodyHeight,
-      gridSettings,
-      canvasData,
-    } = parsed.data;
-
-    const canvasWidth = bodyWidth;
-    const canvasHeight = bodyHeight;
+  const {
+    name,
+    mode,
+    unitSystem,
+    canvasWidth,
+    canvasHeight,
+    gridSettings,
+    canvasData,
+  } = parsed.data;
 
     const [newProject] = await db
       .insert(projects)

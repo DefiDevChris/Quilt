@@ -2,8 +2,10 @@ import { NextRequest } from 'next/server';
 import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blocks } from '@/db/schema';
-import { requireAdminSession, validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import { requireAdminSession } from '@/lib/auth-helpers';
+import { errorResponse, validationErrorResponse } from '@/lib/api-responses';
 import { adminCreateBlockSchema, adminPaginationSchema } from '@/lib/validation';
+import { sanitizeSvg } from '@/lib/sanitize-svg';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,9 +58,14 @@ export async function POST(request: NextRequest) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid block data');
     }
 
+    const sanitizedData = {
+      ...parsed.data,
+      svgData: sanitizeSvg(parsed.data.svgData),
+    };
+
     const [created] = await db
       .insert(blocks)
-      .values({ ...parsed.data, userId: null, isDefault: true })
+      .values({ ...sanitizedData, userId: null, isDefault: true })
       .returning();
 
     return Response.json({ success: true, data: created }, { status: 201 });

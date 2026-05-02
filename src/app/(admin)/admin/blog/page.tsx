@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { COLORS, withAlpha } from '@/lib/design-system';
-import { PaginationInfo } from './types';
+import { PaginationInfo } from '@/types/api';
 
 interface BlogPost {
   id: string;

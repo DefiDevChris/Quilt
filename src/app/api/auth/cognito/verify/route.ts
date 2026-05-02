@@ -5,7 +5,7 @@ import { cognitoConfirmSignUp, cognitoResendVerification } from '@/lib/cognito';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';
 import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
-import { validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import { validationErrorResponse, errorResponse } from '@/lib/api-responses';
 
 const verifySchema = z.object({
   email: z.string().email(),
