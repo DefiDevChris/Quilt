@@ -46,22 +46,6 @@ describe('leftPanelStore', () => {
     });
   });
 
-  describe('openTemplates', () => {
-    it('should set panel mode to templates', () => {
-      useLeftPanelStore.getState().openTemplates();
-      const state = useLeftPanelStore.getState();
-      expect(state.panelMode).toBe('templates');
-    });
-  });
-
-  describe('openQuiltSetup', () => {
-    it('should set panel mode to quilt-setup', () => {
-      useLeftPanelStore.getState().openQuiltSetup();
-      const state = useLeftPanelStore.getState();
-      expect(state.panelMode).toBe('quilt-setup');
-    });
-  });
-
   describe('dismiss', () => {
     it('should reset all state to initial values', () => {
       const store = useLeftPanelStore.getState();
@@ -167,7 +151,7 @@ describe('leftPanelStore', () => {
 
     it('should clear preview but keep other modes intact', () => {
       const store = useLeftPanelStore.getState();
-      store.openTemplates();
+      useLeftPanelStore.setState({ panelMode: 'templates' });
       store.startPreview('{}', 'Test');
       store.selectPreset('preset-1');
       store.cancelPreview();

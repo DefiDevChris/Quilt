@@ -2,19 +2,16 @@
 
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
 import { snapToGridCorner } from '@/lib/snap-utils';
 import { showDrawingHud, hideDrawingHud, formatLength } from '@/lib/drawing-hud';
 import type { CanvasGridSettings } from '@/types/grid';
-import { isPointInFenceAreaPure } from '@/hooks/useFenceConstraints';
 import { CANVAS } from '@/lib/design-system';
 
 export function useDrawingTool() {
-  const { getCanvas } = useCanvasContext();
-  const fabricCanvas = getCanvas();
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
   const stateRef = useRef<{
     fillColor: string;

@@ -10,7 +10,6 @@ import {
   GRID_DEFAULT_SIZE,
   GRID_DEFAULT_ENABLED,
   GRID_DEFAULT_SNAP,
-  REFERENCE_IMAGE_DEFAULT_OPACITY,
 } from '@/lib/constants';
 import { DEFAULT_CANVAS } from '@/lib/design-system';
 import { clamp } from '@/lib/math-utils';
@@ -48,9 +47,7 @@ export type ToolType =
   | 'triangle'
   | 'polygon';
 
-export type BlockDraftingMode = 'freeform' | 'blockbuilder';
-
-export type WorktableType = 'quilt' | 'block-builder';
+type WorktableType = 'quilt' | 'block-builder';
 
 interface CanvasStoreState {
   zoom: number;
@@ -67,13 +64,8 @@ interface CanvasStoreState {
   strokeWidth: number;
   undoStack: string[];
   redoStack: string[];
-  blockDraftingMode: BlockDraftingMode;
-  referenceImageOpacity: number;
-
   isViewportLocked: boolean;
-  showSeamAllowance: boolean;
   printScale: number;
-  easyDrawMode: 'straight' | 'smooth';
   blockBuilderMode: 'straight' | 'smooth';
   toolSettings: Record<
     ToolType,
@@ -104,7 +96,6 @@ interface CanvasStoreState {
   setZoom: (zoom: number) => void;
   setUnitSystem: (unit: UnitSystem) => void;
   setGridSettings: (settings: Partial<CanvasGridSettings>) => void;
-  setGridGranularity: (granularity: GridGranularity) => void;
   setSelectedObjectIds: (ids: string[]) => void;
   setActiveTool: (tool: ToolType) => void;
   setActiveWorktable: (worktable: WorktableType) => void;
@@ -119,33 +110,19 @@ interface CanvasStoreState {
   canUndo: () => boolean;
   canRedo: () => boolean;
   resetHistory: () => void;
-  setBlockDraftingMode: (mode: BlockDraftingMode) => void;
-  setReferenceImageOpacity: (opacity: number) => void;
-
   setViewportLocked: (
     locked: boolean,
     canvas?: unknown,
     canvasWidth?: number,
     canvasHeight?: number
   ) => void;
-  toggleSeamAllowance: () => void;
-  setPrintScale: (scale: number) => void;
-  setEasyDrawMode: (mode: 'straight' | 'smooth') => void;
   setBlockBuilderMode: (mode: 'straight' | 'smooth') => void;
   centerAndFitViewport: (canvas: unknown, canvasWidth: number, canvasHeight: number) => void;
-  zoomAndCenter: (
-    newZoom: number,
-    canvas: unknown,
-    canvasWidth: number,
-    canvasHeight: number
-  ) => void;
   zoomAtPoint: (newZoom: number, canvas: unknown, screenX?: number, screenY?: number) => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
   setClipboard: (objects: unknown[]) => void;
-  setReferenceImageUrl: (url: string) => void;
   setShowReferencePanel: (show: boolean) => void;
-  toggleReferencePanel: () => void;
   setSelectedPatch: (patch: unknown | null) => void;
   setShadeViewActive: (active: boolean) => void;
   toggleShadeView: () => void;
@@ -179,13 +156,8 @@ const INITIAL_STATE = {
   strokeWidth: 1,
   undoStack: [] as string[],
   redoStack: [] as string[],
-  blockDraftingMode: 'freeform' as BlockDraftingMode,
-  referenceImageOpacity: REFERENCE_IMAGE_DEFAULT_OPACITY,
-
   isViewportLocked: false,
-  showSeamAllowance: true,
   printScale: 1.0,
-  easyDrawMode: 'straight' as const,
   blockBuilderMode: 'straight' as const,
   toolSettings: {} as Record<
     ToolType,
@@ -216,11 +188,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setGridSettings: (updates) =>
     set((state) => ({
       gridSettings: { ...state.gridSettings, ...updates },
-    })),
-
-  setGridGranularity: (granularity) =>
-    set((state) => ({
-      gridSettings: { ...state.gridSettings, granularity },
     })),
 
   setSelectedObjectIds: (ids) => set({ selectedObjectIds: ids }),
@@ -279,22 +246,12 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   canRedo: () => get().redoStack.length > 0,
   resetHistory: () => set({ undoStack: [], redoStack: [] }),
 
-  setBlockDraftingMode: (mode) => set({ blockDraftingMode: mode }),
-
-  setReferenceImageOpacity: (opacity) => set({ referenceImageOpacity: clamp(opacity, 0, 1) }),
-
   setViewportLocked: (locked, canvas, canvasWidth, canvasHeight) => {
     set({ isViewportLocked: locked });
     if (locked && canvas && canvasWidth !== undefined && canvasHeight !== undefined) {
       get().centerAndFitViewport(canvas, canvasWidth, canvasHeight);
     }
   },
-
-  toggleSeamAllowance: () => set((state) => ({ showSeamAllowance: !state.showSeamAllowance })),
-
-  setPrintScale: (scale) => set({ printScale: clamp(scale, 0.1, 2.0) }),
-
-  setEasyDrawMode: (mode) => set({ easyDrawMode: mode }),
 
   setBlockBuilderMode: (mode) => set({ blockBuilderMode: mode }),
 
@@ -317,36 +274,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
       canvasWidth,
       canvasHeight,
       zoom,
-      unitSystem
-    );
-    fabricCanvas.setViewportTransform([vp.zoom, 0, 0, vp.zoom, vp.panX, vp.panY]);
-    set({ zoom: vp.zoom });
-    fabricCanvas.renderAll();
-  },
-
-  zoomAndCenter: (newZoom: number, canvas: unknown, canvasWidth: number, canvasHeight: number) => {
-    const { unitSystem } = get();
-    const fabricCanvas = canvas as {
-      wrapperEl: HTMLElement;
-      setViewportTransform: (vp: number[]) => void;
-      renderAll: () => void;
-    } | null;
-    if (!fabricCanvas) return;
-    const el = fabricCanvas.wrapperEl;
-    if (!el) return;
-    const containerW = el.clientWidth;
-    const containerH = el.clientHeight;
-    const minZoom = Math.max(
-      ZOOM_MIN,
-      fitToScreenZoom(containerW, containerH, canvasWidth, canvasHeight, unitSystem)
-    );
-    const clamped = clamp(newZoom, minZoom, ZOOM_MAX);
-    const vp = computeViewportTransform(
-      containerW,
-      containerH,
-      canvasWidth,
-      canvasHeight,
-      clamped,
       unitSystem
     );
     fabricCanvas.setViewportTransform([vp.zoom, 0, 0, vp.zoom, vp.panX, vp.panY]);
@@ -427,9 +354,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setFabricPickerTarget: (target) => set({ fabricPickerTarget: target }),
   setSwapMode: (active, sourceId = null) => set({ swapMode: active, swapSourceId: sourceId }),
   clearSwapMode: () => set({ swapMode: false, swapSourceId: null }),
-  setReferenceImageUrl: (referenceImageUrl) => set({ referenceImageUrl }),
   setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),
-  toggleReferencePanel: () => set((s) => ({ showReferencePanel: !s.showReferencePanel })),
 
   reset: () => {
     // Canvas disposal is handled by useCanvasInit cleanup — only reset store state

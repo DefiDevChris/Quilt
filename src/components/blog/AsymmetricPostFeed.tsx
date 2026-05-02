@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
 import type { BlogPost } from './FeaturedCarousel';
-import { COLORS, MOTION } from '@/lib/design-system';
+import { COLORS } from '@/lib/design-system';
 
 const FALLBACK = [
   '/images/quilts/simple_quilt_one_1775442292809.png',

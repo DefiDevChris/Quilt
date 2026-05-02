@@ -114,6 +114,6 @@ export function patternResultToFabricJson(
   return {
     version: '7.2.0',
     objects,
-    backgroundColor: result.backgroundFabric ?? '#FFFFFF',
+    backgroundColor: result.backgroundFabric ?? 'transparent',
   };
 }

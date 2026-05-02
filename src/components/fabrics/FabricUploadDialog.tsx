@@ -16,7 +16,7 @@ import {
   type CalibrationMethod,
   type ScannerPreset,
 } from '@/lib/fabric-calibration';
-import { COLORS } from '@/lib/design-system';
+
 
 interface FabricUploadDialogProps {
   isOpen: boolean;

@@ -2,7 +2,6 @@
 
 import { useCallback, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { snapToCell, snapToGridCorner } from '@/lib/snap-utils';
@@ -56,8 +55,7 @@ function getComputedLayoutAreas() {
  * Invalid drops are silently ignored.
  */
 export function useBlockDrop() {
-  const { getCanvas } = useCanvasContext();
-  const fabricCanvas = getCanvas();
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const pushUndoState = useCanvasStore((s) => s.pushUndoState);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);
   const dragBlockIdRef = useRef<string | null>(null);

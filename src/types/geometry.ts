@@ -8,5 +8,4 @@ export interface Point {
   y: number;
 }
 
-/** Alias for backward compatibility */
-export type Point2D = Point;
+

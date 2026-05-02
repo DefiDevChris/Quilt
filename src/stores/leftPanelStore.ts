@@ -13,13 +13,6 @@ interface LeftPanelStoreState {
   previewName: string | null;
 
   openLayouts: () => void;
-  openTemplates: () => void;
-  /**
-   * Mount the Quilt Size panel in the left rail. This replaces the modal
-   * step-2 of the New Project Wizard for in-studio edits of rows / columns /
-   * block size / borders / sashing / binding.
-   */
-  openQuiltSetup: () => void;
   dismiss: () => void;
   drillIntoFamily: (family: LayoutType) => void;
   backToFamilies: () => void;
@@ -38,10 +31,6 @@ export const useLeftPanelStore = create<LeftPanelStoreState>((set, get) => ({
   previewName: null,
 
   openLayouts: () => set({ panelMode: 'layouts', layoutBrowserView: 'families', selectedFamily: null, selectedPresetId: null }),
-
-  openTemplates: () => set({ panelMode: 'templates' }),
-
-  openQuiltSetup: () => set({ panelMode: 'quilt-setup' }),
 
   dismiss: () => set({
     panelMode: 'none',

@@ -17,7 +17,7 @@ export type LayoutAreaRole =
   | 'edging'
   | 'setting-triangle';
 
-export interface TemplateBorderConfig {
+interface TemplateBorderConfig {
   width: number; // inches
   position: number; // 0 = innermost
 }

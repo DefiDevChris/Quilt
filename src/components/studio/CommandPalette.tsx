@@ -44,7 +44,6 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useYardageStore } from '@/stores/yardageStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { ZOOM_FACTOR } from '@/lib/constants';
 
 interface CommandPaletteProps {
@@ -79,7 +78,7 @@ export function CommandPalette({
   onOpenHistory,
 }: CommandPaletteProps) {
   const router = useRouter();
-  const { getCanvas } = useCanvasContext();
+  const getCanvas = () => useCanvasStore.getState().fabricCanvas;
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 

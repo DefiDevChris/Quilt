@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import PublicNav from '@/components/landing/PublicNav';
 import PhotoToQuiltApp from '@/components/photo-to-quilt/PhotoToQuiltApp';
+import PublicNav from '@/components/landing/PublicNav';
 
 export const metadata: Metadata = {
   title: 'Photo to Quilt — QuiltCorgi',
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function PhotoToQuiltPage() {
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden bg-[var(--color-bg)]">
       <PublicNav />
       <main className="flex-1 min-h-0 overflow-hidden">
         <PhotoToQuiltApp />

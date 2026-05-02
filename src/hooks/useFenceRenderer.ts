@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { computeCanvasGeometry } from '@/lib/canvas-utils';
@@ -57,8 +56,7 @@ const PREVIEW_STROKES = FENCE.preview.strokes;
  * block-cell areas, fabrics can only drop into structural areas.
  */
 export function useFenceRenderer() {
-  const { getCanvas } = useCanvasContext();
-  const fabricCanvas = getCanvas();
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
   const prevKeyRef = useRef('');
   const areasRef = useRef<FenceArea[]>([]);

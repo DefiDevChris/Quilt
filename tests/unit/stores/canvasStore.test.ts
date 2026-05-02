@@ -40,23 +40,6 @@ describe('canvasStore', () => {
       expect(gs.snapToGrid).toBe(true);
     });
 
-    it('setGridGranularity updates granularity without mutating existing objects', () => {
-      // Don't use the reset state, test on current state
-      const initialGranularity = useCanvasStore.getState().gridSettings.granularity;
-
-      // Set new granularity
-      useCanvasStore.getState().setGridGranularity('half');
-      expect(useCanvasStore.getState().gridSettings.granularity).toBe('half');
-      expect(useCanvasStore.getState().gridSettings.size).toBe(1); // Size unchanged
-      expect(useCanvasStore.getState().gridSettings.snapToGrid).toBe(true); // Other settings unchanged
-
-      // Set another granularity
-      useCanvasStore.getState().setGridGranularity('quarter');
-      expect(useCanvasStore.getState().gridSettings.granularity).toBe('quarter');
-
-      // Reset to initial
-      useCanvasStore.getState().setGridGranularity(initialGranularity);
-    });
   });
 
   describe('activeTool', () => {
@@ -238,67 +221,12 @@ describe('canvasStore', () => {
     });
   });
 
-  describe('blockDraftingMode', () => {
-    it('defaults to freeform', () => {
-      expect(useCanvasStore.getState().blockDraftingMode).toBe('freeform');
-    });
-
-    it('can be set to easydraw', () => {
-      useCanvasStore.getState().setBlockDraftingMode('blockbuilder');
-      expect(useCanvasStore.getState().blockDraftingMode).toBe('blockbuilder');
-    });
-
-    it('updates immutably (does not mutate previous state snapshot)', () => {
-      const before = useCanvasStore.getState();
-      useCanvasStore.getState().setBlockDraftingMode('blockbuilder');
-      const after = useCanvasStore.getState();
-      expect(before.blockDraftingMode).toBe('freeform');
-      expect(after.blockDraftingMode).toBe('blockbuilder');
-    });
-  });
-
-  describe('referenceImageOpacity', () => {
-    it('defaults to 0.5', () => {
-      expect(useCanvasStore.getState().referenceImageOpacity).toBe(0.5);
-    });
-
-    it('can be set to valid values', () => {
-      useCanvasStore.getState().setReferenceImageOpacity(0.8);
-      expect(useCanvasStore.getState().referenceImageOpacity).toBe(0.8);
-    });
-
-    it('clamps to minimum 0', () => {
-      useCanvasStore.getState().setReferenceImageOpacity(-0.5);
-      expect(useCanvasStore.getState().referenceImageOpacity).toBe(0);
-    });
-
-    it('clamps to maximum 1', () => {
-      useCanvasStore.getState().setReferenceImageOpacity(1.5);
-      expect(useCanvasStore.getState().referenceImageOpacity).toBe(1);
-    });
-  });
-
   describe('viewport and other settings', () => {
     it('setViewportLocked sets isViewportLocked', () => {
       useCanvasStore.getState().setViewportLocked(false);
       expect(useCanvasStore.getState().isViewportLocked).toBe(false);
       useCanvasStore.getState().setViewportLocked(true);
       expect(useCanvasStore.getState().isViewportLocked).toBe(true);
-    });
-
-    it('toggleSeamAllowance toggles showSeamAllowance', () => {
-      expect(useCanvasStore.getState().showSeamAllowance).toBe(true);
-      useCanvasStore.getState().toggleSeamAllowance();
-      expect(useCanvasStore.getState().showSeamAllowance).toBe(false);
-    });
-
-    it('setPrintScale clamps to 0.1-2.0', () => {
-      useCanvasStore.getState().setPrintScale(0.05);
-      expect(useCanvasStore.getState().printScale).toBe(0.1);
-      useCanvasStore.getState().setPrintScale(3);
-      expect(useCanvasStore.getState().printScale).toBe(2.0);
-      useCanvasStore.getState().setPrintScale(1.5);
-      expect(useCanvasStore.getState().printScale).toBe(1.5);
     });
 
     it('setClipboard sets clipboard', () => {

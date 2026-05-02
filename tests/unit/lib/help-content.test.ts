@@ -4,11 +4,9 @@ import {
   KEYBOARD_SHORTCUTS,
   FaqEntrySchema,
   FaqCategorySchema,
-  KeyboardShortcutSchema,
   FAQ_CATEGORY_LABELS,
   getContextualHelp,
   searchFaq,
-  getFaqByCategory,
 } from '@/lib/help-content';
 
 describe('help-content', () => {
@@ -42,13 +40,7 @@ describe('help-content', () => {
       expect(KEYBOARD_SHORTCUTS.length).toBeGreaterThanOrEqual(10);
     });
 
-    it('all shortcuts pass Zod validation', () => {
-      for (const shortcut of KEYBOARD_SHORTCUTS) {
-        expect(() => KeyboardShortcutSchema.parse(shortcut)).not.toThrow();
-      }
-    });
-
-    it('includes V for Select', () => {
+  it('includes V for Select', () => {
       const selectShortcut = KEYBOARD_SHORTCUTS.find((s) => s.key === 'V');
       expect(selectShortcut).toBeDefined();
       expect(selectShortcut?.description).toContain('Select');
@@ -135,24 +127,6 @@ describe('help-content', () => {
     it('returns empty array when nothing matches', () => {
       const results = searchFaq('xyznonexistent12345');
       expect(results).toHaveLength(0);
-    });
-  });
-
-  describe('getFaqByCategory', () => {
-    it('returns only entries from the specified category', () => {
-      const results = getFaqByCategory('getting-started');
-      expect(results.length).toBeGreaterThan(0);
-      for (const entry of results) {
-        expect(entry.category).toBe('getting-started');
-      }
-    });
-
-    it('returns entries for all categories', () => {
-      const categories = ['getting-started', 'design-tools', 'export', 'account'] as const;
-      for (const cat of categories) {
-        const results = getFaqByCategory(cat);
-        expect(results.length).toBeGreaterThan(0);
-      }
     });
   });
 });

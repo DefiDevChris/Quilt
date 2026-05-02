@@ -8,30 +8,6 @@
       ],
       "env": {}
     },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ],
-      "disabled": true
-    },
-    "playwright": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@playwright/mcp@latest"
-      ],
-      "disabled": true
-    },
-    "shopify-dev": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@shopify/dev-mcp@latest"
-      ],
-      "disabled": true
-    },
     "mem-palace": {
       "command": "python3.12",
       "args": [

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { cursorForTool } from '@/lib/canvas-utils';
 import { snapToGridCorner } from '@/lib/snap-utils';
@@ -40,8 +39,7 @@ interface BendState {
 }
 
 export function useBendTool() {
-  const { getCanvas } = useCanvasContext();
-  const fabricCanvas = getCanvas();
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
   const mode = useProjectStore((s) => s.mode);
 

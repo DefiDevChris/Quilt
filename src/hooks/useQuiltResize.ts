@@ -2,7 +2,6 @@
 
 import { useCallback } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { usePrintlistStore } from '@/stores/printlistStore';
@@ -52,7 +51,7 @@ function extractObjectData(objects: FabricObject[]): CanvasObjectData[] {
 }
 
 export function useQuiltResize() {
-  const { getCanvas } = useCanvasContext();
+  const getCanvas = () => useCanvasStore.getState().fabricCanvas;
   const applyResize = useCallback(
     (
       mode: 'scale' | 'add-blocks',

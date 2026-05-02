@@ -1,19 +1,8 @@
-'use client';
-
-import { useState, Suspense } from 'react';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronRight } from 'lucide-react';
 
-const MobileUploadsPanel = dynamic(
-  () => import('@/components/uploads/MobileUploadsPanel').then((m) => m.MobileUploadsPanel),
-  { ssr: false }
-);
-
-function DashboardPageContent() {
-  const [showMobileUploads, setShowMobileUploads] = useState(false);
-
+export default function DashboardPage() {
   return (
     <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1fr_0.75fr] lg:grid-rows-2 gap-8 min-h-0 relative pb-8">
 
@@ -28,7 +17,7 @@ function DashboardPageContent() {
 
           <div className="relative z-10 text-left">
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-10 h-px bg-white/30"></div>
+              <div className="w-10 h-px bg-[var(--color-text-on-primary)]/30"></div>
               <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-white/50">Creator</span>
             </div>
             <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none">Design a Quilt</h3>
@@ -46,7 +35,7 @@ function DashboardPageContent() {
         {/* 2. BLOG - Middle Column, Row 1 */}
         <Link
           href="/blog"
-          className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
+          className="bg-[var(--color-surface)] border border-[var(--color-text)]/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
         >
           <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
             <Image src="/icons/quilt-book.png" alt="Blog" fill className="object-contain" />
@@ -56,8 +45,8 @@ function DashboardPageContent() {
               <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
               <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Editorial</span>
             </div>
-            <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Blog</h3>
-            <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Read tutorials, expert tips, and daily inspiration from our community.</p>
+            <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-[var(--color-text)]">Blog</h3>
+            <p className="font-sans text-[var(--color-text)]/50 text-sm mb-auto max-w-[240px]">Read tutorials, expert tips, and daily inspiration from our community.</p>
             <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
               <span>Get Inspired</span>
               <ChevronRight size={14} />
@@ -90,7 +79,7 @@ function DashboardPageContent() {
       {/* 4. PICTURE BLOCKS - Left Column, Row 2 */}
         <Link
           href="/picture-my-blocks"
-          className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
+          className="bg-[var(--color-surface)] border border-[var(--color-text)]/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
         >
           <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
             <Image src="/icons/quilt-mobile-uploads.png" alt="Uploads" fill className="object-contain" />
@@ -100,8 +89,8 @@ function DashboardPageContent() {
               <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
               <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Visualizer</span>
             </div>
-            <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Picture My Blocks</h3>
-            <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Design a quilt with your uploaded blocks. Drag blocks onto a customizable grid and preview with fabrics.</p>
+            <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-[var(--color-text)]">Picture My Blocks</h3>
+            <p className="font-sans text-[var(--color-text)]/50 text-sm mb-auto max-w-[240px]">Design a quilt with your uploaded blocks. Drag blocks onto a customizable grid and preview with fabrics.</p>
             <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
               <span>Start Designing</span>
               <ChevronRight size={14} />
@@ -112,7 +101,7 @@ function DashboardPageContent() {
         {/* 5. PHOTO TO QUILT - Middle Column, Row 2 */}
       <Link
         href="/photo-to-quilt"
-        className="bg-white border border-black/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
+        className="bg-[var(--color-surface)] border border-[var(--color-text)]/[0.03] shadow-[var(--shadow-quilt)] rounded-lg p-8 lg:p-10 flex flex-col justify-between group relative overflow-hidden transition-quilt hover:bg-[var(--color-primary)]/5 h-[280px]"
       >
         <div className="absolute bottom-4 right-4 w-24 h-24 text-[var(--color-primary)]/20 pointer-events-none">
           <Image src="/icons/quilt-mobile-uploads.png" alt="Photo to Quilt" fill className="object-contain" />
@@ -122,8 +111,8 @@ function DashboardPageContent() {
             <div className="w-10 h-px bg-[var(--color-primary)]/30"></div>
             <span className="text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-primary)]">Converter</span>
           </div>
-          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-black">Photo to Quilt</h3>
-          <p className="font-sans text-black/50 text-sm mb-auto max-w-[240px]">Turn any photo into a quilt pattern. Background removed automatically, ready-to-sew blocks generated.</p>
+          <h3 className="font-serif text-2xl lg:text-3xl font-bold mb-2 tracking-tight leading-none text-[var(--color-text)]">Photo to Quilt</h3>
+          <p className="font-sans text-[var(--color-text)]/50 text-sm mb-auto max-w-[240px]">Turn any photo into a quilt pattern. Background removed automatically, ready-to-sew blocks generated.</p>
           <div className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--color-primary)] cursor-pointer transition-quilt">
             <span>Convert Now</span>
             <ChevronRight size={14} />
@@ -153,31 +142,6 @@ function DashboardPageContent() {
           </div>
         </Link>
 
-      {/* Mobile uploads section */}
-      {showMobileUploads && (
-        <div className="col-span-full mt-12">
-          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-black/[0.06]">
-            <h3 className="text-base font-sans font-bold text-black">
-              Mobile uploads
-            </h3>
-            <button
-              onClick={() => setShowMobileUploads(false)}
-              className="ml-auto text-sm text-black/40 hover:text-black transition-quilt"
-            >
-              Hide
-            </button>
-          </div>
-          <MobileUploadsPanel />
-        </div>
-      )}
     </div>
-  );
-}
-
-export default function DashboardPage() {
-  return (
-    <Suspense fallback={null}>
-      <DashboardPageContent />
-    </Suspense>
   );
 }

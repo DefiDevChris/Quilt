@@ -233,12 +233,6 @@ export const templateQuerySchema = z.object({
   sort: z.enum(['popular', 'name', 'newest']).default('popular'),
 });
 
-// --- Profile Schemas ---
-
-export const updateProfileSchema = z.object({
-  displayName: z.string().min(1).max(60),
-});
-
 // --- Admin Schemas ---
 
 export const adminPaginationSchema = z.object({

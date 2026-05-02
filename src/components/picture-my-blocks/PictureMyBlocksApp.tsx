@@ -384,7 +384,7 @@ const [canvasScale, setCanvasScale] = useState(1);
                     key={block.id}
                     draggable
                     onDragStart={(e) => handleBlockDragStart(e, block)}
-                    className="aspect-square rounded-lg border cursor-grab active:cursor-grabbing overflow-hidden hover:shadow-md transition-shadow"
+                    className="aspect-square rounded-lg border cursor-grab active:cursor-grabbing overflow-hidden"
                     style={{
                       backgroundColor: COLORS.surface,
                       borderColor: withAlpha(COLORS.border, 0.6),
@@ -454,7 +454,7 @@ const [canvasScale, setCanvasScale] = useState(1);
                             key={index}
                             onDrop={(e) => handleDrop(e, index)}
                             onDragOver={handleDragOver}
-                            className={`absolute border-2 flex items-center justify-center transition-all duration-300 ${
+                            className={`absolute border-2 flex items-center justify-center transition-colors duration-150 ${
                               cell.block ? 'border-transparent' : 'border-dashed'
                             }`}
                             style={{
@@ -513,7 +513,7 @@ const [canvasScale, setCanvasScale] = useState(1);
             ) : (
               /* STANDARD GRID WRAPPER */
               <div
-                className="quilt-grid-container grid gap-0 transition-all duration-300 border shadow-elevated"
+                className="quilt-grid-container grid gap-0 transition-colors duration-150 border shadow-elevated"
                 style={{
                   backgroundColor: selectedFabric?.imageUrl ? undefined : withAlpha(COLORS.border, 0.1),
                   backgroundImage: selectedFabric?.imageUrl ? `url(${selectedFabric.imageUrl})` : undefined,
@@ -529,7 +529,7 @@ const [canvasScale, setCanvasScale] = useState(1);
                     key={index}
                     onDrop={(e) => handleDrop(e, index)}
                     onDragOver={handleDragOver}
-                    className={`w-[120px] h-[120px] border-2 flex items-center justify-center transition-all duration-300 ${
+                    className={`w-[120px] h-[120px] border-2 flex items-center justify-center transition-colors duration-150 ${
                       cell.block ? 'border-transparent' : 'border-dashed'
                     }`}
                     style={{

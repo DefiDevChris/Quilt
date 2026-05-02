@@ -3,7 +3,6 @@ import {
   createProjectSchema,
   updateProjectSchema,
   paginationSchema,
-  updateProfileSchema,
 } from '@/lib/validation';
 
 describe('createProjectSchema', () => {
@@ -109,32 +108,3 @@ describe('paginationSchema', () => {
   });
 });
 
-describe('updateProfileSchema', () => {
-  it('accepts valid displayName', () => {
-    const result = updateProfileSchema.safeParse({
-      displayName: 'Test User',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('rejects empty displayName', () => {
-    const result = updateProfileSchema.safeParse({
-      displayName: '',
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('rejects displayName over 60 chars', () => {
-    const result = updateProfileSchema.safeParse({
-      displayName: 'a'.repeat(61),
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it('accepts displayName at max length', () => {
-    const result = updateProfileSchema.safeParse({
-      displayName: 'a'.repeat(60),
-    });
-    expect(result.success).toBe(true);
-  });
-});

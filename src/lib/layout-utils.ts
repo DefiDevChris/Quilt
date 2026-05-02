@@ -471,17 +471,3 @@ export function computeBorderStrips(
   return strips;
 }
 
-export function getDefaultLayoutConfig(): LayoutConfig {
-  return {
-    type: 'free-form',
-    rows: 3,
-    cols: 3,
-    blockSize: 6,
-    sashing: {
-      width: 1,
-      color: '#e5d5c5',
-      fabricId: null,
-    },
-    borders: [],
-  };
-}

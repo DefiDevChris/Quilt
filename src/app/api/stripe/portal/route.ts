@@ -32,7 +32,7 @@ export async function POST() {
 
     const portalSession = await getStripe().billingPortal.sessions.create({
       customer: sub.stripeCustomerId,
-      return_url: `${appUrl}/profile`,
+      return_url: `${appUrl}/settings`,
     });
 
     return Response.json({

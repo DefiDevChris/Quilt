@@ -1,3 +1,5 @@
+import type { LayoutAreaRole } from './layout';
+
 /**
  * Fence system types for the quilt layout fence overlay.
  *
@@ -9,14 +11,7 @@
 
 export interface FenceArea {
   id: string;
-  role:
-    | 'block-cell'
-    | 'sashing'
-    | 'cornerstone'
-    | 'border'
-    | 'binding'
-    | 'edging'
-    | 'setting-triangle';
+  role: LayoutAreaRole;
   x: number;
   y: number;
   width: number;

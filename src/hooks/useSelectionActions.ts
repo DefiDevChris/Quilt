@@ -1,8 +1,8 @@
 /**
  * Selection Actions Hook — Shared handlers for selection manipulation.
  *
- * Provides actions that can be invoked from both ContextMenu and
- * CanvasSelectionToolbar. Keeps logic DRY and consistent across
+ * Provides actions that can be invoked from selection toolbars and
+ * keyboard shortcuts. Keeps logic DRY and consistent across
  * interaction patterns.
  */
 
@@ -52,7 +52,8 @@ export interface SelectionActions {
  * @param getCanvas - Function returning the Fabric.js canvas instance
  * @returns SelectionActions object
  */
-export function useSelectionActions(getCanvas: () => unknown | null): SelectionActions {
+export function useSelectionActions(): SelectionActions {
+  const getCanvas = () => useCanvasStore.getState().fabricCanvas;
   const pushUndo = useCallback((canvas: unknown) => {
     const c = canvas as { toJSON: () => unknown };
     const json = JSON.stringify(c.toJSON());

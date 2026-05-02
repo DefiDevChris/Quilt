@@ -275,35 +275,4 @@ export async function verifySessionToken(
   };
 }
 
-/** Cookie names exported for middleware access. */
-export const AUTH_COOKIE_NAMES = {
-  idToken: COOKIE_ID_TOKEN,
-  accessToken: COOKIE_ACCESS_TOKEN,
-  refreshToken: COOKIE_REFRESH_TOKEN,
-} as const;
 
-/**
- * Reusable auth check for layout files. Returns session or redirects to signin.
- * Supports DEV_AUTH_BYPASS for local development.
- */
-export async function requireAuth(options?: {
-  redirectTo?: string;
-  requireAdmin?: boolean;
-}): Promise<CognitoSession> {
-  const { redirectTo = '/auth/signin', requireAdmin = false } = options ?? {};
-
-  const session = await getSession();
-
-  if (!session) {
-    redirect(redirectTo);
-  }
-
-  if (requireAdmin && session.user.role !== 'admin') {
-    redirect('/dashboard');
-  }
-
-  return session;
-}
-
-// Import redirect at the end to avoid circular dependencies
-import { redirect } from 'next/navigation';

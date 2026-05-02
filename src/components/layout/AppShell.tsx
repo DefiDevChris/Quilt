@@ -35,7 +35,7 @@ function SidebarNavItem({ icon: Icon, label, href, active = false }: SidebarNavI
       className={`flex items-center gap-4 px-6 py-3 transition-quilt border-r-4 ${
         active
           ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/5'
-          : 'border-transparent text-black/40 hover:text-[var(--color-primary)] hover:bg-black/[0.02]'
+          : 'border-transparent text-[var(--color-text)]/40 hover:text-[var(--color-primary)] hover:bg-[var(--color-text)]/[0.02]'
       }`}
     >
       <Icon size={18} strokeWidth={active ? 2.5 : 2} />
@@ -68,8 +68,6 @@ export function AppShell({
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [isProModalOpen, setIsProModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -87,14 +85,6 @@ export function AppShell({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    function handleScroll() {
-      setScrolled(window.scrollY > 20);
-    }
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   function isActive(path: string) {
     if (path === '/dashboard') {
       return pathname === '/dashboard';
@@ -103,8 +93,8 @@ export function AppShell({
   }
 
   return (
-    <div className="h-screen bg-[var(--color-bg)] text-black selection:bg-[var(--color-accent)] font-sans flex flex-col overflow-hidden antialiased relative">
-      <header className="h-20 px-12 flex items-center justify-between shrink-0 bg-white border-b border-black/[0.04] z-50">
+    <div className="h-screen bg-[var(--color-bg)] text-[var(--color-text)] selection:bg-[var(--color-accent)] font-sans flex flex-col overflow-hidden antialiased relative">
+      <header className="h-20 px-12 flex items-center justify-between shrink-0 bg-[var(--color-surface)] border-b border-[var(--color-text)]/[0.04] z-50">
         <BrandLogo href="/dashboard" />
 
         <div className="flex items-center gap-10" ref={dropdownRef}>
@@ -139,7 +129,7 @@ export function AppShell({
                 aria-label="User menu"
                 aria-expanded={dropdownOpen}
                 aria-haspopup="true"
-                className="w-10 h-10 rounded-full bg-[var(--color-secondary)] border-2 border-white shadow-[var(--shadow-quilt)] overflow-hidden shrink-0 hover:opacity-80 transition-quilt"
+                className="w-10 h-10 rounded-full bg-[var(--color-secondary)] border-2 border-[var(--color-surface)] shadow-[var(--shadow-quilt)] overflow-hidden shrink-0 hover:opacity-80 transition-quilt"
               >
                 <Image
                   src="/mascots&avatars/corgi29.png"
@@ -151,12 +141,12 @@ export function AppShell({
               </button>
 
               {dropdownOpen && (
-                <div className="absolute top-20 right-12 z-50 w-48 rounded-lg bg-white border border-black/[0.06] py-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
+                <div className="absolute top-20 right-12 z-50 w-48 rounded-lg bg-[var(--color-surface)] border border-[var(--color-text)]/[0.06] py-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
                   <div className="px-4 py-2 border-b border-black/[0.06]">
-                    <p className="text-sm font-medium text-black truncate">
+                    <p className="text-sm font-medium text-[var(--color-text)] truncate">
                       {user?.name}
                     </p>
-                    <p className="text-xs text-black/40 truncate">{user?.email}</p>
+                    <p className="text-xs text-[var(--color-text)]/40 truncate">{user?.email}</p>
                   </div>
 
 
@@ -183,7 +173,7 @@ export function AppShell({
             <div className="flex items-center gap-4">
               <Link
                 href="/auth/signup"
-                className="bg-[var(--color-primary)] text-black px-5 py-2 rounded-full text-[11px] tracking-[0.1em] font-bold uppercase hover:opacity-90 transition-quilt shadow-[var(--shadow-quilt)]"
+                className="bg-[var(--color-primary)] text-[var(--color-text)] px-5 py-2 rounded-full text-[11px] tracking-[0.1em] font-bold uppercase hover:opacity-90 transition-quilt shadow-[var(--shadow-quilt)]"
               >
                 Start Designing
               </Link>
@@ -194,12 +184,11 @@ export function AppShell({
 
       <div className="flex-1 flex min-h-0">
         {!isStudio && (
-          <aside className="w-64 border-r border-black/[0.06] bg-white hidden md:flex flex-col shrink-0">
+          <aside className="w-64 border-r border-[var(--color-text)]/[0.06] bg-[var(--color-surface)] hidden md:flex flex-col shrink-0">
             <div className="p-8 flex flex-col h-full">
               <div className="mb-14">
                 <button
-                  onClick={() => setDialogOpen(true)}
-                  className="w-full py-4 rounded-full text-[10px] font-bold uppercase tracking-[0.4em] shadow-[var(--shadow-quilt)] transition-quilt flex items-center justify-center gap-3 bg-[var(--color-primary)] text-black hover:opacity-95"
+                  className="w-full py-4 rounded-full text-[10px] font-bold uppercase tracking-[0.4em] shadow-[var(--shadow-quilt)] transition-quilt flex items-center justify-center gap-3 bg-[var(--color-primary)] text-[var(--color-text)] hover:opacity-95"
                 >
                   <Plus size={14} />
                   <span>New Project</span>
@@ -207,7 +196,7 @@ export function AppShell({
               </div>
 
               <nav className="flex-1 space-y-2">
-                <p className="font-sans text-[9px] uppercase tracking-[0.5em] font-bold text-black/20 mb-6 px-6">Workbench</p>
+                <p className="font-sans text-[9px] uppercase tracking-[0.5em] font-bold text-[var(--color-text)]/20 mb-6 px-6">Workbench</p>
                 <SidebarNavItem icon={Clock} label="Recent" href="/dashboard" active={isActive('/dashboard')} />
                 <SidebarNavItem icon={Folder} label="My Projects" href="/projects" active={isActive('/projects')} />
                 <SidebarNavItem icon={Images} label="Project Gallery" href="/gallery" active={isActive('/gallery')} />

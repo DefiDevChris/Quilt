@@ -20,7 +20,7 @@ import { Calculator, Copy, Check } from 'lucide-react';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useFabricStore } from '@/stores/fabricStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
+import { useCanvasStore } from '@/stores/canvasStore';
 import {
   computeCanvasYardage,
   formatShoppingList,
@@ -46,7 +46,7 @@ export function YardagePanel() {
   const userFabrics = useFabricStore((s) => s.userFabrics);
   const uploadedFabrics = useFabricStore((s) => s.uploadedFabrics);
 
-  const { getCanvas } = useCanvasContext();
+  const getCanvas = () => useCanvasStore.getState().fabricCanvas;
 
   // Build a fabricId → display info lookup over every fabric source we
   // know about. Falls through to undefined if we can't find the fabric

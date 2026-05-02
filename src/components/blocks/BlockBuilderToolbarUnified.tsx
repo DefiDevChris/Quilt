@@ -13,7 +13,7 @@ export interface BlockBuilderCallbacks {
   canRedo: boolean;
 }
 
-export function useBlockBuilderTools(callbacks: BlockBuilderCallbacks): ToolDef[] {
+function useBlockBuilderTools(callbacks: BlockBuilderCallbacks): ToolDef[] {
   return [
     {
       id: 'select',

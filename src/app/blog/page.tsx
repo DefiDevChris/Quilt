@@ -57,7 +57,7 @@ export default async function BlogPage() {
   return (
     <div className="w-full">
       <FeaturedCarousel posts={featured} />
-      <AsymmetricPostFeed posts={feed.length ? feed : posts} />
+      {feed.length > 0 && <AsymmetricPostFeed posts={feed} />}
     </div>
   );
 }

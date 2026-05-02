@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
-import { COLORS, MOTION } from '@/lib/design-system';
+import { COLORS } from '@/lib/design-system';
 
 interface PostNavigationProps {
   prev: { slug: string; title: string } | null;

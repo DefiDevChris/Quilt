@@ -3,13 +3,11 @@
 import { useEffect } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { isInputElement } from '@/lib/dom-utils';
 import { clampPan, cursorForTool } from '@/lib/canvas-utils';
 
 export function useCanvasZoomPan() {
-  const { getCanvas } = useCanvasContext();
-  const fabricCanvas = getCanvas();
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
   useEffect(() => {
     if (!fabricCanvas) return;

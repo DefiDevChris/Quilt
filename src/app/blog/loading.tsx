@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function BlogLoading() {
   return (
     <div className="flex flex-col w-full min-h-screen animate-pulse bg-default">

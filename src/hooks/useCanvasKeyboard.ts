@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { useProjectStore } from '@/stores/projectStore';
 
 import { useBlockStore } from '@/stores/blockStore';
@@ -14,8 +13,7 @@ import { ZOOM_FACTOR } from '@/lib/constants';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
 
 export function useCanvasKeyboard() {
-  const { getCanvas } = useCanvasContext();
-  const fabricCanvas = getCanvas();
+  const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
 
   useEffect(() => {
     if (!fabricCanvas) return;

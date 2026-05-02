@@ -13,7 +13,6 @@ import { SaveAsTemplateModal } from '@/components/studio/SaveAsTemplateModal';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
 import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
-import { useCanvasContext } from '@/contexts/CanvasContext';
 import { clearAllFabricsOnCanvas } from '@/lib/canvas-clear-fabrics';
 
 function formatTimestamp(date: Date | null): string {
@@ -233,13 +232,12 @@ export function StudioTopBar({
   const isDirty = useProjectStore((s) => s.isDirty);
   const lastSavedAt = useProjectStore((s) => s.lastSavedAt);
   const layoutLocked = useLayoutStore((s) => s.layoutLocked);
-  const [tick, setTick] = useState(0);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [saveAsTemplateOpen, setSaveAsTemplateOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
   const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
-  const { getCanvas } = useCanvasContext();
+  const getCanvas = () => useCanvasStore.getState().fabricCanvas;
 
   // Save-as-Template is offered for layout/free-form projects with content.
   // Template-mode users save via "Save Project" instead — re-saving a
@@ -297,11 +295,6 @@ export function StudioTopBar({
     }
     router.push('/dashboard');
   }, [isDirty, onSave, router, toast]);
-
-  useEffect(() => {
-    const timer = setInterval(() => setTick((t) => t + 1), 60000);
-    return () => clearInterval(timer);
-  }, []);
 
   // Cmd+K / Ctrl+K toggles the command palette globally so users don't
   // have to mouse over to the hamburger icon to discover commands.

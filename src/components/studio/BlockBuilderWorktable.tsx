@@ -22,7 +22,7 @@ import { useToast } from '@/components/ui/ToastProvider';
 /**
  * Shared props for drafting tab components.
  */
-export interface DraftTabProps {
+interface DraftTabProps {
   draftCanvasRef: React.MutableRefObject<unknown>;
   isOpen: boolean;
   activeOverlay?: string | null;
