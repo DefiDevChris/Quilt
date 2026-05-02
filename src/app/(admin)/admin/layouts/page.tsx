@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { COLORS, withAlpha } from '@/lib/design-system';
-import { PaginationInfo } from './types';
+import { PaginationInfo } from '@/types/api';
 
 interface LayoutTemplate {
   id: string;

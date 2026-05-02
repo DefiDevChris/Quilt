@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema';
-import { notFoundResponse, errorResponse } from '@/lib/auth-helpers';
+import { notFoundResponse, errorResponse } from '@/lib/api-responses';
 
 export const dynamic = 'force-dynamic';
 

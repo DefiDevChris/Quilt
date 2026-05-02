@@ -7,7 +7,7 @@ import { setAuthCookies, setRoleCookie } from '@/lib/cognito-session';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';
 import { checkRateLimit, AUTH_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
-import { validationErrorResponse, errorResponse } from '@/lib/auth-helpers';
+import { validationErrorResponse, errorResponse } from '@/lib/api-responses';
 
 const signinSchema = z.object({
   email: z.string().email().max(255),

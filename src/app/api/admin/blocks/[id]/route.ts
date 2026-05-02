@@ -16,16 +16,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const { id } = await params;
     const body = await request.json();
 
-    const [existing] = await db
-      .select({ id: blocks.id })
-      .from(blocks)
-      .where(eq(blocks.id, id))
-      .limit(1);
-
-    if (!existing) {
-      return notFoundResponse('Block not found');
-    }
-
     const updateData: Record<string, unknown> = {};
     if (body.name !== undefined) updateData.name = body.name;
     if (body.category !== undefined) updateData.category = body.category;
@@ -36,6 +26,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (body.fabricJsData !== undefined) updateData.fabricJsData = body.fabricJsData;
 
     const [updated] = await db.update(blocks).set(updateData).where(eq(blocks.id, id)).returning();
+
+    if (!updated) {
+      return notFoundResponse('Block not found');
+    }
 
     return Response.json({ success: true, data: updated });
   } catch (err) { console.error('[admin/blocks/[id]]', err);
@@ -53,16 +47,6 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-
-    const [existing] = await db
-      .select({ id: blocks.id })
-      .from(blocks)
-      .where(eq(blocks.id, id))
-      .limit(1);
-
-    if (!existing) {
-      return notFoundResponse('Block not found');
-    }
 
     const [deleted] = await db.delete(blocks).where(eq(blocks.id, id)).returning({ id: blocks.id });
 

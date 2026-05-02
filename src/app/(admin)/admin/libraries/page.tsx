@@ -224,7 +224,7 @@ function BlockForm() {
         .map((t) => t.trim())
         .filter(Boolean);
 
-      const res = await fetch('/api/admin/libraries/blocks', {
+      const res = await fetch('/api/admin/blocks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, fabricJsData, tags }),

@@ -1,9 +1,8 @@
 import { NextRequest } from 'next/server';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts, users } from '@/db/schema';
-import { errorResponse } from '@/lib/auth-helpers';
-import { notFoundResponse } from '@/lib/api-responses';
+import { errorResponse, notFoundResponse } from '@/lib/api-responses';
 import { calculateReadTime } from '@/lib/read-time';
 import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
@@ -17,8 +16,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const { slug } = await params;
 
   try {
-    const conditions = [eq(blogPosts.slug, slug)];
-
     const [post] = await db
       .select({
         id: blogPosts.id,
@@ -36,7 +33,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       })
       .from(blogPosts)
       .leftJoin(users, eq(blogPosts.authorId, users.id))
-      .where(and(...conditions))
+      .where(eq(blogPosts.slug, slug))
       .limit(1);
 
     if (!post) {
