@@ -39,6 +39,8 @@ interface UseBlockBuilderReturn {
   setSelectedPatchId: (id: string | null) => void;
   clearSegments: () => void;
   undoSegment: () => void;
+  redoSegment: () => void;
+  canRedo: boolean;
   setPatchFill: (patchId: string, fabricId: string) => void;
 }
 
@@ -96,6 +98,8 @@ export function useBlockBuilder({
     setPatchFill,
     clearSegments: baseClear,
     undoSegment,
+    redoSegment,
+    redoStack,
     replaceSegmentAt,
   } = useSegments(gridCols, gridRows);
 
@@ -198,6 +202,8 @@ export function useBlockBuilder({
     setSelectedPatchId,
     clearSegments,
     undoSegment,
+    redoSegment,
+    canRedo: redoStack.length > 0,
     setPatchFill,
   };
 }

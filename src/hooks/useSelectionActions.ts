@@ -164,8 +164,9 @@ export function useSelectionActions(): SelectionActions {
   }, []);
 
   const openFabricPicker = useCallback(() => {
-    useCanvasStore.getState().setFabricPickerTarget('selection');
-    // TODO: In Phase 3, this will also activate the Fabrics tab in ContextPanel
+    const store = useCanvasStore.getState();
+    store.setFabricPickerTarget('selection');
+    store.setContextPanelTab('fabrics');
   }, []);
 
   const applyFabric = useCallback(

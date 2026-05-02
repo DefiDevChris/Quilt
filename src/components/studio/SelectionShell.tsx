@@ -25,8 +25,8 @@ interface SelectionShellProps {
    *   - 'free-form' → quilt-size preset cards + W×H sliders (size only)
    *
    * Block Builder is hidden in template mode (handled in StudioLayout, not
-   * here). Free-form Phase 1 has NO binding-width slider — binding is a
-   * Phase 2 concern in free-form, deferred to a later iteration.
+   * here). Free-form Phase 1 includes the binding-width slider alongside
+   * quilt size presets.
    */
   mode: ProjectMode;
 }
@@ -126,6 +126,8 @@ export function SelectionShell({ mode }: SelectionShellProps) {
   const [freeformWidth, setFreeformWidth] = useState<number>(projectStoreCanvasWidth || 50);
   const [freeformHeight, setFreeformHeight] = useState<number>(projectStoreCanvasHeight || 60);
   const [freeformPresetId, setFreeformPresetId] = useState<string | null>('lap');
+  const freeformBindingWidth = useLayoutStore((s) => s.bindingWidth);
+  const setFreeformBindingWidth = useLayoutStore((s) => s.setBindingWidth);
 
   // Fetch user templates on mount when in template mode
   useEffect(() => {
@@ -404,6 +406,7 @@ export function SelectionShell({ mode }: SelectionShellProps) {
           <FreeformConfigPanel
             width={freeformWidth}
             height={freeformHeight}
+            bindingWidth={freeformBindingWidth}
             onWidthChange={(v) => {
               setFreeformWidth(v);
               setFreeformPresetId(null);
@@ -412,6 +415,7 @@ export function SelectionShell({ mode }: SelectionShellProps) {
               setFreeformHeight(v);
               setFreeformPresetId(null);
             }}
+            onBindingWidthChange={setFreeformBindingWidth}
             onCommit={handleCommit}
           />
         ) : (
@@ -1115,14 +1119,18 @@ function FreeformSizePresetsCatalog({
 function FreeformConfigPanel({
   width,
   height,
+  bindingWidth,
   onWidthChange,
   onHeightChange,
+  onBindingWidthChange,
   onCommit,
 }: {
   width: number;
   height: number;
+  bindingWidth: number;
   onWidthChange: (v: number) => void;
   onHeightChange: (v: number) => void;
+  onBindingWidthChange: (v: number) => void;
   onCommit: () => void;
 }) {
   return (
@@ -1157,6 +1165,21 @@ function FreeformConfigPanel({
             max={FREEFORM_DIM_MAX}
             step={1}
             onChange={onHeightChange}
+            format={(v) => `${v}″`}
+          />
+        </section>
+
+        <section className="space-y-3 pt-2 border-t border-[var(--color-border)]">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text-dim)]">
+            Binding
+          </h3>
+          <SliderRow
+            label="Width"
+            value={bindingWidth}
+            min={0}
+            max={2}
+            step={0.125}
+            onChange={onBindingWidthChange}
             format={(v) => `${v}″`}
           />
         </section>

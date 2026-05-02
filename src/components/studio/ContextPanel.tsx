@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { BlockLibrary } from '@/components/blocks/BlockLibrary';
 import { FabricLibrary } from '@/components/fabrics/FabricLibrary';
 import { ShadeBreakdownPanel } from '@/components/studio/ShadeBreakdownPanel';
@@ -24,18 +24,11 @@ export function ContextPanel({
   onOpenDrafting,
   onOpenUpload,
 }: ContextPanelProps) {
-  const [activeTab, setActiveTab] = useState<PanelTab>('blocks');
   const [isApplying, setIsApplying] = useState(false);
   const { getBreakdown, bulkApply, hasShadeData, isBlockGroupSelected } = useShadeAssignment();
 
-  const fabricPickerTarget = useCanvasStore((s) => s.fabricPickerTarget);
-
-	useEffect(() => {
-		if (fabricPickerTarget) {
-			// eslint-disable-next-line react-hooks/set-state-in-effect
-			setActiveTab('fabrics');
-		}
-	}, [fabricPickerTarget]);
+  const activeTab = useCanvasStore((s) => s.contextPanelTab);
+  const setActiveTab = useCanvasStore((s) => s.setContextPanelTab);
 
   const showShadePanel = isBlockGroupSelected && hasShadeData;
   const breakdown = showShadePanel ? getBreakdown('selected') : null;
@@ -44,7 +37,7 @@ export function ContextPanel({
     async (shade: Shade) => {
       const recents = getRecentFabrics();
       if (recents.length === 0) {
-        setActiveTab('fabrics');
+        useCanvasStore.getState().setContextPanelTab('fabrics');
         return;
       }
       const recent = recents[0];

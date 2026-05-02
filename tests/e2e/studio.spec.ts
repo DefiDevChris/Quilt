@@ -893,32 +893,59 @@ test.describe('EasyDraw and Bend Tools (Free-form mode)', () => {
   test.beforeEach(async ({ page }) => {
     await mockAuth(page, 'pro');
     await mockCanvas(page);
-    // Mock a free-form project
-    await page.route('**/api/projects/**', async (route) => {
+    // Mock a free-form project with all required fields
+    await page.route('**/api/projects/freeform-test-project', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            success: true,
+            data: {
+              id: 'freeform-test-project',
+              userId: 'test-user-123',
+              name: 'Free-form Test Project',
+              description: null,
+              mode: 'free-form',
+              canvasWidth: 60,
+              canvasHeight: 80,
+              gridGranularity: 'inch',
+              canvasData: {},
+              worktables: [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
+              unitSystem: 'imperial',
+              gridSettings: { enabled: true, size: 1, snapToGrid: true },
+              fabricPresets: [],
+              thumbnailUrl: null,
+              version: 1,
+              lastSavedAt: new Date().toISOString(),
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          }),
+        });
+      } else {
+        await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+      }
+    });
+    await page.route('**/api/projects/freeform-test-project/save', async (route) => {
+      await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+    });
+    await page.route('**/api/projects/freeform-test-project/history', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'freeform-test-project',
-          name: 'Free-form Test Project',
-          mode: 'free-form',
-          canvasWidth: 60,
-          canvasHeight: 80,
-          gridGranularity: 'inch',
-        }),
+        body: JSON.stringify([
+          { id: 'h1', action: 'Project created', timestamp: new Date().toISOString() },
+        ]),
       });
     });
+    await page.goto('/studio/freeform-test-project');
+    await page.locator('canvas').waitFor({ state: 'visible', timeout: 10000 });
   });
 
   test('EasyDraw tool creates straight segment on canvas', async ({ page }) => {
-    await page.goto('/studio/freeform-test-project');
-    await page.waitForTimeout(2000);
-
     const canvas = page.locator('canvas');
-    if (!(await canvas.isVisible())) {
-      test.skip();
-      return;
-    }
+    await expect(canvas).toBeVisible();
 
     // Activate EasyDraw tool
     const easyDrawButton = page.getByLabel(/easydraw|draw/i).first();
@@ -948,14 +975,8 @@ test.describe('EasyDraw and Bend Tools (Free-form mode)', () => {
   });
 
   test('EasyDraw segment can be bent using Bend tool', async ({ page }) => {
-    await page.goto('/studio/freeform-test-project');
-    await page.waitForTimeout(2000);
-
     const canvas = page.locator('canvas');
-    if (!(await canvas.isVisible())) {
-      test.skip();
-      return;
-    }
+    await expect(canvas).toBeVisible();
 
     // First, draw a segment with EasyDraw
     const easyDrawButton = page.getByLabel(/easydraw|draw/i).first();
@@ -996,14 +1017,8 @@ test.describe('EasyDraw and Bend Tools (Free-form mode)', () => {
   });
 
   test('Bent segment can be straightened via toolbar', async ({ page }) => {
-    await page.goto('/studio/freeform-test-project');
-    await page.waitForTimeout(2000);
-
     const canvas = page.locator('canvas');
-    if (!(await canvas.isVisible())) {
-      test.skip();
-      return;
-    }
+    await expect(canvas).toBeVisible();
 
     // Draw and bend a segment first
     const easyDrawButton = page.getByLabel(/easydraw|draw/i).first();
@@ -1047,14 +1062,8 @@ test.describe('EasyDraw and Bend Tools (Free-form mode)', () => {
   });
 
   test('EasyDraw can be cancelled with Escape', async ({ page }) => {
-    await page.goto('/studio/freeform-test-project');
-    await page.waitForTimeout(2000);
-
     const canvas = page.locator('canvas');
-    if (!(await canvas.isVisible())) {
-      test.skip();
-      return;
-    }
+    await expect(canvas).toBeVisible();
 
     const easyDrawButton = page.getByLabel(/easydraw|draw/i).first();
     if (await easyDrawButton.isVisible()) {
@@ -1078,6 +1087,104 @@ test.describe('EasyDraw and Bend Tools (Free-form mode)', () => {
         // Should see preview line starting from 200,200 not from 100,100
         // (This is primarily testing that no error occurs)
       }
+    }
+  });
+});
+
+test.describe('Free-form Binding Flow', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockAuth(page, 'pro');
+    await mockCanvas(page);
+    // Mock a free-form project with all required fields
+    await page.route('**/api/projects/freeform-binding-test', async (route) => {
+      if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            success: true,
+            data: {
+              id: 'freeform-binding-test',
+              userId: 'test-user-123',
+              name: 'Free-form Binding Test',
+              description: null,
+              mode: 'free-form',
+              canvasWidth: 60,
+              canvasHeight: 80,
+              gridGranularity: 'inch',
+              canvasData: {},
+              worktables: [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
+              unitSystem: 'imperial',
+              gridSettings: { enabled: true, size: 1, snapToGrid: true },
+              fabricPresets: [],
+              thumbnailUrl: null,
+              version: 1,
+              lastSavedAt: new Date().toISOString(),
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          }),
+        });
+      } else {
+        await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+      }
+    });
+    await page.route('**/api/projects/freeform-binding-test/save', async (route) => {
+      await route.fulfill({ status: 200, body: JSON.stringify({ success: true }) });
+    });
+    await page.route('**/api/projects/freeform-binding-test/history', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { id: 'h1', action: 'Project created', timestamp: new Date().toISOString() },
+        ]),
+      });
+    });
+    await page.goto('/studio/freeform-binding-test');
+    await page.locator('canvas').waitFor({ state: 'visible', timeout: 10000 });
+  });
+
+  test('Add Edging toolbar button toggles binding on and off', async ({ page }) => {
+    const addEdgingButton = page.getByRole('button', { name: /add edging/i }).first();
+    await expect(addEdgingButton).toBeVisible();
+
+    // Initial state: binding is enabled by default (bindingWidth = 0.25)
+    await expect(addEdgingButton).toHaveAttribute('aria-pressed', 'true');
+
+    // Click to disable binding
+    await addEdgingButton.click();
+    await page.waitForTimeout(500);
+    await expect(addEdgingButton).toHaveAttribute('aria-pressed', 'false');
+
+    // Click to re-enable binding
+    await addEdgingButton.click();
+    await page.waitForTimeout(500);
+    await expect(addEdgingButton).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('yardage panel omits binding when edging is disabled', async ({ page }) => {
+    // Disable edging first
+    const addEdgingButton = page.getByRole('button', { name: /add edging/i }).first();
+    if (await addEdgingButton.isVisible()) {
+      if ((await addEdgingButton.getAttribute('aria-pressed')) === 'true') {
+        await addEdgingButton.click();
+        await page.waitForTimeout(500);
+      }
+    }
+
+    const yardageButton = page.getByRole('button', { name: /yardage/i }).first();
+    await expect(yardageButton).toBeVisible();
+
+    await yardageButton.click();
+    await page.waitForTimeout(500);
+
+    // With no fabrics and binding disabled, the binding section should not appear
+    const bindingText = page.getByText(/binding/i).first();
+    if (await bindingText.isVisible()) {
+      // If binding text appears, verify it is only in the header/title area
+      const bindingYardage = page.getByText(/strips at/i);
+      await expect(bindingYardage).not.toBeVisible();
     }
   });
 });

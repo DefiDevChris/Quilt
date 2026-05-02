@@ -163,6 +163,8 @@ export interface ComputeYardageInput {
   readonly wof: WOF;
   readonly wasteMargin?: number;
   readonly lookupFabric?: FabricLookup;
+  /** Finished binding width in inches. If 0 or omitted, binding yardage is omitted. */
+  readonly bindingWidth?: number;
 }
 
 /**
@@ -176,6 +178,7 @@ export function computeCanvasYardage({
   wof,
   wasteMargin = DEFAULT_WASTE_MARGIN,
   lookupFabric,
+  bindingWidth = 0,
 }: ComputeYardageInput): ComputedYardage {
   const shapes = extractCanvasShapes(canvas, lookupFabric);
   const baseResults = computeYardageEstimates(shapes, PIXELS_PER_INCH, wof, wasteMargin);
@@ -190,7 +193,7 @@ export function computeCanvasYardage({
       ? calculateBackingYardage(quiltWidth, quiltHeight, wof)
       : null;
   const binding =
-    quiltWidth > 0 && quiltHeight > 0
+    quiltWidth > 0 && quiltHeight > 0 && bindingWidth > 0
       ? calculateBindingYardage(quiltWidth, quiltHeight, wof)
       : null;
 

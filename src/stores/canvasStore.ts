@@ -87,6 +87,9 @@ interface CanvasStoreState {
   /** Target for fabric picker: 'selection' when coloring selected object, 'background' for quilt background, null when closed. */
   fabricPickerTarget: 'selection' | 'background' | null;
 
+  /** Active tab in the right-hand ContextPanel. */
+  contextPanelTab: 'blocks' | 'fabrics';
+
   /** When true, the user is in swap mode (tap another block to swap positions). */
   swapMode: boolean;
 
@@ -128,6 +131,7 @@ interface CanvasStoreState {
   toggleShadeView: () => void;
   setFabricCanvas: (canvas: unknown | null) => void;
   setFabricPickerTarget: (target: 'selection' | 'background' | null) => void;
+  setContextPanelTab: (tab: 'blocks' | 'fabrics') => void;
   setSwapMode: (active: boolean, sourceId?: string | null) => void;
   clearSwapMode: () => void;
   reset: () => void;
@@ -170,6 +174,7 @@ const INITIAL_STATE = {
   shadeViewActive: false,
   fabricCanvas: null,
   fabricPickerTarget: null,
+  contextPanelTab: 'blocks' as const,
   swapMode: false,
   swapSourceId: null,
 };
@@ -352,6 +357,7 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   toggleShadeView: () => set((s) => ({ shadeViewActive: !s.shadeViewActive })),
   setFabricCanvas: (canvas) => set({ fabricCanvas: canvas }),
   setFabricPickerTarget: (target) => set({ fabricPickerTarget: target }),
+  setContextPanelTab: (tab) => set({ contextPanelTab: tab }),
   setSwapMode: (active, sourceId = null) => set({ swapMode: active, swapSourceId: sourceId }),
   clearSwapMode: () => set({ swapMode: false, swapSourceId: null }),
   setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),

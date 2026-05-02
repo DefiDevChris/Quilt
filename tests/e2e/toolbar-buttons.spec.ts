@@ -124,31 +124,10 @@ test.describe('Studio Action Buttons', () => {
     }
   });
 
-  test.skip('reference image button — removed from toolbar', async ({ page }) => {
-    const refBtn = page.getByRole('button', { name: /reference/i });
-    if (await refBtn.isVisible()) {
-      await refBtn.click();
-    }
-  });
-
   test('yardage button', async ({ page }) => {
     const yardageBtn = page.getByRole('button', { name: /yardage/i });
     if (await yardageBtn.isVisible()) {
       await yardageBtn.click();
-    }
-  });
-
-  test.skip('grid toggle button — removed from toolbar', async ({ page }) => {
-    const gridBtn = page.getByRole('button', { name: /grid/i });
-    if (await gridBtn.isVisible()) {
-      await gridBtn.click();
-    }
-  });
-
-  test.skip('snap toggle button — removed from toolbar', async ({ page }) => {
-    const snapBtn = page.getByRole('button', { name: /snap/i });
-    if (await snapBtn.isVisible()) {
-      await snapBtn.click();
     }
   });
 

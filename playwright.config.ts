@@ -37,10 +37,10 @@ export default defineConfig({
       use: { ...devices['iPhone 12'] },
     },
   ],
-  webServer: {
-    command: 'npm run dev',
-    url: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000',
-    reuseExistingServer: true,
-    timeout: 120_000,
-  },
+  // webServer: {
+  //   command: 'npm run dev',
+  //   url: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000',
+  //   reuseExistingServer: true,
+  //   timeout: 120_000,
+  // },
 });

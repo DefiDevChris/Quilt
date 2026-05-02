@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   searchFaq,
   FAQ_CATEGORY_LABELS,
-  VIDEO_TUTORIALS,
   type FaqEntry,
   type FaqCategory,
 } from '@/lib/help-content';
@@ -106,50 +105,6 @@ function FaqSection({
   );
 }
 
-function VideoTutorialsSection() {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {VIDEO_TUTORIALS.map((video) => (
-        <div
-          key={video.id}
-          className="border border-[var(--color-border)] bg-[var(--color-surface)] rounded-lg overflow-hidden hover:border-[var(--color-primary)] transition-colors duration-150"
-        >
-          {/* Thumbnail placeholder */}
-          <div className="aspect-video bg-[var(--color-bg)] flex items-center justify-center">
-            <div className="text-center">
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="text-[var(--color-text-dim)] mx-auto mb-1"
-              >
-                <polygon
-                  points="5 3 19 12 5 21 5 3"
-                  fill="currentColor"
-                  opacity="0.3"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <p className="text-xs text-[var(--color-text-dim)]">Coming Soon</p>
-            </div>
-          </div>
-          <div className="p-3">
-            <h4 className="text-sm font-medium text-[var(--color-text)] mb-1">{video.title}</h4>
-            <p className="text-xs text-[var(--color-text-dim)] line-clamp-2">{video.description}</p>
-            <span className="text-xs text-[var(--color-text-dim)] mt-1 inline-block">
-              {video.duration}
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function ContactSection() {
   return (
     <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-[0_1px_2px_rgba(54,49,45,0.08)] p-8">
@@ -244,14 +199,6 @@ export function HelpCenterContent() {
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
         />
-      </section>
-
-      {/* Video Tutorials */}
-      <section className="mb-16">
-        <h2 className="text-[24px] leading-[32px] font-normal text-[var(--color-text)] mb-6">
-          Video Tutorials
-        </h2>
-        <VideoTutorialsSection />
       </section>
 
       {/* Contact */}
