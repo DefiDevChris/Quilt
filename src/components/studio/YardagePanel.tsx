@@ -21,6 +21,7 @@ import { useYardageStore } from '@/stores/yardageStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import {
   computeCanvasYardage,
   formatShoppingList,
@@ -41,6 +42,7 @@ export function YardagePanel() {
   const projectName = useProjectStore((s) => s.projectName);
   const canvasWidth = useProjectStore((s) => s.canvasWidth);
   const canvasHeight = useProjectStore((s) => s.canvasHeight);
+  const bindingWidth = useLayoutStore((s) => s.bindingWidth);
 
   const fabrics = useFabricStore((s) => s.fabrics);
   const userFabrics = useFabricStore((s) => s.userFabrics);
@@ -80,9 +82,10 @@ export function YardagePanel() {
       wof,
       wasteMargin,
       lookupFabric,
+      bindingWidth,
     });
     setResult(computed);
-  }, [isPanelOpen, canvasWidth, canvasHeight, wof, wasteMargin, getCanvas, lookupFabric]);
+  }, [isPanelOpen, canvasWidth, canvasHeight, wof, wasteMargin, getCanvas, lookupFabric, bindingWidth]);
 
   // Reset the copy-confirmation chip a second after success
   useEffect(() => {

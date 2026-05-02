@@ -198,48 +198,4 @@ export const FAQ_CATEGORY_LABELS: Readonly<Record<FaqCategory, string>> = {
   sharing: 'Sharing',
 };
 
-// --- Video Tutorials ---
 
-export interface VideoTutorial {
-  readonly id: string;
-  readonly title: string;
-  readonly description: string;
-  readonly category: string;
-  readonly duration: string;
-  readonly thumbnailUrl: string | null;
-}
-
-export const VIDEO_TUTORIALS: readonly VideoTutorial[] = [
-  {
-    id: 'vt-1',
-    title: 'Getting Started with Quilt Studio',
-    description: 'A quick intro to the Studio workspace, worktables, and your first quilt.',
-    category: 'getting-started',
-    duration: '5 min',
-    thumbnailUrl: null,
-  },
-  {
-    id: 'vt-3',
-    title: 'Exporting Your Design',
-    description: 'Generate PDFs with cutting charts, yardage estimates, and 1:1 cutting templates.',
-    category: 'export',
-    duration: '4 min',
-    thumbnailUrl: null,
-  },
-  {
-    id: 'vt-4',
-    title: 'Working with the Block Library',
-    description: 'Browse 50 blocks, create custom blocks, and manage your collection.',
-    category: 'design-tools',
-    duration: '6 min',
-    thumbnailUrl: null,
-  },
-  {
-    id: 'vt-5',
-    title: 'Layout Templates and Sashing',
-    description: 'Set up grid, sashing, and on-point layouts with the built-in templates.',
-    category: 'design-tools',
-    duration: '5 min',
-    thumbnailUrl: null,
-  },
-] as const;

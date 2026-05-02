@@ -126,6 +126,8 @@ export function BlockBuilderWorktable() {
     patches,
     clearSegments: hookClearSegments,
     undoSegment: hookUndoSegment,
+    redoSegment: hookRedoSegment,
+    canRedo: hookCanRedo,
     setPatchFill,
   } = useBlockBuilder({
     draftCanvasRef,
@@ -460,12 +462,10 @@ export function BlockBuilderWorktable() {
   const toolbarCallbacks: BlockBuilderCallbacks = {
     onModeChange: setActiveMode,
     onUndo: hookUndoSegment,
-    onRedo: () => {
-      /* redo not implemented */
-    },
+    onRedo: hookRedoSegment,
     onClear: handleClearCanvas,
     canUndo: segments.length > 0,
-    canRedo: false,
+    canRedo: hookCanRedo,
   };
 
   const sliderValue = Math.round(cellSizeIn / 0.25);

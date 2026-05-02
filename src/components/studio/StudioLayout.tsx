@@ -90,14 +90,19 @@ export function StudioLayout({ project, configuring = false }: StudioLayoutProps
     }
   }, [getCanvas]);
 
-  // ── Block / fabric drag stubs ───────────────────────────────────
-  // The actual drop targets live inside StudioDropZone (see useBlockDrop /
-  // useFabricLayout hooks). The ContextPanel only needs these to wire up
-  // dataTransfer on dragstart so the dispatcher in StudioDropZone can route.
+  // ── Block / fabric drag handlers ────────────────────────────────
+  // Set the dataTransfer MIME type + effect so the dispatcher in
+  // StudioDropZone can route to the correct drop handler
+  // (useBlockDrop or useFabricDrop). The drag preview image is set
+  // from the dragged element's thumbnail for visual feedback.
   const handleBlockDragStart = useCallback(
     (e: React.DragEvent, blockId: string) => {
       e.dataTransfer.setData('application/quiltcorgi-block-id', blockId);
       e.dataTransfer.effectAllowed = 'copy';
+      const thumb = (e.currentTarget as HTMLElement).querySelector<HTMLImageElement>('img');
+      if (thumb) {
+        e.dataTransfer.setDragImage(thumb, thumb.naturalWidth / 2, thumb.naturalHeight / 2);
+      }
     },
     [],
   );
@@ -106,6 +111,10 @@ export function StudioLayout({ project, configuring = false }: StudioLayoutProps
     (e: React.DragEvent, fabricId: string) => {
       e.dataTransfer.setData('application/quiltcorgi-fabric-id', fabricId);
       e.dataTransfer.effectAllowed = 'copy';
+      const thumb = (e.currentTarget as HTMLElement).querySelector<HTMLImageElement>('img');
+      if (thumb) {
+        e.dataTransfer.setDragImage(thumb, thumb.naturalWidth / 2, thumb.naturalHeight / 2);
+      }
     },
     [],
   );

@@ -99,7 +99,7 @@ export const LAYOUT_TYPE_CARDS: LayoutTypeCard[] = [
     hasCornerstones: false,
     hasGridConfig: false,
     hasBorders: false,
-    hasBinding: false,
+    hasBinding: true,
     defaultPresetId: 'free-form',
   },
 ];

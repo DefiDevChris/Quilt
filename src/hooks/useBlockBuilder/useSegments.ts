@@ -5,12 +5,16 @@ import type { DrawSegment, Segment, GridPoint, Patch } from './types';
 
 export function useSegments(gridCols: number, gridRows: number) {
   const [segments, setSegments] = useState<readonly DrawSegment[]>([]);
+  const [redoStack, setRedoStack] = useState<readonly DrawSegment[]>([]);
   const [patches, setPatches] = useState<readonly Patch[]>([]);
   const [patchFills, setPatchFills] = useState<Record<string, string>>({});
   const [selectedPatchId, setSelectedPatchId] = useState<string | null>(null);
   const segmentsRef = useRef<readonly DrawSegment[]>(segments);
   // eslint-disable-next-line react-hooks/refs
   segmentsRef.current = segments;
+  const redoRef = useRef<readonly DrawSegment[]>(redoStack);
+  // eslint-disable-next-line react-hooks/refs
+  redoRef.current = redoStack;
 
   const segmentsIntersectAtGridPoint = useCallback((a: Segment, b: Segment): GridPoint | null => {
     const pointsA: GridPoint[] = [];
@@ -117,6 +121,7 @@ export function useSegments(gridCols: number, gridRows: number) {
         });
 
         if (uniqueToAdd.length === 0) return prev;
+        setRedoStack([]);
         return [...prev, ...uniqueToAdd];
       });
     },
@@ -129,12 +134,27 @@ export function useSegments(gridCols: number, gridRows: number) {
 
   const clearSegments = useCallback(() => {
     setSegments([]);
+    setRedoStack([]);
     setPatchFills({});
     setSelectedPatchId(null);
   }, []);
 
   const undoSegment = useCallback(() => {
-    setSegments((prev) => (prev.length > 0 ? prev.slice(0, -1) : prev));
+    setSegments((prev) => {
+      if (prev.length === 0) return prev;
+      const removed = prev[prev.length - 1];
+      setRedoStack((redoPrev) => [...redoPrev, removed]);
+      return prev.slice(0, -1);
+    });
+  }, []);
+
+  const redoSegment = useCallback(() => {
+    setRedoStack((prev) => {
+      if (prev.length === 0) return prev;
+      const toRestore = prev[prev.length - 1];
+      setSegments((segPrev) => [...segPrev, toRestore]);
+      return prev.slice(0, -1);
+    });
   }, []);
 
   const replaceSegmentAt = useCallback((index: number, replacement: DrawSegment) => {
@@ -147,6 +167,7 @@ export function useSegments(gridCols: number, gridRows: number) {
 
   return {
     segments,
+    redoStack,
     patches,
     setPatches,
     patchFills,
@@ -157,6 +178,7 @@ export function useSegments(gridCols: number, gridRows: number) {
     setPatchFill,
     clearSegments,
     undoSegment,
+    redoSegment,
     replaceSegmentAt,
   };
 }

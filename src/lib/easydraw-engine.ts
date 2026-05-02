@@ -1,61 +1,50 @@
 /**
- * EasyDraw Engine — Pure math for segment creation and bend-to-curve algorithm.
+ * EasyDraw Engine — Pure math for segment creation, bend-to-curve, and
+ * cubic Bezier editing algorithms.
  *
  * No DOM or Fabric.js dependencies. All coordinates are in pixels.
  *
- * Phase 8: Simplified EasyDraw + Bend (no bezier handles).
- * - Straight segments between grid corners
- * - Bend via click-drag on segment → single quadratic arc
+ * Segment types:
+ * - Straight: simple line between two endpoints
+ * - Bent (quadratic): single-click-drag arc with one control point
+ * - Cubic: full cubic Bezier with two independent control-point handles
  */
 
 export type Point = { x: number; y: number };
 
-/**
- * Represents a straight line segment.
- */
 export interface EasyDrawSegment {
   type: 'straight';
   start: Point;
   end: Point;
 }
 
-/**
- * Represents a bent segment (quadratic arc).
- * Retains original endpoints A, B, parameter t, and drag point P2
- * for re-editing capability.
- */
 export interface BentSegment {
   type: 'bent';
-  a: Point; // Original start
-  b: Point; // Original end
-  t: number; // Parameter where click happened on original segment
-  p2: Point; // Drag endpoint (curve passes through/bulges toward this)
-  controlPoint: Point; // Calculated quadratic bezier control point
+  a: Point;
+  b: Point;
+  t: number;
+  p2: Point;
+  controlPoint: Point;
 }
 
-/**
- * Union type for segment states.
- */
-export type Segment = EasyDrawSegment | BentSegment;
+export interface CubicSegment {
+  type: 'cubic';
+  a: Point;
+  cp1: Point;
+  cp2: Point;
+  b: Point;
+}
 
-/**
- * Create a straight segment between two points.
- */
+export type Segment = EasyDrawSegment | BentSegment | CubicSegment;
+
 export function createSegment(start: Point, end: Point): EasyDrawSegment {
   return { type: 'straight', start, end };
 }
 
-/**
- * Calculate the distance between two points.
- */
 export function distance(p1: Point, p2: Point): number {
   return Math.hypot(p2.x - p1.x, p2.y - p1.y);
 }
 
-/**
- * Project point P onto line AB, returning the closest point on the segment
- * and the parameter t [0,1] along the segment.
- */
 export function projectPointToSegment(
   p: Point,
   a: Point,
@@ -69,7 +58,6 @@ export function projectPointToSegment(
     return { point: { ...a }, t: 0 };
   }
 
-  // t = ((P - A) · (B - A)) / ||B-A||²
   let t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / lenSq;
   t = Math.max(0, Math.min(1, t));
 
@@ -81,10 +69,6 @@ export function projectPointToSegment(
   return { point: proj, t };
 }
 
-/**
- * Find the closest point on a segment to a given point.
- * Returns the projected point and parameter t.
- */
 export function closestPointOnSegment(
   p: Point,
   a: Point,
@@ -95,22 +79,6 @@ export function closestPointOnSegment(
   return { point, t, distance: dist };
 }
 
-/**
- * Calculate the quadratic Bezier control point that makes the curve
- * pass through point P2 at parameter t.
- *
- * For a quadratic Bezier from A to B with control point C:
- *   B(t) = (1-t)²·A + 2(1-t)t·C + t²·B
- *
- * Solving for C when B(t) = P2:
- *   C = (P2 - (1-t)²·A - t²·B) / (2·t·(1-t))
- *
- * @param a - Start point of segment
- * @param b - End point of segment
- * @param t - Parameter [0,1] where the curve should pass through p2
- * @param p2 - Target point the curve should pass through/bulge toward
- * @returns Control point for the quadratic Bezier
- */
 export function calculateBendControlPoint(
   a: Point,
   b: Point,
@@ -119,12 +87,9 @@ export function calculateBendControlPoint(
 ): Point {
   const EPSILON = 0.001;
 
-  // Guard against degenerate cases (t near 0 or 1)
   if (t < EPSILON || t > 1 - EPSILON) {
-    // Fall back to midpoint control
     const midX = (a.x + b.x) / 2;
     const midY = (a.y + b.y) / 2;
-    // Push the control point toward p2 from the midpoint
     return {
       x: midX + (p2.x - midX) * 2,
       y: midY + (p2.y - midY) * 2,
@@ -136,32 +101,19 @@ export function calculateBendControlPoint(
   const t2 = t * t;
   const twoUT = 2 * u * t;
 
-  // C = (P2 - (1-t)²·A - t²·B) / (2·t·(1-t))
   const cx = (p2.x - u2 * a.x - t2 * b.x) / twoUT;
   const cy = (p2.y - u2 * a.y - t2 * b.y) / twoUT;
 
   return { x: cx, y: cy };
 }
 
-/**
- * Create a bent segment from a straight segment by applying a bend drag.
- *
- * @param a - Start point of original segment
- * @param b - End point of original segment
- * @param clickPoint - Point where the user clicked down on the segment (P1)
- * @param dragPoint - Point where the user released (P2, snapped to grid)
- * @returns BentSegment with calculated control point
- */
 export function createBentSegment(
   a: Point,
   b: Point,
   clickPoint: Point,
   dragPoint: Point
 ): BentSegment {
-  // Calculate t from clickPoint's projection onto AB
   const { t } = projectPointToSegment(clickPoint, a, b);
-
-  // Calculate control point
   const controlPoint = calculateBendControlPoint(a, b, t, dragPoint);
 
   return {
@@ -174,16 +126,11 @@ export function createBentSegment(
   };
 }
 
-/**
- * Re-bend an existing bent segment with a new drag point.
- * Uses the original A, B, and calculates new t from click position.
- */
 export function reBendSegment(
   segment: BentSegment,
   clickPoint: Point,
   dragPoint: Point
 ): BentSegment {
-  // Recalculate t based on new click position
   const { t } = projectPointToSegment(clickPoint, segment.a, segment.b);
   const controlPoint = calculateBendControlPoint(segment.a, segment.b, t, dragPoint);
 
@@ -197,21 +144,68 @@ export function reBendSegment(
   };
 }
 
-/**
- * Convert a bent segment back to straight.
- */
-export function makeStraight(segment: BentSegment): EasyDrawSegment {
+export function makeStraight(segment: BentSegment | CubicSegment): EasyDrawSegment {
   return {
     type: 'straight',
-    start: segment.a,
-    end: segment.b,
+    start: 'a' in segment ? segment.a : segment.start,
+    end: 'b' in segment ? segment.b : segment.end,
   };
 }
 
-/**
- * Evaluate a quadratic Bezier curve at parameter t.
- * B(t) = (1-t)²·A + 2(1-t)t·C + t²·B
- */
+// ── Cubic Bezier segment ──────────────────────────────────────────
+
+export function createCubicSegment(
+  a: Point,
+  cp1: Point,
+  cp2: Point,
+  b: Point
+): CubicSegment {
+  return { type: 'cubic', a, cp1, cp2, b };
+}
+
+export function convertBentToCubic(segment: BentSegment): CubicSegment {
+  return {
+    type: 'cubic',
+    a: segment.a,
+    cp1: {
+      x: segment.a.x + (2 / 3) * (segment.controlPoint.x - segment.a.x),
+      y: segment.a.y + (2 / 3) * (segment.controlPoint.y - segment.a.y),
+    },
+    cp2: {
+      x: segment.b.x + (2 / 3) * (segment.controlPoint.x - segment.b.x),
+      y: segment.b.y + (2 / 3) * (segment.controlPoint.y - segment.b.y),
+    },
+    b: segment.b,
+  };
+}
+
+export function convertStraightToCubic(segment: EasyDrawSegment): CubicSegment {
+  const cp = {
+    x: (segment.start.x + segment.end.x) / 2,
+    y: (segment.start.y + segment.end.y) / 2,
+  };
+  return {
+    type: 'cubic',
+    a: segment.start,
+    cp1: { x: segment.start.x + (cp.x - segment.start.x) * 0.33, y: segment.start.y + (cp.y - segment.start.y) * 0.33 },
+    cp2: { x: segment.end.x + (cp.x - segment.end.x) * 0.33, y: segment.end.y + (cp.y - segment.end.y) * 0.33 },
+    b: segment.end,
+  };
+}
+
+export function updateCubicHandle(
+  segment: CubicSegment,
+  handle: 'cp1' | 'cp2',
+  newPoint: Point
+): CubicSegment {
+  return {
+    ...segment,
+    [handle]: newPoint,
+  };
+}
+
+// ── Bezier evaluation ──────────────────────────────────────────────
+
 export function evaluateQuadraticBezier(
   a: Point,
   c: Point,
@@ -229,56 +223,88 @@ export function evaluateQuadraticBezier(
   };
 }
 
-/**
- * Generate SVG path data for a segment.
- */
+export function evaluateCubicBezier(
+  p0: Point,
+  p1: Point,
+  p2: Point,
+  p3: Point,
+  t: number
+): Point {
+  const u = 1 - t;
+  const u3 = u * u * u;
+  const u2t3 = 3 * u * u * t;
+  const ut23 = 3 * u * t * t;
+  const t3 = t * t * t;
+
+  return {
+    x: u3 * p0.x + u2t3 * p1.x + ut23 * p2.x + t3 * p3.x,
+    y: u3 * p0.y + u2t3 * p1.y + ut23 * p2.y + t3 * p3.y,
+  };
+}
+
+export function evaluateCubicBezierDerivative(
+  p0: Point,
+  p1: Point,
+  p2: Point,
+  p3: Point,
+  t: number
+): Point {
+  const u = 1 - t;
+  return {
+    x: 3 * u * u * (p1.x - p0.x) + 6 * u * t * (p2.x - p1.x) + 3 * t * t * (p3.x - p2.x),
+    y: 3 * u * u * (p1.y - p0.y) + 6 * u * t * (p2.y - p1.y) + 3 * t * t * (p3.y - p2.y),
+  };
+}
+
+// ── SVG path generation ────────────────────────────────────────────
+
 export function segmentToSvgPath(segment: Segment): string {
   if (segment.type === 'straight') {
     return `M ${segment.start.x} ${segment.start.y} L ${segment.end.x} ${segment.end.y}`;
-  } else {
-    // Bent segment - quadratic bezier
+  } else if (segment.type === 'bent') {
     const { a, b, controlPoint } = segment;
     return `M ${a.x} ${a.y} Q ${controlPoint.x} ${controlPoint.y} ${b.x} ${b.y}`;
+  } else {
+    const { a, cp1, cp2, b } = segment;
+    return `M ${a.x} ${a.y} C ${cp1.x} ${cp1.y} ${cp2.x} ${cp2.y} ${b.x} ${b.y}`;
   }
 }
 
-/**
- * Generate an array of points along a segment for rendering.
- * For bent segments, subdivides the curve.
- *
- * @param segment - The segment to subdivide
- * @param subdivisions - Number of subdivisions (default 32, higher = smoother)
- * @returns Array of points along the segment
- */
+// ── Subdivision for rendering ──────────────────────────────────────
+
 export function subdivideSegment(
   segment: Segment,
   subdivisions: number = 32
 ): Point[] {
   if (segment.type === 'straight') {
     return [segment.start, segment.end];
+  } else if (segment.type === 'bent') {
+    const points: Point[] = [segment.a];
+    const { a, b, controlPoint } = segment;
+
+    for (let i = 1; i < subdivisions; i++) {
+      const t = i / subdivisions;
+      points.push(evaluateQuadraticBezier(a, controlPoint, b, t));
+    }
+
+    points.push(b);
+    return points;
+  } else {
+    const points: Point[] = [segment.a];
+    const { a, cp1, cp2, b } = segment;
+
+    for (let i = 1; i < subdivisions; i++) {
+      const t = i / subdivisions;
+      points.push(evaluateCubicBezier(a, cp1, cp2, b, t));
+    }
+
+    points.push(b);
+    return points;
   }
-
-  // For bent segment, generate points along the quadratic curve
-  const points: Point[] = [segment.a];
-  const { a, b, controlPoint } = segment;
-
-  for (let i = 1; i < subdivisions; i++) {
-    const t = i / subdivisions;
-    points.push(evaluateQuadraticBezier(a, controlPoint, b, t));
-  }
-
-  points.push(b);
-  return points;
 }
 
-/**
- * Check if a point is within hit distance of a segment.
- *
- * @param point - The point to test
- * @param segment - The segment to test against
- * @param threshold - Hit threshold in pixels
- * @returns true if point is within threshold of the segment
- */
+// ── Hit testing ────────────────────────────────────────────────────
+
 export function hitTestSegment(
   point: Point,
   segment: Segment,
@@ -287,8 +313,16 @@ export function hitTestSegment(
   if (segment.type === 'straight') {
     const { distance } = closestPointOnSegment(point, segment.start, segment.end);
     return distance <= threshold;
+  } else if (segment.type === 'bent') {
+    const points = subdivideSegment(segment, 32);
+
+    for (let i = 0; i < points.length - 1; i++) {
+      const { distance } = closestPointOnSegment(point, points[i], points[i + 1]);
+      if (distance <= threshold) return true;
+    }
+
+    return false;
   } else {
-    // For bent segments, sample points along the curve
     const points = subdivideSegment(segment, 32);
 
     for (let i = 0; i < points.length - 1; i++) {
@@ -300,14 +334,18 @@ export function hitTestSegment(
   }
 }
 
-/**
- * Find which segment (if any) is under the given point.
- *
- * @param point - The point to test
- * @param segments - Array of segments to test against
- * @param threshold - Hit threshold in pixels
- * @returns The index of the hit segment, or -1 if none
- */
+export function hitTestCubicHandle(
+  point: Point,
+  segment: CubicSegment,
+  threshold: number
+): 'cp1' | 'cp2' | 'a' | 'b' | null {
+  if (distance(point, segment.cp1) <= threshold) return 'cp1';
+  if (distance(point, segment.cp2) <= threshold) return 'cp2';
+  if (distance(point, segment.a) <= threshold) return 'a';
+  if (distance(point, segment.b) <= threshold) return 'b';
+  return null;
+}
+
 export function findSegmentAtPoint(
   point: Point,
   segments: Segment[],
@@ -319,4 +357,55 @@ export function findSegmentAtPoint(
     }
   }
   return -1;
+}
+
+// ── Cubic Bezier nearest-point search (iterative Newton-Raphson) ──
+
+export function nearestPointOnCubic(
+  point: Point,
+  p0: Point,
+  p1: Point,
+  p2: Point,
+  p3: Point,
+  iterations: number = 8
+): { t: number; point: Point; distance: number } {
+  let bestT = 0.5;
+  let bestDist = Infinity;
+  let bestPt = p0;
+
+  const steps = 16;
+  for (let s = 0; s <= steps; s++) {
+    const t = s / steps;
+    const pt = evaluateCubicBezier(p0, p1, p2, p3, t);
+    const d = distance(point, pt);
+    if (d < bestDist) {
+      bestDist = d;
+      bestT = t;
+      bestPt = pt;
+    }
+  }
+
+  let t = bestT;
+  for (let i = 0; i < iterations; i++) {
+    const pt = evaluateCubicBezier(p0, p1, p2, p3, t);
+    const deriv = evaluateCubicBezierDerivative(p0, p1, p2, p3, t);
+    const dx = pt.x - point.x;
+    const dy = pt.y - point.y;
+    const numerator = dx * deriv.x + dy * deriv.y;
+    const denominator = deriv.x * deriv.x + deriv.y * deriv.y + dx * deriv.x + dy * deriv.y;
+
+    if (Math.abs(denominator) < 1e-10) break;
+
+    const step = numerator / denominator;
+    const newT = t - step;
+
+    if (newT < 0 || newT > 1) break;
+    t = newT;
+  }
+
+  t = Math.max(0, Math.min(1, t));
+  const finalPt = evaluateCubicBezier(p0, p1, p2, p3, t);
+  const finalDist = distance(point, finalPt);
+
+  return { t, point: finalPt, distance: finalDist };
 }
