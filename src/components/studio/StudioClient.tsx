@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { ProjectModeModal } from '@/components/studio/ProjectModeModal';
 import { CanvasProvider } from '@/contexts/CanvasContext';
 import type { Project } from '@/types/project';
 
@@ -28,20 +27,13 @@ type LoadState =
 /**
  * Client-side bootstrap for the Studio. Runs through three phases:
  *
- *   1. Loading        — fetch the project from the API
- *   2. Selecting mode — first time the user opens a project, pick mode
- *   3. Configuring    — Phase 1: catalog / size picker (all three modes)
- *   4. Designing      — Phase 2: canvas + worktable tabs (locked layout)
- *
- * Note that Free-form ALSO has a 'configuring' phase (the size picker),
- * unlike the previous behaviour which short-circuited free-form straight
- * into 'designing'. The locked three-mode spec requires a Start Designing
- * gate for every mode.
+ *   1. Loading     — fetch the project from the API
+ *   2. Configuring — Phase 1: catalog / size picker (all modes)
+ *   3. Designing   — Phase 2: canvas + worktable tabs (locked layout)
  */
 export function StudioClient({ projectId }: StudioClientProps) {
   const [loadState, setLoadState] = useState<LoadState>({ kind: 'loading' });
 
-  const modeSelected = useProjectStore((s) => s.modeSelected);
   const layoutLocked = useLayoutStore((s) => s.layoutLocked);
 
   // Fetch the project on mount. The Studio cannot render without a Project,
@@ -63,21 +55,12 @@ export function StudioClient({ projectId }: StudioClientProps) {
           throw new Error('Malformed project response');
         }
         if (cancelled) return;
-        // Mode is "chosen once at project start and locked for the life of
-        // that project" (per spec). The DB always has a `mode` column with
-        // a default of 'layout', so we can't trust its presence alone.
-        // Instead: show the mode picker only when the project has never
-        // been saved (lastSavedAt within ~5s of createdAt).
-        // We use setState directly rather than setMode() to avoid the
-        // isDirty: true side-effect that setMode bakes in — hydrating
-        // from the server is not a user edit.
-        const created = json.data.createdAt ? new Date(json.data.createdAt).getTime() : 0;
-        const lastSaved = json.data.lastSavedAt ? new Date(json.data.lastSavedAt).getTime() : 0;
-        const isFresh = !lastSaved || Math.abs(lastSaved - created) < 5_000;
-        if (!isFresh && json.data.mode) {
-          useProjectStore.setState({ mode: json.data.mode, modeSelected: true });
-          // Previously committed projects should skip Phase 1 — restore the
-          // layout lock so the user goes straight to the design canvas.
+        // Mode is set at creation time (free-form / layout / template /
+        // photo-to-quilt). Hydrate the store directly without setMode()
+        // to avoid the isDirty: true side-effect — loading from the server
+        // is not a user edit.
+        if (json.data.mode) {
+          useProjectStore.setState({ mode: json.data.mode });
           useLayoutStore.setState({
             layoutLocked: true,
             hasAppliedLayout: true,
@@ -117,16 +100,10 @@ export function StudioClient({ projectId }: StudioClientProps) {
 
   const project = loadState.project;
 
-  const phase = !modeSelected
-    ? ('selecting-mode' as const)
-    : layoutLocked
-      ? ('designing' as const)
-      : ('configuring' as const);
+  const phase = layoutLocked ? ('designing' as const) : ('configuring' as const);
 
   return (
     <CanvasProvider>
-      {phase === 'selecting-mode' && <ProjectModeModal />}
-
       {/* Studio chrome (top bar, toolbar, canvas, context panel, bottom bar)
        * is mounted as soon as we have a project — even during the configuring
        * phase. The SelectionShell rails are rendered INSIDE StudioLayout's

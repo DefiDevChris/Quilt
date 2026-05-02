@@ -757,7 +757,7 @@ function findClickedPiece(
   const ny = relY / cellPx;
 
   if (cell.pieces.length === 1 && cell.pieces[0].kind === 'square') {
-    return { pieceIndex: 0 };
+    return { pieceIndex: 0, newKind: nx + ny <= 1 ? 'triangle-a' : 'triangle-b' };
   }
 
   if (nx + ny <= 1) {
@@ -1113,14 +1113,42 @@ export default function PhotoToQuiltApp() {
       if (!clicked) return prev;
 
       if (editMode === 'erase') {
-        const newPieces = [...cell.pieces];
-        newPieces[clicked.pieceIndex] = { ...newPieces[clicked.pieceIndex], isBackground: true };
-        // Remove remaining background-only cells
-        const filteredPieces = newPieces.filter(p => !p.isBackground);
-        newCells[cellIndex] = { ...cell, pieces: filteredPieces };
+        const newPieces: PatternPiece[] = [...cell.pieces];
+        if (clicked.newKind) {
+          const original = newPieces[clicked.pieceIndex];
+          newPieces.splice(clicked.pieceIndex, 1);
+          if (clicked.newKind === 'triangle-a') {
+            if (!original.isBackground) {
+              newPieces.push({ colorIndex: original.colorIndex, kind: 'triangle-b', spanW: 1, spanH: 1, isBackground: false });
+            }
+          } else {
+            if (!original.isBackground) {
+              newPieces.push({ colorIndex: original.colorIndex, kind: 'triangle-a', spanW: 1, spanH: 1, isBackground: false });
+            }
+          }
+        } else {
+          newPieces.splice(clicked.pieceIndex, 1);
+        }
+        newCells[cellIndex] = { ...cell, pieces: newPieces.filter(p => !p.isBackground) };
       } else if (editMode === 'paint') {
-        const newPieces = [...cell.pieces];
-        newPieces[clicked.pieceIndex] = { ...newPieces[clicked.pieceIndex], colorIndex: paintColorIdx, isBackground: false };
+        const newPieces: PatternPiece[] = [...cell.pieces];
+        if (clicked.newKind) {
+          const original = newPieces[clicked.pieceIndex];
+          newPieces.splice(clicked.pieceIndex, 1);
+          if (clicked.newKind === 'triangle-a') {
+            newPieces.push({ colorIndex: paintColorIdx, kind: 'triangle-a', spanW: 1, spanH: 1, isBackground: false });
+            if (!original.isBackground) {
+              newPieces.push({ colorIndex: original.colorIndex, kind: 'triangle-b', spanW: 1, spanH: 1, isBackground: false });
+            }
+          } else {
+            if (!original.isBackground) {
+              newPieces.push({ colorIndex: original.colorIndex, kind: 'triangle-a', spanW: 1, spanH: 1, isBackground: false });
+            }
+            newPieces.push({ colorIndex: paintColorIdx, kind: 'triangle-b', spanW: 1, spanH: 1, isBackground: false });
+          }
+        } else {
+          newPieces[clicked.pieceIndex] = { ...newPieces[clicked.pieceIndex], colorIndex: paintColorIdx, isBackground: false };
+        }
         newCells[cellIndex] = { ...cell, pieces: newPieces };
       }
 
@@ -1376,8 +1404,9 @@ export default function PhotoToQuiltApp() {
           return { colorIndex: i, hex, squareCount: sq, triangleCount: tri, totalCount: sq + tri };
         });
         const totalPieces = cutList.reduce((s, r) => s + r.totalCount, 0);
-        const totalBlocks = blocks.length;
-        const solidBlocks = blocks.filter(b => b.isSolid).length;
+        const nonBgBlocks = blocks.filter(b => b.totalPieces > 0);
+        const totalBlocks = nonBgBlocks.length;
+        const solidBlocks = nonBgBlocks.filter(b => b.isSolid).length;
         const piecedBlocks = totalBlocks - solidBlocks;
 
         // Normalize cells for editing (explode multi-span cells into 1x1)

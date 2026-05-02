@@ -16,7 +16,7 @@ interface BuildYourOwnShellProps {
 }
 
 const LAYOUT_GUIDES: { id: LayoutType; label: string; description: string }[] = [
-  { id: 'none', label: 'No Guide', description: 'Free-form placement' },
+  { id: 'free-form', label: 'No Guide', description: 'Free-form placement' },
   { id: 'grid', label: 'Grid', description: 'Rows × columns of blocks' },
   { id: 'on-point', label: 'On-Point', description: '45° rotated blocks' },
 ];
@@ -44,7 +44,6 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
   const lockBaseQuiltSize = useProjectStore((s) => s.lockBaseQuiltSize);
   const setProjectName = useProjectStore((s) => s.setProjectName);
   const projectName = useProjectStore((s) => s.projectName);
-  const mode = useProjectStore((s) => s.mode);
 
   const selectedPresetId = useLayoutStore((s) => s.selectedPresetId);
   const setSelectedPreset = useLayoutStore((s) => s.setSelectedPreset);
@@ -56,16 +55,18 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
     try {
       applyLayoutAndLock();
 
+      const finalMode = layoutType === 'free-form' ? 'free-form' : 'layout';
+
       const body: Record<string, unknown> = {
         name: projectName,
-        mode: mode === 'template' ? 'template' : 'scratch',
+        mode: finalMode,
         unitSystem: 'imperial',
         canvasWidth: baseQuiltWidth,
         canvasHeight: baseQuiltHeight,
         gridSettings: { enabled: true, size: 1, snapToGrid: true },
       };
 
-      if (layoutType !== 'none' && selectedPresetId) {
+      if (layoutType !== 'free-form' && selectedPresetId) {
         body.canvasData = { initialSetup: { kind: 'layout', presetId: selectedPresetId, blockSize, rotated: false } };
       }
 
@@ -89,7 +90,6 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
   }, [
     applyLayoutAndLock,
     projectName,
-    mode,
     baseQuiltWidth,
     baseQuiltHeight,
     layoutType,
@@ -120,7 +120,7 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
                 key={guide.id}
                 onClick={() => {
                   setLayoutType(guide.id);
-                  if (guide.id !== 'none') {
+                  if (guide.id !== 'free-form') {
                     const defaultPreset = LAYOUT_PRESETS.find(
                       (p) => p.id.startsWith(guide.id) && p.id.includes('4x4')
                     ) ?? LAYOUT_PRESETS.find((p) => p.id.startsWith(guide.id));
@@ -141,7 +141,7 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
             ))}
           </div>
 
-          {layoutType !== 'none' && (
+          {layoutType !== 'free-form' && (
             <div className="space-y-3 pt-2 border-t border-[var(--color-border)]">
               <h3 className="text-xs font-semibold text-[var(--color-text-dim)] uppercase tracking-wide">Grid</h3>
               <SliderRow label="Rows" value={rows} min={2} max={12} onChange={setRows} />

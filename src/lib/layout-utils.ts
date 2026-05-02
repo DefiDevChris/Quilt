@@ -7,7 +7,6 @@
  */
 
 export type LayoutType =
-  | 'none'
   | 'free-form'
   | 'grid'
   | 'sashing'
@@ -114,7 +113,7 @@ const EMPTY_RESULT: LayoutResult = {
 };
 
 export function computeLayout(config: LayoutConfig, pxPerUnit: number): LayoutResult {
-  if (config.type === 'none') {
+  if (config.type === 'free-form') {
     return { ...EMPTY_RESULT };
   }
 

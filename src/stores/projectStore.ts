@@ -12,18 +12,12 @@ export interface FabricPreset {
 
 export type { Worktable } from '@/types/project';
 
-export type ProjectMode = 'free-form' | 'layout' | 'template' | 'scratch' | 'photo-to-quilt';
+export type ProjectMode = 'free-form' | 'layout' | 'template' | 'photo-to-quilt';
 
 interface ProjectStoreState {
   projectId: string | null;
   projectName: string;
   mode: ProjectMode;
-  /** True after user explicitly selects a mode in the mode-selection modal */
-  modeSelected: boolean;
-  /** True after user picks "Use a Template" or "Build Your Own" in the new-design flow */
-  creationPathChosen: boolean;
-  /** True when project hasn't been persisted to DB yet (new /studio/new flow) */
-  isPending: boolean;
   saveStatus: SaveStatus;
   canvasWidth: number;
   canvasHeight: number;
@@ -56,8 +50,6 @@ interface ProjectStoreState {
   }) => void;
   setProjectName: (name: string) => void;
   setMode: (mode: ProjectMode) => void;
-  setCreationPathChosen: (chosen: boolean) => void;
-  setIsPending: (pending: boolean) => void;
   setSaveStatus: (status: SaveStatus) => void;
   setDirty: (dirty: boolean) => void;
   setHasContent: (has: boolean) => void;
@@ -88,9 +80,6 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   projectId: null,
   projectName: 'Untitled Quilt',
   mode: 'layout',
-  modeSelected: false,
-  creationPathChosen: false,
-  isPending: false,
   saveStatus: 'saved',
   canvasWidth: DEFAULT_CANVAS_WIDTH,
   canvasHeight: DEFAULT_CANVAS_HEIGHT,
@@ -105,12 +94,6 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   version: 1,
 
   setProject: ({ id, name, mode, width, height, worktables, version }) =>
-    // NOTE: intentionally does NOT set `modeSelected`. That flag is owned by
-    // `StudioClient` (true for projects already saved with a chosen mode,
-    // false for fresh projects where the user still needs to pick). If we
-    // forced it true here, fresh projects would briefly show the
-    // ProjectModeModal and then dismiss it the moment `useCanvasInit`
-    // hydrated the store — i.e. the "modal flashes for ~1s on load" bug.
     set({
       projectId: id,
       projectName: name,
@@ -131,12 +114,9 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
 
   setProjectName: (projectName) => set({ projectName }),
   setMode: (mode) => {
-    const { modeSelected: alreadySelected, mode: currentMode } = get();
-    if (alreadySelected && currentMode !== mode) return;
-    set({ mode, modeSelected: true, isDirty: true });
+    const { mode: currentMode } = get();
+    if (currentMode !== mode) set({ mode, isDirty: true });
   },
-  setCreationPathChosen: (creationPathChosen) => set({ creationPathChosen }),
-  setIsPending: (isPending) => set({ isPending }),
   setSaveStatus: (saveStatus) => set({ saveStatus }),
   setDirty: (isDirty) => set({ isDirty }),
   setHasContent: (hasContent) => set({ hasContent }),
@@ -216,9 +196,6 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
       projectId: null,
       projectName: 'Untitled Quilt',
       mode: 'layout',
-      modeSelected: false,
-      creationPathChosen: false,
-      isPending: false,
       saveStatus: 'saved',
       canvasWidth: DEFAULT_CANVAS_WIDTH,
       canvasHeight: DEFAULT_CANVAS_HEIGHT,

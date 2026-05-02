@@ -77,7 +77,7 @@ export function QuiltSettingsDropdown({
   const unit = getUnitLabel(unitSystem);
 
   const isLayoutSized =
-    hasAppliedLayout && layoutType !== 'none' && layoutType !== 'free-form';
+    hasAppliedLayout && layoutType !== 'free-form';
   const layoutSize = isLayoutSized
     ? computeLayoutSize({
         type: layoutType,
