@@ -6,7 +6,6 @@ export const FaqCategorySchema = z.enum([
   'export',
   'account',
   'sharing',
-  'mobile',
 ]);
 
 export type FaqCategory = z.infer<typeof FaqCategorySchema>;
@@ -160,21 +159,6 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
     content:
       'No. Shared links are read-only. Viewers can see your quilt but cannot modify it. You can turn off sharing anytime by toggling "Public Link" off.',
   },
-  // Mobile
-  {
-    id: 'mb-1',
-    category: 'mobile',
-    title: 'Can I use the Studio on my phone?',
-    content:
-      'The full Studio is desktop-only for the best design experience. On mobile, you can upload fabrics and block photos, browse the community, and manage your account. Uploaded items sync to your desktop automatically.',
-  },
-  {
-    id: 'mb-2',
-    category: 'mobile',
-    title: 'How do I upload fabrics from my phone?',
-    content:
-      'Tap the golden + button at the bottom of the screen and choose "Upload Fabric." You can photograph fabric directly or pick from your camera roll.',
-  },
 ] as const;
 
 // --- Contextual help by active tool ---
@@ -212,7 +196,6 @@ export const FAQ_CATEGORY_LABELS: Readonly<Record<FaqCategory, string>> = {
   export: 'Export',
   account: 'Account',
   sharing: 'Sharing',
-  mobile: 'Mobile',
 };
 
 // --- Video Tutorials ---

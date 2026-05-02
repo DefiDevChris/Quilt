@@ -2,14 +2,13 @@ import { db } from '@/lib/db';
 import { blocks } from '@/db/schema/blocks';
 import { blogPosts } from '@/db/schema/blogPosts';
 import { fabrics } from '@/db/schema/fabrics';
-import { mobileUploads } from '@/db/schema/mobileUploads';
 import { users } from '@/db/schema/users';
 import { count, eq, desc } from 'drizzle-orm';
 import Link from 'next/link';
 import { COLORS, COLORS_HOVER, SHADOW, withAlpha } from '@/lib/design-system';
 
 async function getStats() {
-  const [blockCount, blogCount, fabricCount, userCount, pendingUploads] = await Promise.all([
+  const [blockCount, blogCount, fabricCount, userCount] = await Promise.all([
     db
       .select({ count: count() })
       .from(blocks)
@@ -28,11 +27,6 @@ async function getStats() {
       .select({ count: count() })
       .from(users)
       .then((r) => r[0]?.count ?? 0),
-    db
-      .select({ count: count() })
-      .from(mobileUploads)
-      .where(eq(mobileUploads.status, 'pending'))
-      .then((r) => r[0]?.count ?? 0),
   ]);
 
   return {
@@ -40,7 +34,6 @@ async function getStats() {
     blogCount,
     fabricCount,
     userCount,
-    pendingUploads,
   };
 }
 
@@ -80,10 +73,6 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Secondary stat row */}
-      <div className="grid grid-cols-2 gap-4">
-        <StatCard label="Pending Uploads" value={stats.pendingUploads} href="/admin/libraries" />
-      </div>
-
       {/* Quick actions */}
       <div>
         <h3 className="text-sm font-semibold text-[var(--color-text-dim)] mb-4">Quick Actions</h3>
