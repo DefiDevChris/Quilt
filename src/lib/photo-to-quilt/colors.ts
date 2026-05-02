@@ -1,30 +1,24 @@
-export type RGB = {
-  r: number;
-  g: number;
-  b: number;
-};
+import type { RGB } from '@/lib/color-math';
 
-export function clamp(value: number, min = 0, max = 255) {
-  return Math.max(min, Math.min(max, value));
-}
+export type { RGB };
 
 export function rgbToHex(color: RGB) {
   const toHex = (value: number) =>
-    clamp(Math.round(value))
+    Math.max(0, Math.min(255, Math.round(value)))
       .toString(16)
-      .padStart(2, "0");
+      .padStart(2, '0');
 
   return `#${toHex(color.r)}${toHex(color.g)}${toHex(color.b)}`.toUpperCase();
 }
 
 export function hexToRgb(hex: string): RGB {
-  const clean = hex.replace("#", "");
+  const clean = hex.replace('#', '');
   const full =
     clean.length === 3
       ? clean
-          .split("")
+          .split('')
           .map((char) => char + char)
-          .join("")
+          .join('')
       : clean;
 
   return {

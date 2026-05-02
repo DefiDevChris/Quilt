@@ -7,13 +7,13 @@ import {
   PRO_PRICE_MONTHLY,
   PRO_PRICE_YEARLY,
   PIXELS_PER_INCH,
-  PDF_POINTS_PER_INCH,
   DEFAULT_SEAM_ALLOWANCE_INCHES,
   AUTO_SAVE_INTERVAL_MS,
   UNDO_HISTORY_MAX,
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
 } from '@/lib/constants';
+import { PDF_POINTS_PER_INCH } from '@/lib/pdf-engine/types';
 
 describe('constants', () => {
   it('has valid zoom range', () => {

@@ -28,9 +28,4 @@ export function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-/**
- * Epsilon value for floating point comparisons.
- * Chosen to be small enough for precision but large enough to handle
- * typical floating point arithmetic errors.
- */
-export const EPSILON = 1e-6;
+

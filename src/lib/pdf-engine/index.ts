@@ -1,10 +1,10 @@
 /**
  * PDF Engine — unified entry point for all PDF generation.
  *
- * Consolidates three previous engines:
- * - pdf-generator.ts (pattern pieces, bin-packed)
- * - cutlist-pdf-engine.ts (one page per shape)
- * - project-pdf-engine.ts (full project document)
+ * Provides three generation modes:
+ * - Pattern pieces (bin-packed, 1:1 scale)
+ * - Cutlist (one page per shape)
+ * - Project (full project document)
  */
 
 import { PDFDocument, StandardFonts, rgb, type PDFPage } from 'pdf-lib';

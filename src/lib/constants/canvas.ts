@@ -2,18 +2,12 @@
 export const ZOOM_MIN = 0.05;
 export const ZOOM_MAX = 8;
 export const ZOOM_DEFAULT = 0.2;
-export const ZOOM_STEP = 0.1;
 export const ZOOM_FACTOR = 1.2;
 
 /** Grid display and snap defaults */
 export const GRID_DEFAULT_SIZE = 1;
 export const GRID_DEFAULT_ENABLED = true;
 export const GRID_DEFAULT_SNAP = true;
-
-/** Grid cell size constraints in inches */
-export const GRID_CELL_SIZE_MIN = 0.125;
-export const GRID_CELL_SIZE_MAX = 12;
-export const GRID_CELL_SIZE_STEP = 0.125;
 
 /** Undo/redo history limits */
 export const UNDO_HISTORY_MAX = 50;
@@ -33,9 +27,6 @@ export const PIXELS_PER_CM = PIXELS_PER_INCH / 2.54;
 export const DEFAULT_SEAM_ALLOWANCE_INCHES = 0.25;
 export const DEFAULT_WOF = 44 as const;
 export const DEFAULT_WASTE_MARGIN = 0.1;
-
-/** Reference image overlay opacity */
-export const REFERENCE_IMAGE_DEFAULT_OPACITY = 0.5;
 
 /** Standard quilt size presets in inches */
 export const QUILT_SIZE_PRESETS: readonly {

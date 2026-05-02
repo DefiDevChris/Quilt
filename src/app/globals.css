@@ -136,7 +136,7 @@
 
   /* ── Studio-specific layout atoms ──────────────────────────────────────── */
 
-.studio-layout {
-@apply relative h-screen overflow-hidden;
-}
+  .studio-layout {
+    @apply relative h-screen overflow-hidden;
+  }
 }

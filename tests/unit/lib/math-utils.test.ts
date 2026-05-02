@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { clamp, EPSILON } from '@/lib/math-utils';
+import { clamp } from '@/lib/math-utils';
 
 describe('clamp', () => {
   it('returns value when within range', () => {
