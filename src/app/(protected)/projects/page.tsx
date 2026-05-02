@@ -12,6 +12,7 @@ interface ProjectItem {
   name: string;
   description: string | null;
   thumbnailUrl: string | null;
+  mode: string;
   unitSystem: string;
   lastSavedAt: string | null;
   createdAt: string;

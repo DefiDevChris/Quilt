@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
           name: projects.name,
           description: projects.description,
           thumbnailUrl: projects.thumbnailUrl,
+          mode: projects.mode,
           unitSystem: projects.unitSystem,
           lastSavedAt: projects.lastSavedAt,
           createdAt: projects.createdAt,
