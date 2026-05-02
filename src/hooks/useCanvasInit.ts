@@ -396,12 +396,11 @@ export function useCanvasInit(
         const layoutData = (canvasDataToLoad as Record<string, unknown>).__layoutState as
           | Record<string, unknown>
           | undefined;
-        if (layoutData && layoutData.layoutType && layoutData.layoutType !== 'none') {
+        if (layoutData && layoutData.layoutType && layoutData.layoutType !== 'free-form') {
           const ls = useLayoutStore.getState();
           if (layoutData.layoutType)
             ls.setLayoutType(
               layoutData.layoutType as
-                | 'none'
                 | 'free-form'
                 | 'grid'
                 | 'sashing'

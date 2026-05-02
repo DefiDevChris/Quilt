@@ -62,7 +62,7 @@ function createBorder(overrides?: Partial<BorderConfig>): BorderConfig {
 }
 
 const INITIAL_STATE = {
-  layoutType: 'none' as LayoutType,
+  layoutType: 'free-form' as LayoutType,
   selectedPresetId: null as string | null,
   expandedCardId: null as string | null,
   rows: 3,

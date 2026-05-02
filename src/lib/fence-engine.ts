@@ -49,10 +49,9 @@ function categoryToLayoutType(category: LayoutCategory): 'grid' | 'sashing' | 'o
 }
 
 export function layoutSourceToTemplate(source: LayoutTemplateSource): LayoutTemplate | null {
-  if (source.layoutType === 'none' || source.layoutType === 'free-form') return null;
+  if (source.layoutType === 'free-form') return null;
 
   const categoryMap: Record<LayoutType, LayoutTemplate['category'] | null> = {
-    none: null,
     'free-form': null,
     grid: 'straight',
     sashing: 'sashing',

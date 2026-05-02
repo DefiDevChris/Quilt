@@ -26,7 +26,7 @@ const SYNTHETIC_PROJECT: Project = {
   userId: '',
   name: 'Untitled Quilt',
   description: null,
-  mode: 'scratch',
+  mode: 'layout',
   canvasData: {},
   worktables: [{ id: 'main', name: 'Main', canvasData: {}, order: 0 }],
   unitSystem: 'imperial',
@@ -44,33 +44,27 @@ export function NewStudioClient() {
   const [phase, setPhase] = useState<NewFlowPhase>('choose-path');
 
   const setMode = useProjectStore((s) => s.setMode);
-  const setCreationPathChosen = useProjectStore((s) => s.setCreationPathChosen);
-  const setIsPending = useProjectStore((s) => s.setIsPending);
   const resetProject = useProjectStore((s) => s.reset);
 
   useEffect(() => {
     resetProject();
-    setIsPending(true);
-  }, [resetProject, setIsPending]);
+  }, [resetProject]);
 
   const handleBuildYourOwn = useCallback(() => {
-    setMode('scratch');
-    setCreationPathChosen(true);
+    setMode('layout');
     setPhase('build-your-own');
-  }, [setMode, setCreationPathChosen]);
+  }, [setMode]);
 
   const handleUseTemplate = useCallback(() => {
     setMode('template');
-    setCreationPathChosen(true);
     setPhase('template-gallery');
-  }, [setMode, setCreationPathChosen]);
+  }, [setMode]);
 
   const handleProjectCreated = useCallback(
     (projectId: string) => {
-      setIsPending(false);
       router.replace(`/studio/${projectId}`);
     },
-    [router, setIsPending],
+    [router],
   );
 
   const configuring = phase === 'build-your-own';
