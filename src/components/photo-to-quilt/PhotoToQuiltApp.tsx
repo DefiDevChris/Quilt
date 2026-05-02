@@ -1,7 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ImagePlus, Loader2, Upload, Paintbrush, Eraser, Eye, Sparkles, Printer, Undo2, Redo2, RotateCcw } from 'lucide-react';
+import { ImagePlus, Loader2, Upload, Paintbrush, Eraser, Eye, Sparkles, Printer, Undo2, Redo2, RotateCcw, Save } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/stores/authStore';
+import { patternResultToFabricJson } from '@/lib/photo-to-quilt/to-fabric';
 import {
   RGB,
   averageColors,
@@ -816,6 +819,13 @@ export default function PhotoToQuiltApp() {
   const [generating, setGenerating] = useState(false);
   const [result, setResult] = useState<PatternResult | null>(null);
 
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveName, setSaveName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const router = useRouter();
+
   const { cols, rows } = useMemo(() => {
     const maxCols = Math.floor(quiltWidthIn / pieceSizeInches);
     const maxRows = Math.floor(quiltHeightIn / pieceSizeInches);
@@ -1486,6 +1496,47 @@ export default function PhotoToQuiltApp() {
     });
   };
 
+  const handleSaveToStudio = async () => {
+    if (!result) return;
+    const user = useAuthStore.getState().user;
+    if (!user) {
+      router.push('/auth/signin?callbackUrl=/photo-to-quilt');
+      return;
+    }
+    setIsSaving(true);
+    setSaveError(null);
+    try {
+      const canvasData = patternResultToFabricJson(result);
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: saveName.trim() || 'Photo Quilt Design',
+          mode: 'photo-to-quilt',
+          unitSystem: 'imperial',
+          canvasWidth: result.finishedWidth,
+          canvasHeight: result.finishedHeight,
+          canvasData,
+        }),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || 'Failed to save project');
+      }
+      const json = await res.json();
+      if (!json.success || !json.data?.id) {
+        throw new Error('Invalid response from server');
+      }
+      setShowSaveModal(false);
+      setSaveName('');
+      router.push(`/studio/${json.data.id}`);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); };
   const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); };
   const handleDrop = (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); const file = e.dataTransfer.files?.[0] ?? null; if (file) handleUpload(file); };
@@ -1615,6 +1666,28 @@ export default function PhotoToQuiltApp() {
                 : 'Drop a photo or click upload to get started'}</span>
           </div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            {result && (
+              <button
+                type="button"
+                onClick={() => { setSaveName(''); setSaveError(null); setShowSaveModal(true); }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '5px 12px',
+                  borderRadius: 8,
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  background: 'var(--color-primary)',
+                  color: '#fff',
+                  border: '1.5px solid var(--color-primary)',
+                }}
+              >
+                <Save size={14} />
+                Save to Studio
+              </button>
+            )}
             <label className="p2q-grid-toggle">
               <input type="checkbox" checked={showBlockGrid} onChange={e => setShowBlockGrid(e.target.checked)} />
               Block grid
@@ -2253,6 +2326,54 @@ export default function PhotoToQuiltApp() {
                   style={{ flex: 1 }}
                 >
                   Start Creating
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save to Studio Modal */}
+      {showSaveModal && (
+        <div className="p2q-modal-overlay" onClick={() => !isSaving && setShowSaveModal(false)}>
+          <div className="p2q-modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: 420 }}>
+            <div className="p2q-modal-header">
+              <h3>Save to Studio</h3>
+              <button className="p2q-modal-close" onClick={() => !isSaving && setShowSaveModal(false)}>&#10005;</button>
+            </div>
+            <div style={{ display: 'grid', gap: 16 }}>
+              <div>
+                <label style={{ display: 'block', fontWeight: 700, fontSize: '0.82rem', color: 'var(--color-text-dim)', marginBottom: 8 }}>Project Name</label>
+                <input
+                  type="text"
+                  value={saveName}
+                  onChange={e => setSaveName(e.target.value)}
+                  placeholder="Photo Quilt Design"
+                  disabled={isSaving}
+                  style={{ width: '100%', padding: '8px 10px', borderRadius: 8, border: '1.5px solid var(--color-border)', fontSize: '0.85rem', fontWeight: 600 }}
+                />
+              </div>
+              {saveError && (
+                <div style={{ padding: '10px 12px', borderRadius: 8, background: '#FFEBEE', border: '1.5px solid #EF9A9A', color: '#C62828', fontSize: '0.78rem', fontWeight: 600 }}>
+                  {saveError}
+                </div>
+              )}
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  className="p2q-ghost-button"
+                  onClick={() => setShowSaveModal(false)}
+                  disabled={isSaving}
+                  style={{ flex: 1 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="p2q-primary-action"
+                  onClick={handleSaveToStudio}
+                  disabled={isSaving}
+                  style={{ flex: 1 }}
+                >
+                  {isSaving ? 'Saving…' : 'Save'}
                 </button>
               </div>
             </div>

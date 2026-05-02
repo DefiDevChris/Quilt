@@ -12,7 +12,7 @@ export interface FabricPreset {
 
 export type { Worktable } from '@/types/project';
 
-export type ProjectMode = 'free-form' | 'layout' | 'template' | 'scratch';
+export type ProjectMode = 'free-form' | 'layout' | 'template' | 'scratch' | 'photo-to-quilt';
 
 interface ProjectStoreState {
   projectId: string | null;

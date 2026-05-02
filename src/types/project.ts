@@ -22,7 +22,7 @@ export interface Project {
   userId: string;
   name: string;
   description: string | null;
-  mode: 'free-form' | 'layout' | 'template' | 'scratch';
+  mode: 'free-form' | 'layout' | 'template' | 'scratch' | 'photo-to-quilt';
   canvasData: Record<string, unknown> & {
     initialSetup?: InitialSetupConfig;
   };
