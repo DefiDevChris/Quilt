@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { usePhotoToQuiltStore } from '@/stores/photoToQuiltStore';
 import {
@@ -30,6 +30,17 @@ export default function WizardStepBackground() {
   const setWizardStep = usePhotoToQuiltStore((s) => s.setWizardStep);
 
   const [error, setError] = useState<string | null>(null);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!pendingFile) {
+      setThumbnailUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(pendingFile);
+    setThumbnailUrl(url);
+    return () => { URL.revokeObjectURL(url); };
+  }, [pendingFile]);
 
   const handleBack = useCallback(() => {
     if (previewUrl) {
@@ -75,8 +86,11 @@ export default function WizardStepBackground() {
           setWorkingSize({ width: w, height: h });
           setMask(refined);
           setPreviewUrl(procUrl);
+          procUrl = null;
           URL.revokeObjectURL(origUrl);
+          origUrl = null;
         } catch {
+          if (procUrl) { URL.revokeObjectURL(procUrl); procUrl = null; }
           const img = await loadHtmlImage(origUrl!);
           const scale = Math.min(1, MAX_WORKING_SIZE / Math.max(img.naturalWidth, img.naturalHeight));
           const w = Math.round(img.naturalWidth * scale);
@@ -88,6 +102,7 @@ export default function WizardStepBackground() {
           setWorkingSize({ width: w, height: h });
           setMask(m);
           setPreviewUrl(origUrl!);
+          origUrl = null;
         }
       } else {
         const img = await loadHtmlImage(origUrl!);
@@ -101,6 +116,7 @@ export default function WizardStepBackground() {
         setWorkingSize({ width: w, height: h });
         setMask(m);
         setPreviewUrl(origUrl!);
+        origUrl = null;
       }
 
       setPendingFile(null);
@@ -109,10 +125,11 @@ export default function WizardStepBackground() {
       setError('Could not load the image. Please try a different file.');
     } finally {
       setIsRemovingBg(false);
+      if (origUrl) URL.revokeObjectURL(origUrl);
+      if (procUrl) URL.revokeObjectURL(procUrl);
     }
   }, [pendingFile, removeBackground, setIsRemovingBg, setBgProgress, setImage, setImageName, setWorkingSize, setMask, setPreviewUrl, setPendingFile, setWizardStep]);
 
-  const thumbnailUrl = pendingFile ? URL.createObjectURL(pendingFile) : null;
 
   return (
     <div className="flex-1 min-h-0 flex items-center justify-center bg-[var(--color-bg)] p-8">
@@ -128,7 +145,7 @@ export default function WizardStepBackground() {
                 src={thumbnailUrl}
                 alt="Preview"
                 className="max-h-[280px] max-w-full object-contain"
-                onLoad={() => { if (thumbnailUrl.startsWith('blob:')) URL.revokeObjectURL(thumbnailUrl); }}
+                onLoad={() => { if (thumbnailUrl?.startsWith('blob:')) URL.revokeObjectURL(thumbnailUrl); }}
               />
             )}
           </div>
@@ -161,7 +178,7 @@ export default function WizardStepBackground() {
             <div className="mt-4 flex flex-col items-center gap-2">
               <Loader2 size={24} className="animate-spin text-[var(--color-primary)]" />
               <span className="text-sm font-semibold text-[var(--color-text)]">
-                Removing background&hellip; {bgProgress}%
+                Removing background… {bgProgress}%
               </span>
               <div className="w-full h-2 overflow-hidden rounded-full bg-[var(--color-border)]">
                 <div
@@ -188,7 +205,7 @@ export default function WizardStepBackground() {
               onClick={handleNext}
               disabled={isRemovingBg}
             >
-              {isRemovingBg ? 'Processing&hellip;' : 'Next'}
+              {isRemovingBg ? 'Processing…' : 'Next'}
             </button>
           </div>
         </div>

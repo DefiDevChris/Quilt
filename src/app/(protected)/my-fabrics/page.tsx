@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, Plus } from 'lucide-react';
 import { COLOR_FAMILIES, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -50,7 +50,7 @@ export default function FabricsPage() {
     };
   }, [search]);
 
-  const fetchFabrics = async () => {
+  const fetchFabrics = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -73,12 +73,11 @@ export default function FabricsPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-useEffect(() => {
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  fetchFabrics();
   }, [page, debouncedSearch, colorFamily]);
+
+  useEffect(() => {
+    fetchFabrics();
+  }, [page, debouncedSearch, colorFamily, fetchFabrics]);
 
   return (
     <>

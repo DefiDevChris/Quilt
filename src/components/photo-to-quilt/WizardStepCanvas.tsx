@@ -67,7 +67,7 @@ export default function WizardStepCanvas() {
   const renderCanvas = useCallback(
     (cells: typeof result extends null ? never : NonNullable<typeof result>['cells'], pal: string[]) => {
       const canvas = canvasRef.current;
-      if (!canvas || !result) return;
+      if (!canvas) return;
       const maxPx = 980;
       const cellPx = Math.max(7, Math.floor(maxPx / cols));
       canvas.width = cols * cellPx;
@@ -172,7 +172,7 @@ export default function WizardStepCanvas() {
         }
       }
     },
-    [cols, rows, blockCols, blockRows, showGrid, showBlockGrid, result],
+    [cols, rows, blockCols, blockRows, showGrid, showBlockGrid],
   );
 
   useEffect(() => {
@@ -530,7 +530,7 @@ export default function WizardStepCanvas() {
                     />
                   </div>
                   <h2 className="font-[family-name:var(--font-heading)] text-lg font-bold tracking-tight text-[var(--color-text)]">
-                    Generating Pattern&hellip;
+                    Generating Pattern…
                   </h2>
                   <p className="text-sm text-[var(--color-text-dim)]">
                     Filtering colors and building blocks
@@ -577,7 +577,7 @@ export default function WizardStepCanvas() {
                 onClick={handleSaveToStudio}
                 disabled={isSaving}
               >
-                {isSaving ? 'Saving&hellip;' : 'Save & Open'}
+                {isSaving ? 'Saving…' : 'Save & Open'}
               </button>
             </div>
             <button
@@ -588,7 +588,7 @@ export default function WizardStepCanvas() {
               Download PNG
             </button>
             {saveError && (
-              <p className="text-sm text-red-600 mt-2">{saveError}</p>
+              <p className="text-sm text-[var(--color-error)] mt-2">{saveError}</p>
             )}
           </div>
         </div>

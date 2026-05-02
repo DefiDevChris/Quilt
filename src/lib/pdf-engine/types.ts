@@ -33,9 +33,6 @@ export interface PdfFonts {
   bold: PDFFont;
 }
 
-// For function parameters that accept fonts
-export type PdfFontsParam = PdfFonts;
-
 export interface ShapePolyline {
   cutLine: Point[];
   seamLine: Point[] | null;

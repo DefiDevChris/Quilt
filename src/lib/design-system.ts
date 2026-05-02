@@ -124,13 +124,6 @@ export const FENCE = {
       binding: withAlpha('#7A726C', 0.40),
     },
   },
-  // Legacy single-role colors (deprecated — prefer `normal.fills[role]`).
-  block: '#7CB9E8',
-  sashing: '#C5DFF3',
-  border: '#FFE08A',
-  cornerstone: '#F6C6C8',
-  binding: '#7A726C',
-  defaultColor: '#E6E1DC',
 } as const;
 
 // ─── Shade Colors ──────────────────────────────────────────────────────────────────
@@ -140,14 +133,6 @@ export const SHADE = {
   light: '#F5F0E8',
   background: '#FEFDFB',
   unknown: '#7A726C',
-} as const;
-
-// ─── Pattern Preview Colors ───────────────────────────────────────────────────────
-
-export const PATTERN_PREVIEW = {
-  fill: '#FEFDFB',
-  stroke: '#36312D',
-  accent: '#7CB9E8',
 } as const;
 
 // ─── Default Canvas Colors ──────────────────────────────────────────────────────
@@ -172,102 +157,6 @@ export const GRID = {
   border: '#E6E1DC',
 } as const;
 
-// ─── Typography ───────────────────────────────────────────────────────────────
-
-const ts = brandConfig.design_system.typography.scale;
-
-export const FONT_SIZE = {
-  h1: ts['3xl'],
-  h1LineHeight: '1.2',
-  h2: ts['2xl'],
-  h2LineHeight: '1.3',
-  h3: ts.xl,
-  h3LineHeight: '1.4',
-  body: '18px',
-  bodyLineHeight: '28px',
-  small: '16px',
-  smallLineHeight: '24px',
-  label: '14px',
-  labelLineHeight: '20px',
-} as const;
-
-export const SPACING = {
-  button: 'px-6 py-2',
-  buttonSm: 'px-4 py-2',
-  input: 'px-4 py-2.5',
-  inputSm: 'px-3 py-1.5',
-  card: 'p-6',
-  dialog: 'p-8',
-} as const;
-
-// Fonts are defined in globals.css via CSS variables - CSS is the source of truth
-const FONT_HEADING = 'Noto Sans';
-const FONT_BODY = 'Montserrat';
-
-export const TYPOGRAPHY = {
-  h1: {
-    fontSize: ts['3xl'],
-    lineHeight: '1.2',
-    fontFamily: FONT_HEADING,
-    tailwind: 'text-3xl',
-  },
-  h2: {
-    fontSize: ts['2xl'],
-    lineHeight: '1.3',
-    fontFamily: FONT_HEADING,
-    tailwind: 'text-2xl',
-  },
-  h3: {
-    fontSize: ts.xl,
-    lineHeight: '1.4',
-    fontFamily: FONT_HEADING,
-    tailwind: 'text-xl',
-  },
-  body: {
-    fontSize: ts.base,
-    lineHeight: '1.6',
-    fontFamily: FONT_BODY,
-    tailwind: 'text-base',
-  },
-  small: {
-    fontSize: ts.sm,
-    lineHeight: '1.5',
-    fontFamily: FONT_BODY,
-    tailwind: 'text-sm',
-  },
-  label: {
-    fontSize: ts.sm,
-    lineHeight: '1.4',
-    fontFamily: FONT_BODY,
-    tailwind: 'text-sm',
-  },
-} as const;
-
-// ─── Layout ───────────────────────────────────────────────────────────────
-
-export const LAYOUT = {
-  containerMax: '1280px',
-  gutter: '24px',
-  baseSpacing: 4,
-  sidebarWidth: '256px',
-  headerHeight: '64px',
-  contextPanelWidth: '320px',
-  toolbarWidth: '88px',
-  dialogSm: '380px',
-  dialogMd: '440px',
-  dialogLg: '560px',
-  helpPanelWidth: '340px',
-  modalMaxHeight: '90vh',
-} as const;
-
-// Common max-widths for layout containers (page wrappers, content blocks)
-export const MAX_WIDTHS = {
-  page: '1280px',
-  content: '720px',
-  narrow: '560px',
-  wide: '1440px',
-} as const;
-
 // ─── Motion ───────────────────────────────────────────────────────────────
 
 export const MOTION = {
@@ -281,13 +170,6 @@ export const SHADOW = {
   brand: `0 1px 2px ${withAlpha('#36312D', 0.08)}`,
   elevated: `0 4px 8px ${withAlpha('#36312D', 0.06)}, 0 12px 32px ${withAlpha('#36312D', 0.08)}`,
   inset: `inset 0 2px 8px ${withAlpha('#36312D', 0.04)}, inset 0 1px 3px ${withAlpha('#36312D', 0.06)}`,
-} as const;
-
-// ─── Decoration ─────────────────────────────────────────────────────────────
-
-export const DECORATION = {
-  defaultOpacity: 12,
-  stitchColor: 'var(--color-text)',
 } as const;
 
 // ─── Mascots ────────────────────────────────────────────────────────────────
@@ -338,18 +220,6 @@ export const MASCOT = {
     ],
   },
   maxPerScreen: 1,
-} as const;
-
-// ─── Assets ───────────────────────────────────────────────────────────────
-
-export const ASSETS = {
-  logo: '/quilt-logo-white.png',
-  mascots: {
-    sitting: '/mascots/corgi-sitting.png',
-    wagging: '/mascots/corgi-wagging.png',
-    walking: '/mascots/corgi-walking.png',
-  },
-  icons: '/icons',
 } as const;
 
 // ─── Radius ───────────────────────────────────────────────────────────────

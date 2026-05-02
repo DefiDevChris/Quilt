@@ -5,7 +5,6 @@
  *   import { PRO_PRICE_MONTHLY } from '@/lib/constants/pricing'
  */
 export * from './canvas';
-export * from './pdf';
 export * from './pricing';
 export * from './pagination';
 export * from './fabrics';

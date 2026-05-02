@@ -34,17 +34,6 @@ export const FABRIC_MANUFACTURERS = [
   'Windham Fabrics',
 ] as const;
 
-/** Tonal value categories for fabric selection */
-export const FABRIC_VALUES = ['Light', 'Medium', 'Dark'] as const;
-
-/** Sort options for the fabric browser */
-export const FABRIC_SORT_OPTIONS = [
-  { value: 'name', label: 'Name A-Z' },
-  { value: 'manufacturer', label: 'Brand' },
-  { value: 'colorFamily', label: 'Color' },
-  { value: 'value', label: 'Value' },
-] as const;
-
 /** Image size constraints for fabric assets */
 export const THUMBNAIL_SIZE = 200;
 export const FABRIC_IMAGE_MAX_SIZE = 2048;

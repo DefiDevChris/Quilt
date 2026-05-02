@@ -6,12 +6,14 @@ rooms:
       - public
 
   - name: app
-    description: Next.js App Router — pages, layouts, API routes
+    description: Next.js App Router — pages, layouts, API routes, plus top-level files instrumentation.ts and middleware.ts
     keywords:
       - app
       - pages
       - routes
       - api
+      - instrumentation
+      - middleware
 
   - name: components
     description: React components organized by domain
@@ -46,12 +48,6 @@ rooms:
       - interfaces
       - schemas
 
-  - name: contexts
-    description: React context providers
-    keywords:
-      - contexts
-      - providers
-
   - name: db
     description: Database schema, migrations, and queries
     keywords:
@@ -70,10 +66,11 @@ rooms:
       - designs
 
   - name: quilt_blocks
-    description: Quilt block SVG definitions and block data
+    description: Quilt block definitions spread across src/components/blocks/, src/lib/block-builder-engine.ts, and generated via scripts/generate-blocks.ts
     keywords:
       - blocks
       - quilt_blocks
+      - block-builder
 
   - name: scripts
     description: Build, seed, and utility scripts

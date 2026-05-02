@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type { PrintlistItem } from '@/types/printlist';
 import { DEFAULT_SEAM_ALLOWANCE_INCHES } from '@/lib/constants';
 import { clamp } from '@/lib/math-utils';
-import type { PaperSize } from '@/lib/pdf-generator';
+import type { PaperSize } from '@/lib/pdf-engine/types';
 
 const QUANTITY_MIN = 1;
 const QUANTITY_MAX = 9999;

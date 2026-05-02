@@ -213,12 +213,13 @@ export const usePhotoToQuiltStore = create<PhotoToQuiltState & PhotoToQuiltActio
     }),
 
   resetAll: () => {
-    const prev = usePhotoToQuiltStore.getState();
-    if (prev.previewUrl) {
-      try {
-        URL.revokeObjectURL(prev.previewUrl);
-      } catch {}
-    }
-    set({ ...initialState });
+    set((state) => {
+      if (state.previewUrl) {
+        try {
+          URL.revokeObjectURL(state.previewUrl);
+        } catch {}
+      }
+      return { ...initialState };
+    });
   },
 }));
