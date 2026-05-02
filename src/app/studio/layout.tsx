@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { verifySessionToken } from '@/lib/cognito-session';
 import { ResponsiveShell } from '@/components/layout/ResponsiveShell';
-import { StudioGate } from '@/components/mobile/StudioGate';
 
 /**
  * Studio route layout.
@@ -33,9 +32,6 @@ export default async function StudioLayout({ children }: { children: React.React
   }
 
   return (
-    <ResponsiveShell variant="studio">
-      <StudioGate />
-      <div className="hidden md:block">{children}</div>
-    </ResponsiveShell>
+    <ResponsiveShell variant="studio">{children}</ResponsiveShell>
   );
 }

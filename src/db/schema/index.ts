@@ -6,5 +6,4 @@ export { printlists } from './printlists';
 export { subscriptions } from './subscriptions';
 export { blogPosts } from './blogPosts';
 export { userFabrics } from './userFabrics';
-export { mobileUploads } from './mobileUploads';
 export { layoutTemplates } from './layoutTemplates';

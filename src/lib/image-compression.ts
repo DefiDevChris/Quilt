@@ -1,8 +1,8 @@
 /**
- * Mobile image compression utility.
+ * Image compression utility.
  *
  * Handles HEIC/HEIF conversion and canvas-based downscaling
- * before S3 upload to prevent slow uploads and desktop rendering failures.
+ * before S3 upload to prevent slow uploads and rendering failures.
  */
 
 import { loadImageFromFile } from '@/lib/image-processing';

@@ -7,8 +7,6 @@ import {
   FABRICS_PAGINATION_DEFAULT_LIMIT,
   FABRICS_PAGINATION_MAX_LIMIT,
   ACCEPTED_IMAGE_TYPES,
-  MOBILE_UPLOADS_DEFAULT_LIMIT,
-  MOBILE_UPLOADS_MAX_LIMIT,
 } from '@/lib/constants';
 
 /**
@@ -177,7 +175,7 @@ export const calibrationInputSchema = z.discriminatedUnion('method', [
 export const presignedUrlSchema = z.object({
   filename: z.string().min(1).max(255),
   contentType: z.enum(ACCEPTED_IMAGE_TYPES),
-  purpose: z.enum(['fabric', 'thumbnail', 'export', 'block', 'mobile-upload']),
+  purpose: z.enum(['fabric', 'thumbnail', 'export', 'block']),
 });
 
 // Blog post category enum values matching the database
@@ -270,34 +268,3 @@ export const adminUpdateSettingSchema = z.object({
   value: z.boolean(),
 });
 
-// --- Mobile Upload Schemas ---
-
-export const mobileUploadCreateSchema = z.object({
-  imageUrl: z.string().url(),
-  originalFilename: z.string().max(255).optional(),
-  fileSizeBytes: z.number().int().min(0).optional(),
-});
-
-export const mobileUploadUpdateSchema = z.object({
-  assignedType: z.enum(['unassigned', 'fabric', 'block', 'quilt']).optional(),
-});
-
-export const mobileUploadListSchema = z.object({
-  status: z.enum(['pending', 'processing', 'completed', 'failed']).optional(),
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce
-    .number()
-    .int()
-    .min(1)
-    .max(MOBILE_UPLOADS_MAX_LIMIT)
-    .default(MOBILE_UPLOADS_DEFAULT_LIMIT),
-});
-
-export const mobileUploadProcessSchema = z.object({
-  assignedType: z.enum(['fabric', 'block', 'quilt']),
-});
-
-export const mobileUploadCompleteSchema = z.object({
-  processedEntityId: z.string().uuid(),
-  processedEntityType: z.enum(['fabric', 'block', 'project']),
-});
