@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { eq, asc } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blocks } from '@/db/schema';
 import {
@@ -9,8 +9,6 @@ import {
   notFoundResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { FREE_BLOCK_LIMIT } from '@/lib/constants';
-import { isPro, type UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,22 +23,6 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     if (!block) {
       return notFoundResponse('Block not found.');
-    }
-
-    // Check if free user is trying to access a locked block
-    if (!isPro(session.user.role as UserRole) && block.isDefault) {
-      // Check if this block is within the free limit
-      const freeBlocks = await db
-        .select({ id: blocks.id })
-        .from(blocks)
-        .where(eq(blocks.isDefault, true))
-        .orderBy(asc(blocks.name))
-        .limit(FREE_BLOCK_LIMIT);
-
-      const freeBlockIds = new Set(freeBlocks.map((b) => b.id));
-      if (!freeBlockIds.has(block.id)) {
-        return errorResponse('This block requires a Pro subscription.', 'PRO_REQUIRED', 403);
-      }
     }
 
     // For user-created blocks, verify ownership

@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas, mockProject } from './utils';
 
 test.describe('Fabric Library', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
     await page.route('**/api/fabrics', async (route) => {
@@ -85,7 +85,7 @@ test.describe('Fabric Library', () => {
 
 test.describe('Fabric Calibration', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -129,7 +129,7 @@ test.describe('Fabric Calibration', () => {
 
 test.describe('Fussy Cut Preview', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -156,7 +156,7 @@ test.describe('Fussy Cut Preview', () => {
 
 test.describe('Color Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -193,7 +193,7 @@ test.describe('Color Tools', () => {
 
 test.describe('Recent Fabrics', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });

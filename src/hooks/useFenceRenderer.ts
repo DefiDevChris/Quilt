@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { computeCanvasGeometry } from '@/lib/canvas-utils';
 import { computeFenceAreas, layoutSourceToTemplate } from '@/lib/fence-engine';
 import { FENCE, CANVAS } from '@/lib/design-system';
-import type { LayoutTemplate, LayoutAreaRole } from '@/types/layout';
-import type { FenceArea } from '@/types/fence';
+import type { LayoutTemplate } from '@/types/layout';
 
 /** Property names used to tag Fabric.js objects created by this renderer. */
 const FENCE_MARKER = '_fenceElement';
@@ -59,9 +58,6 @@ export function useFenceRenderer() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const unitSystem = useCanvasStore((s) => s.unitSystem);
   const prevKeyRef = useRef('');
-  const areasRef = useRef<FenceArea[]>([]);
-
-  const getFenceAreas = useCallback(() => areasRef.current, []);
 
   useEffect(() => {
     if (!fabricCanvas) return;
@@ -120,7 +116,6 @@ export function useFenceRenderer() {
       }
 
       if (!template) {
-        areasRef.current = [];
         canvas.requestRenderAll();
         return;
       }
@@ -150,8 +145,6 @@ export function useFenceRenderer() {
           obj.setCoords();
         }
       }
-
-      areasRef.current = areas;
 
       // Render each fence area as a Fabric.js shape (Rect or Polygon)
       for (const area of areas) {
@@ -297,21 +290,4 @@ export function useFenceRenderer() {
       unsubProject();
     };
   }, [fabricCanvas, unitSystem]);
-
-  return { getFenceAreas };
-}
-
-/**
- * Get the fence area ID and role from a selected Fabric.js object,
- * if it was created by the fence renderer.
- * Internal utility — not exported for external use.
- */
-function getFenceAreaFromObject(
-  obj: Record<string, unknown>
-): { areaId: string; role: LayoutAreaRole } | null {
-  if (!obj[FENCE_MARKER]) return null;
-  const areaId = obj[FENCE_AREA_ID_PROP] as string | undefined;
-  const role = obj[FENCE_ROLE_PROP] as LayoutAreaRole | undefined;
-  if (!areaId || !role) return null;
-  return { areaId, role };
 }

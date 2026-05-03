@@ -4,11 +4,11 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 ## What You Can Do
 
-- **Design Studio** — Pick a layout template (or start with a free-form canvas), configure borders, sashing, cornerstones, and block cells. Assign fabrics to every area. Two worktable modes: Worktable (full quilt canvas) and Block Builder (dedicated 3-pane drafting workspace for custom blocks).
+- **Design Studio** — Pick a layout template (or start with a free-form canvas), configure borders, sashing, cornerstones, and block cells. Assign fabrics to every area. Two worktable modes: Worktable (full quilt canvas) and Block Builder (dedicated 3-pane drafting workspace for custom blocks). Photo-to-Quilt wizard converts photos into quilt designs. Picture My Blocks matches photos to block patterns.
 - **Block Library** — 50 traditional quilt block SVGs. Draft your own with the Freeform or BlockBuilder tools (Freedraw, Rectangle, Triangle, Curve), or upload a photo of a finished sewn block as a non-editable image block. Filter by SVG, Custom, or Photo blocks.
 - **Yardage & Cutting** — Automatic fabric calculations with rotary cutting guides.
 - **Print-Ready Patterns** — PDF export with quilt overview, fabric requirements, cutting directions, block assembly diagrams, and individual cutting templates at exact 1:1 scale with seam allowance.
-- **Pro Features** — Unlimited projects, full export, fabric calibration.
+- **Affiliate Fabric Ingestion** — Retailer catalog ingestion with affiliate click tracking and commission management.
 
 ## Tech Stack
 
@@ -17,13 +17,13 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Framework | Next.js 16.2.2 (App Router) + TypeScript + React 19  |
 | Styling   | Tailwind CSS v4                                      |
 | Canvas    | Fabric.js 7.2                                        |
-| State     | Zustand (17 stores)                                  |
+| State | Zustand (10 stores) |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
-| Database  | PostgreSQL + Drizzle ORM 0.45 (23 schema files)      |
+| Database | PostgreSQL + Drizzle ORM 0.45 (11 table files + enums + index) |
 | Storage   | AWS S3 + CloudFront CDN                              |
 | Secrets   | AWS Secrets Manager                                  |
-| PDF       | pdf-lib (client-side 1:1 scale)                      |
-| Payments  | Stripe (checkout, webhooks, subscription management) |
+| PDF | pdf-lib (client-side 1:1 scale) |
+| Affiliate | Retailer ingestion + affiliate click tracking (S3, CloudFront) |
 | Testing   | Vitest + Playwright E2E                              |
 
 ## Design System
@@ -52,11 +52,11 @@ Full spec lives in `brand_config.json` (authoritative) → `src/lib/design-syste
 ## Product Tiers
 
 - **Free:** 20 blocks, 10 fabrics, no save/export
-- **Pro ($8/mo or $60/yr):** Full library, save, export (PDF/PNG/SVG), cutting charts, yardage estimator
+- **Admin:** Full access, moderation tools
 
 ## Roles
 
-`free | pro | admin` — defined in `src/lib/role-utils.ts`
+`free | admin` — defined in `src/lib/role-utils.ts`
 
 ## Getting Started
 
@@ -68,7 +68,7 @@ npm run db:push
 npm run dev
 ```
 
-Configure `.env.local` with your AWS Cognito, S3, and Stripe credentials.
+Configure `.env.local` with your AWS Cognito and S3 credentials. Set `AWS_SECRET_NAME=skip` for local development.
 
 ## Commands
 
@@ -87,35 +87,47 @@ npm run db:generate      # Generate Drizzle migration from schema changes
 npm run db:migrate       # Run pending migrations
 npm run db:push          # Push schema directly (no migration file)
 npm run db:studio        # Open Drizzle Studio web UI
-npm run db:seed:blog     # Seed blog posts
+npm run db:seed:blog # Seed blog posts
+npm run db:seed:templates # Seed layout templates
 ```
 
 ## Project Structure
 
 ```
 src/
-  app/                    # Next.js App Router — pages and API routes
-    (protected)/          # Auth-gated routes (layout redirects guests)
-    (public)/             # Public marketing pages + shop (hidden)
-    admin/                # Admin moderation tools
-    api/                  # API route handlers
-    auth/                 # Sign in/up/verify/forgot-password pages
-    blog/                 # Blog list and individual post pages
-    dashboard/            # Bento grid dashboard
-    studio/[projectId]/   # Design canvas (desktop only)
-    templates/            # Template browser
-  components/             # React components, organized by domain
-    mobile/               # MobileShell, MobileBottomNav (3 items)
-    studio/               # Studio panels and controls
-    blocks/               # BlockBuilderWorktable, BlockBuilderTab, BlockBuilderToolbar, BlockLibrary, SimplePhotoBlockUpload
-    export/               # PdfExportDialog
-  hooks/                  # Custom React hooks (canvas, drawing, auth)
-  stores/                 # Zustand stores (19 total)
-  lib/                    # Pure utility modules and engines
-    *-engine.ts           # Pure computation — zero DOM deps, fully testable
-    *-utils.ts            # Domain-specific utilities
-  db/schema/              # Drizzle table definitions (23 files)
-  types/                  # Shared TypeScript type definitions
+  app/                           # Next.js App Router — pages and API routes
+    (protected)/                 # Auth-gated routes (layout redirects guests)
+    (public)/                    # Public marketing pages
+    admin/                       # Admin moderation tools
+    api/                         # API route handlers
+    auth/                        # Sign in/up/verify/forgot-password pages
+    blog/                        # Blog list and individual post pages
+    dashboard/                   # Bento grid dashboard
+    studio/[projectId]/          # Design canvas (desktop only)
+    templates/                   # Template browser
+  components/                    # React components, organized by domain
+    auth/                        # Sign-in/sign-up forms
+    blocks/                      # BlockBuilder, BlockLibrary, BlockSearch, BlockPreview, etc.
+    blog/                        # Blog page components
+    canvas/                      # Canvas toolbar and controls
+    editor/                      # Editor components
+    fabrics/                     # Fabric browsing and management
+    help/                        # Help/onboarding
+    landing/                     # Landing page
+    layout/                      # Layout components
+    mobile/                      # MobileGate (StudioGate redirects mobile users)
+    photo-to-quilt/              # Photo to Quilt wizard (upload, background, canvas steps)
+    picture-my-blocks/           # Picture My Blocks app
+    settings/                    # User settings
+    studio/                      # Studio panels, toolbars, modals, worktables
+    ui/                          # Shared UI primitives
+  hooks/                         # Custom React hooks (canvas, drawing, auth, block builder)
+  stores/                        # Zustand stores (10 total)
+  lib/                           # Pure utility modules and engines
+    *-engine.ts                  # Pure computation — zero DOM deps, fully testable
+    *-utils.ts                   # Domain-specific utilities
+  db/schema/                     # Drizzle table definitions (11 tables + enums + index)
+  types/                         # Shared TypeScript type definitions
 ```
 
 ## Architecture
@@ -127,12 +139,12 @@ All computational logic lives in pure `src/lib/*-engine.ts` files with zero DOM 
 **Route protection:**
 
 - `/studio/*` — server layout redirects guests to `/auth/signin?callbackUrl=...`
-- `/admin/*` — cookie + role check (`admin` role only)
 - `/dashboard` — public, but protected actions redirect guests to sign-in
+- `/admin/*` — admin role only (moderation, ingestion tools)
 
 ## Mobile
 
-Studio is desktop-only (`StudioGate` redirects mobile users). Mobile shell: Home, Upload FAB (center), Profile/Sign In — 3 items only.
+Studio is desktop-only (`MobileGate` redirects mobile users). Mobile shell: Home, Upload FAB (center), Profile/Sign In — 3 items only.
 
 ## Brand Voice
 

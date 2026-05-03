@@ -91,7 +91,7 @@ test.describe('Mobile Blog', () => {
 test.describe('Mobile Dashboard', () => {
   test('dashboard works on mobile', async ({ page, isMobile }) => {
     if (isMobile) {
-      await mockAuth(page, 'pro');
+      await mockAuth(page, 'free');
       await page.goto('/dashboard');
       await expect(page.getByText(/new design/i)).toBeVisible();
     }
@@ -99,7 +99,7 @@ test.describe('Mobile Dashboard', () => {
 
   test('mobile dashboard has bento grid', async ({ page, isMobile }) => {
     if (isMobile) {
-      await mockAuth(page, 'pro');
+      await mockAuth(page, 'free');
       await page.goto('/dashboard');
       const bentoCards = page.locator('[data-testid="bento-card"]').or(page.getByText(/new design|photo/i));
       const count = await bentoCards.count();

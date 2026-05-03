@@ -4,7 +4,7 @@
  */
 
 import { db } from '@/lib/db';
-import { blogPosts, users, userProfiles } from '@/db/schema';
+import { blogPosts, users } from '@/db/schema';
 import { blogSeedPosts } from './blog-seed';
 import { eq } from 'drizzle-orm';
 
@@ -34,14 +34,7 @@ async function seedBlogPosts() {
       .returning();
 
     systemUserId = newUser.id;
-    console.log(`Created system user: ${newUser.email} (${newUser.id})`);
-
-    // Create user profile
-    await db.insert(userProfiles).values({
-      userId: newUser.id,
-      displayName: 'QuiltCorgi Team',
-    });
-    console.log('Created user profile\n');
+    console.log(`Created system user: ${newUser.email} (${newUser.id})\n`);
   }
 
   // Check for existing posts

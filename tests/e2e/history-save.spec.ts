@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas, mockProject } from './utils';
 
 test.describe('History Panel', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -119,7 +119,7 @@ test.describe('History Panel', () => {
 
 test.describe('Auto-Save', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -175,7 +175,7 @@ test.describe('Auto-Save', () => {
 
 test.describe('Project Save', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -219,7 +219,7 @@ test.describe('Project Save', () => {
 
 test.describe('Before Unload Warning', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });

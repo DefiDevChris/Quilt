@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas } from './utils';
 
 test.describe('Authenticated Dashboard', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
   });
 
   test('dashboard loads bento grid', async ({ page }) => {
@@ -20,7 +20,7 @@ test.describe('Authenticated Dashboard', () => {
 
 test.describe('Authenticated Projects', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
   });
 
   test('projects page loads with search', async ({ page }) => {
@@ -40,7 +40,7 @@ test.describe('Authenticated Projects', () => {
 
 test.describe('Authenticated Settings', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
   });
 
   test('settings page loads', async ({ page }) => {
@@ -59,7 +59,7 @@ test.describe('Authenticated Settings', () => {
 
 test.describe('Pro User Features', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
   });
 
@@ -112,7 +112,7 @@ test.describe('Admin Features', () => {
 
 test.describe('Canvas Operations', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
   });
 
@@ -139,7 +139,7 @@ test.describe('Canvas Operations', () => {
 
 test.describe('Worktable Operations', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
   });
 
@@ -159,7 +159,7 @@ test.describe('Worktable Operations', () => {
 
 test.describe('History and Save', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
   });
 
@@ -180,13 +180,13 @@ test.describe('History and Save', () => {
 
 test.describe('Photo to Design', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
   });
 });
 
 test.describe('Billing and Subscriptions', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
   });
 
   test('billing page loads for pro users', async ({ page }) => {

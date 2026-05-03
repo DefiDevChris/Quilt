@@ -3,16 +3,10 @@ import { test as base, Page, Locator, expect } from '@playwright/test';
 
 export const authenticatedTest = base.extend<{
   authenticatedPage: Page;
-  proPage: Page;
   adminPage: Page;
 }>({
   authenticatedPage: async ({ page }, use) => {
     await mockAuth(page, 'free');
-    await page.goto('/');
-    await use(page);
-  },
-  proPage: async ({ page }, use) => {
-    await mockAuth(page, 'pro');
     await page.goto('/');
     await use(page);
   },
@@ -23,7 +17,7 @@ export const authenticatedTest = base.extend<{
   },
 });
 
-export async function mockAuth(page: Page, role: 'free' | 'pro' | 'admin' = 'pro') {
+export async function mockAuth(page: Page, role: 'free' | 'admin' = 'free') {
   await page.addInitScript((role) => {
     localStorage.setItem('qc_access_token', 'mock-jwt-token');
     localStorage.setItem(
@@ -33,7 +27,6 @@ export async function mockAuth(page: Page, role: 'free' | 'pro' | 'admin' = 'pro
         email: 'test@example.com',
         name: 'Test User',
         role: role,
-        isPro: role === 'pro' || role === 'admin',
         isAdmin: role === 'admin',
       })
     );
@@ -50,7 +43,6 @@ export async function mockAuth(page: Page, role: 'free' | 'pro' | 'admin' = 'pro
           id: 'test-user-123',
           email: 'test@example.com',
           role: role,
-          isPro: role === 'pro' || role === 'admin',
           isAdmin: role === 'admin',
         },
       }),

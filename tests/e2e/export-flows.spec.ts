@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas, mockProject } from './utils';
 
 test.describe('Export PDF', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -57,7 +57,7 @@ test.describe('Export PDF', () => {
 
 test.describe('Export PNG', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -91,7 +91,7 @@ test.describe('Export PNG', () => {
 
 test.describe('Export SVG', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -125,7 +125,7 @@ test.describe('Export SVG', () => {
 
 test.describe('FPP Templates', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -159,7 +159,7 @@ test.describe('FPP Templates', () => {
 
 test.describe('Yardage Calculator', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -197,7 +197,7 @@ test.describe('Yardage Calculator', () => {
 
 test.describe('Cutting Charts', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });

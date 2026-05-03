@@ -9,10 +9,8 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { FREE_BLOCK_LIMIT } from '@/lib/constants';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
-import { isPro, type UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,7 +36,6 @@ export async function GET(request: NextRequest) {
 
   const { search, category, scope, page, limit } = parsed.data;
   const offset = (page - 1) * limit;
-  const userIsPro = isPro(session.user.role as UserRole);
 
   try {
     // Build WHERE conditions
@@ -96,50 +93,34 @@ export async function GET(request: NextRequest) {
       db.select({ count: count() }).from(blocks).where(whereClause),
     ]);
 
-    const total = totalRow?.count ?? 0;
+  const total = totalRow?.count ?? 0;
 
-    // Compute isLocked for free users
-    // Free users can access the first FREE_BLOCK_LIMIT system blocks (by name order)
-    // We need to determine which blocks are within the free limit
-    let freeBlockIds: Set<string> | null = null;
-    if (!userIsPro) {
-      const freeBlocks = await db
-        .select({ id: blocks.id })
-        .from(blocks)
-        .where(eq(blocks.isDefault, true))
-        .orderBy(asc(blocks.name))
-        .limit(FREE_BLOCK_LIMIT);
-      freeBlockIds = new Set(freeBlocks.map((b) => b.id));
-    }
+  const blocksResponse = blockRows.map((block) => {
+    const fjd = block.fabricJsData as Record<string, unknown> | null;
+    const isPhoto = fjd !== null && typeof fjd === 'object' && fjd.type === 'photo-block';
+    const blockType = block.isDefault ? 'svg' : isPhoto ? 'photo' : 'custom';
+    const photoUrl = isPhoto && fjd && typeof fjd.imageUrl === 'string' ? fjd.imageUrl : null;
 
-    const blocksWithLock = blockRows.map((block) => {
-      const fjd = block.fabricJsData as Record<string, unknown> | null;
-      const isPhoto = fjd !== null && typeof fjd === 'object' && fjd.type === 'photo-block';
-      const blockType = block.isDefault ? 'svg' : isPhoto ? 'photo' : 'custom';
-      const photoUrl = isPhoto && fjd && typeof fjd.imageUrl === 'string' ? fjd.imageUrl : null;
+    return {
+      id: block.id,
+      name: block.name,
+      category: block.category,
+      subcategory: block.subcategory,
+      tags: block.tags ?? [],
+      thumbnailUrl: block.thumbnailUrl,
+      svgData: isPhoto ? null : (block.svgData ?? null),
+      photoUrl,
+      isDefault: block.isDefault,
+      blockType,
+      widthIn: Number(block.widthIn) || 12,
+      heightIn: Number(block.heightIn) || 12,
+    };
+  });
 
-      return {
-        id: block.id,
-        name: block.name,
-        category: block.category,
-        subcategory: block.subcategory,
-        tags: block.tags ?? [],
-        thumbnailUrl: block.thumbnailUrl,
-        svgData: isPhoto ? null : (block.svgData ?? null),
-        photoUrl,
-        isDefault: block.isDefault,
-        isLocked:
-          !userIsPro && block.isDefault && freeBlockIds !== null && !freeBlockIds.has(block.id),
-        blockType,
-        widthIn: Number(block.widthIn) || 12,
-        heightIn: Number(block.heightIn) || 12,
-      };
-    });
-
-    return Response.json({
-      success: true,
-      data: {
-        blocks: blocksWithLock,
+  return Response.json({
+    success: true,
+    data: {
+      blocks: blocksResponse,
         pagination: {
           page,
           limit,

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Plus, ArrowRight } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
 interface ProjectItem {
@@ -101,7 +101,7 @@ export default function ProjectsPage() {
       ) : projects.length === 0 ? (
         <div className="py-24 text-center">
           <div className="mb-6">
-            <QuiltPieceRow count={3} size={10} gap={4} className="mb-8" />
+            <Image src="/icons/quilt-projects.png" alt="Projects" width={96} height={96} className="mx-auto opacity-20" unoptimized />
           </div>
           <h3 className="text-headline-sm font-semibold text-[var(--color-text)] mb-3">
             No projects yet

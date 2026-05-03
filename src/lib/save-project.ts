@@ -1,8 +1,6 @@
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { useAuthStore, getAuthDerived } from '@/stores/authStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { saveTempProject } from '@/lib/temp-project-storage';
 
 const MAX_SAVE_RETRIES = 3;
 const RETRY_DELAY_BASE_MS = 2000;
@@ -63,7 +61,6 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
 
   if (!projectId || !fabricCanvas) return;
 
-  const { isPro } = getAuthDerived();
   const canvas = fabricCanvas as { toJSON: () => Record<string, unknown> };
   const canvasData = canvas.toJSON();
 
@@ -108,44 +105,6 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
     w.id === activeWorktableId ? { ...w, canvasData } : w
   );
 
-  // Free users: save to localStorage only
-  if (!isPro) {
-    const result = saveTempProject(projectId, {
-      canvasData,
-      unitSystem,
-      gridSettings: gridSettings as unknown as Record<string, unknown>,
-      fabricPresets,
-      canvasWidth,
-      canvasHeight,
-      activeWorktable,
-      worktables: updatedWorktables as unknown as Array<Record<string, unknown>>,
-    });
-    const store = useProjectStore.getState();
-    if (!result.ok) {
-      // Persist failed (most commonly QuotaExceededError). Previously we set
-      // 'saved' regardless, so users thought their work was captured when in
-      // fact nothing reached localStorage. Surface the real state and fire an
-      // error event the UI can render.
-      store.setSaveStatus('error');
-      if (typeof window !== 'undefined') {
-        const message = result.quotaExceeded
-          ? "Your browser's storage is full. Free up space (or upgrade to Pro) to save your work."
-          : 'Could not save to local storage. Upgrade to Pro to save your work to the cloud.';
-        window.dispatchEvent(
-          new CustomEvent('quiltcorgi:save-error', {
-            detail: { message, quotaExceeded: result.quotaExceeded ?? false },
-          }),
-        );
-      }
-      return;
-    }
-    store.setSaveStatus('saved');
-    store.setDirty(false);
-    store.setLastSavedAt(new Date());
-    return;
-  }
-
-  // Pro users: save to server
   // Auto-save yields to in-flight manual saves
   if (source === 'auto' && manualSaveControllers.has(projectId)) {
     return;
@@ -226,18 +185,6 @@ export async function saveProject(options: SaveProjectOptions): Promise<void> {
         }
       }
 
-      // Don't retry Pro-required errors — free users can design but not save
-      if (res.status === 403) {
-        try {
-          const data = await res.json();
-          if (data.code === 'PRO_REQUIRED') {
-            store.setSaveStatus('error');
-            return; // Don't retry
-          }
-        } catch {
-          // If JSON parsing fails, fall through to normal error handling
-        }
-      }
       throw new Error('Save failed');
     }
     store.setSaveStatus('saved');

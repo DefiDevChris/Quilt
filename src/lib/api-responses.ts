@@ -2,7 +2,6 @@ export type ApiErrorCode =
   | 'BAD_REQUEST'
   | 'UNAUTHORIZED'
   | 'FORBIDDEN'
-  | 'PRO_REQUIRED'
   | 'PROJECT_LIMIT_REACHED'
   | 'NOT_FOUND'
   | 'CONFLICT'

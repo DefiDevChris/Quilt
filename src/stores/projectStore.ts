@@ -55,8 +55,6 @@ interface ProjectStoreState {
   setHasContent: (has: boolean) => void;
   setLastSavedAt: (date: Date) => void;
   setCanvasDimensions: (width: number, height: number) => void;
-  setCanvasWidth: (width: number) => void;
-  setCanvasHeight: (height: number) => void;
   /**
    * Snapshot the current canvas size as the "base" used for proportional
    * scaling later. Called once when the layout transitions from configuring
@@ -122,8 +120,6 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   setHasContent: (hasContent) => set({ hasContent }),
   setLastSavedAt: (lastSavedAt) => set({ lastSavedAt }),
   setCanvasDimensions: (canvasWidth, canvasHeight) => set({ canvasWidth, canvasHeight }),
-  setCanvasWidth: (canvasWidth) => set({ canvasWidth }),
-  setCanvasHeight: (canvasHeight) => set({ canvasHeight }),
   lockBaseQuiltSize: (baseQuiltWidth, baseQuiltHeight) =>
     set({ baseQuiltWidth, baseQuiltHeight }),
   addFabricPreset: (fabric) =>

@@ -65,7 +65,6 @@ interface CanvasStoreState {
   undoStack: string[];
   redoStack: string[];
   isViewportLocked: boolean;
-  printScale: number;
   blockBuilderMode: 'straight' | 'smooth';
   toolSettings: Record<
     ToolType,
@@ -89,12 +88,6 @@ interface CanvasStoreState {
 
   /** Active tab in the right-hand ContextPanel. */
   contextPanelTab: 'blocks' | 'fabrics';
-
-  /** When true, the user is in swap mode (tap another block to swap positions). */
-  swapMode: boolean;
-
-  /** The source block for swap mode (the one that initiated the swap). */
-  swapSourceId: string | null;
 
   setZoom: (zoom: number) => void;
   setUnitSystem: (unit: UnitSystem) => void;
@@ -132,8 +125,6 @@ interface CanvasStoreState {
   setFabricCanvas: (canvas: unknown | null) => void;
   setFabricPickerTarget: (target: 'selection' | 'background' | null) => void;
   setContextPanelTab: (tab: 'blocks' | 'fabrics') => void;
-  setSwapMode: (active: boolean, sourceId?: string | null) => void;
-  clearSwapMode: () => void;
   reset: () => void;
 }
 
@@ -161,7 +152,6 @@ const INITIAL_STATE = {
   undoStack: [] as string[],
   redoStack: [] as string[],
   isViewportLocked: false,
-  printScale: 1.0,
   blockBuilderMode: 'straight' as const,
   toolSettings: {} as Record<
     ToolType,
@@ -175,8 +165,6 @@ const INITIAL_STATE = {
   fabricCanvas: null,
   fabricPickerTarget: null,
   contextPanelTab: 'blocks' as const,
-  swapMode: false,
-  swapSourceId: null,
 };
 
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
@@ -358,8 +346,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   setFabricCanvas: (canvas) => set({ fabricCanvas: canvas }),
   setFabricPickerTarget: (target) => set({ fabricPickerTarget: target }),
   setContextPanelTab: (tab) => set({ contextPanelTab: tab }),
-  setSwapMode: (active, sourceId = null) => set({ swapMode: active, swapSourceId: sourceId }),
-  clearSwapMode: () => set({ swapMode: false, swapSourceId: null }),
   setShowReferencePanel: (showReferencePanel) => set({ showReferencePanel }),
 
   reset: () => {

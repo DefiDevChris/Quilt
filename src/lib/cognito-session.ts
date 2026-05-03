@@ -33,7 +33,7 @@ export interface CognitoSession {
     id: string;
     email: string;
     name: string;
-    role: 'free' | 'pro' | 'admin';
+    role: 'free' | 'admin';
     emailVerified: boolean;
   };
   accessToken: string;
@@ -144,7 +144,7 @@ async function _getSession(): Promise<CognitoSession | null> {
           id: user.id,
           email: user.email,
           name: user.name ?? user.email.split('@')[0],
-          role: user.role as 'free' | 'pro' | 'admin',
+          role: user.role as 'free' | 'admin',
           emailVerified: !!user.emailVerified,
         },
         accessToken: 'dev-access-token',
@@ -220,7 +220,7 @@ async function resolveUserFromPayload(
     }
   }
 
-  const role = (dbUser?.role as 'free' | 'pro' | 'admin') ?? 'free';
+  const role = (dbUser?.role as 'free' | 'admin') ?? 'free';
   const userId = dbUser?.id ?? cognitoSub;
 
   return { id: userId, email, name, role, emailVerified };

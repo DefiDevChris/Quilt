@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas } from './utils';
 
 test.describe('Studio Toolbar Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await page.goto('/studio/test-project-1');
     await page.waitForTimeout(2000);
@@ -69,7 +69,7 @@ test.describe('Studio Toolbar Buttons', () => {
 
 test.describe('Studio Action Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await page.goto('/studio/test-project-1');
     await page.waitForTimeout(2000);
@@ -141,7 +141,7 @@ test.describe('Studio Action Buttons', () => {
 
 test.describe('Zoom and View Controls', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await page.goto('/studio/test-project-1');
     await page.waitForTimeout(2000);
@@ -178,7 +178,7 @@ test.describe('Zoom and View Controls', () => {
 
 test.describe('Group and Alignment Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await page.goto('/studio/test-project-1');
     await page.waitForTimeout(2000);
@@ -257,7 +257,7 @@ test.describe('Group and Alignment Buttons', () => {
 
 test.describe('Layer Control Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await page.goto('/studio/test-project-1');
     await page.waitForTimeout(2000);

@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas, mockProject } from './utils';
 
 test.describe('Dashboard', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.route('**/api/projects', async (route) => {
       await route.fulfill({
         status: 200,
@@ -43,7 +43,7 @@ test.describe('Dashboard', () => {
 
 test.describe('Projects Page', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.route('**/api/projects', async (route) => {
       await route.fulfill({
         status: 200,
@@ -135,7 +135,7 @@ test.describe('Projects Page', () => {
 
 test.describe('Project Creation', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.route('**/api/projects', async (route) => {
       if (route.request().method() === 'POST') {
         await route.fulfill({
@@ -210,7 +210,7 @@ test.describe('Project Creation', () => {
 
 test.describe('Project Management', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockProject(page, 'test-project-1');
     await page.route('**/api/projects', async (route) => {
       await route.fulfill({
@@ -302,7 +302,7 @@ test.describe('Project Management', () => {
 
 test.describe('Profile & Settings', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
   });
 
   test('profile link navigates to profile page', async ({ page }) => {

@@ -19,27 +19,6 @@ import { findPatchAtPoint } from '@/lib/blockbuilder-utils';
 import { hexToRgb } from '@/lib/color-math';
 import { useToast } from '@/components/ui/ToastProvider';
 
-/**
- * Shared props for drafting tab components.
- */
-interface DraftTabProps {
-  draftCanvasRef: React.MutableRefObject<unknown>;
-  isOpen: boolean;
-  activeOverlay?: string | null;
-  overlayOpacity?: number;
-  setOverlayOpacity?: (opacity: number) => void;
-  cellSizeIn?: number;
-  onCellSizeInChange?: (units: number) => void;
-  blockWidthIn: number;
-  blockHeightIn: number;
-  canvasSize: number;
-  activeMode: BlockBuilderMode;
-  setActiveMode: (mode: BlockBuilderMode) => void;
-  segmentCount: number;
-  onClear: () => void;
-  onUndoSegment: () => void;
-}
-
 export type BlockBuilderMode = 'select' | 'pencil' | 'rectangle' | 'triangle' | 'circle' | 'bend';
 
 const DEFAULT_CELL_SIZE = 1;

@@ -21,7 +21,7 @@ test.describe('End-to-End User Flows', () => {
   });
 
   test('authenticated user can navigate app', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
 
     await page.goto('/dashboard');
     await expect(page.getByText(/new design/i)).toBeVisible({ timeout: 10000 });
@@ -33,7 +33,7 @@ test.describe('End-to-End User Flows', () => {
 
 test.describe('Project Lifecycle', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
   });
 
@@ -62,7 +62,7 @@ test.describe('Project Lifecycle', () => {
 
 test.describe('Design Workflow', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
   });
 
@@ -94,7 +94,7 @@ test.describe('Design Workflow', () => {
 
 test.describe('Export Workflow', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
   });
 
@@ -173,7 +173,7 @@ test.describe('Performance', () => {
   });
 
   test('dashboard loads quickly for authenticated users', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     const startTime = Date.now();
     await page.goto('/dashboard');
     await expect(page.getByText(/new design/i)).toBeVisible({ timeout: 10000 });

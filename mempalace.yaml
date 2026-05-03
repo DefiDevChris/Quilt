@@ -66,7 +66,7 @@ rooms:
       - designs
 
   - name: quilt_blocks
-    description: Quilt block definitions spread across src/components/blocks/, src/lib/block-builder-engine.ts, and generated via scripts/generate-blocks.ts
+    description: Quilt block definitions spread across src/components/blocks/ and src/lib/block-builder-engine.ts
     keywords:
       - blocks
       - quilt_blocks

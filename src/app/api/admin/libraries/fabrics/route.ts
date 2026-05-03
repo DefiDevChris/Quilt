@@ -3,22 +3,9 @@ import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema';
 import { requireAdminSession } from '@/lib/auth-helpers';
 import { errorResponse, validationErrorResponse } from '@/lib/api-responses';
-import { z } from 'zod';
+import { adminCreateFabricSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
-
-const createFabricSchema = z.object({
-  name: z.string().min(1).max(255),
-  imageUrl: z.string().url().min(1).max(2048),
-  thumbnailUrl: z.string().url().max(2048).optional(),
-  manufacturer: z.string().max(255).optional(),
-  sku: z.string().max(255).optional(),
-  collection: z.string().max(255).optional(),
-  colorFamily: z.string().max(100).optional(),
-  scaleX: z.number().min(0.01).max(100).optional(),
-  scaleY: z.number().min(0.01).max(100).optional(),
-  rotation: z.number().min(0).max(360).optional(),
-});
 
 export async function POST(request: NextRequest) {
   const result = await requireAdminSession();
@@ -27,22 +14,13 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const parsed = createFabricSchema.safeParse(body);
+    const parsed = adminCreateFabricSchema.safeParse(body);
     if (!parsed.success) {
       return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid fabric data');
     }
 
     const fabricData = {
-      name: parsed.data.name,
-      imageUrl: parsed.data.imageUrl,
-      thumbnailUrl: parsed.data.thumbnailUrl ?? null,
-      manufacturer: parsed.data.manufacturer ?? null,
-      sku: parsed.data.sku ?? null,
-      collection: parsed.data.collection ?? null,
-      colorFamily: parsed.data.colorFamily ?? null,
-      scaleX: parsed.data.scaleX ?? 1.0,
-      scaleY: parsed.data.scaleY ?? 1.0,
-      rotation: parsed.data.rotation ?? 0.0,
+      ...parsed.data,
       isDefault: true,
       userId: null,
     };

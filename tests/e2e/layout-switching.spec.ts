@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas, mockProject } from './utils';
 
 test.describe('Layout Switching', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -96,7 +96,7 @@ test.describe('Layout Switching', () => {
 
 test.describe('Layout Configuration', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -158,7 +158,7 @@ test.describe('Layout Configuration', () => {
 
 test.describe('Layout Preview', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });

@@ -3,7 +3,6 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
-import { usePrintlistStore } from '@/stores/printlistStore';
 import { useYardageStore } from '@/stores/yardageStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 
@@ -34,7 +33,6 @@ export async function logout(): Promise<void> {
   useCanvasStore.getState().reset();
   useBlockStore.getState().reset();
   useFabricStore.getState().reset();
-  usePrintlistStore.getState().reset();
   useYardageStore.getState().reset();
   useLayoutStore.getState().reset();
 }

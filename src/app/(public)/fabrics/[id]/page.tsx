@@ -17,21 +17,17 @@ export default function FabricDetailPage() {
 
   const [fabric, setFabric] = useState<FabricDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     async function load() {
       try {
         const res = await fetch(`/api/fabrics/public/${id}`);
-        if (res.status === 404) {
-          setNotFound(true);
-          return;
-        }
+        if (res.status === 404) return;
         if (!res.ok) throw new Error('Failed to fetch');
         const json = await res.json();
         setFabric(json.data);
       } catch {
-        setNotFound(true);
+        // leave fabric null to show not-found UI
       } finally {
         setLoading(false);
       }
@@ -47,7 +43,7 @@ export default function FabricDetailPage() {
     );
   }
 
-  if (notFound || !fabric) {
+  if (!fabric) {
     return (
       <div className="min-h-screen bg-[var(--color-bg)] flex flex-col items-center justify-center gap-4">
         <p className="text-lg text-[var(--color-text-dim)]">Fabric not found.</p>

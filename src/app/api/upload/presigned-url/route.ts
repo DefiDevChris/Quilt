@@ -8,7 +8,6 @@ import {
   errorResponse,
 } from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
-import { isPro, type UserRole } from '@/lib/role-utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,10 +26,6 @@ export async function POST(request: NextRequest) {
     }
 
     const { filename, contentType, purpose } = parsed.data;
-
-    if (!isPro(session.user.role as UserRole)) {
-      return errorResponse('File upload requires a Pro subscription.', 'PRO_REQUIRED', 403);
-    }
 
     const result = await generatePresignedUrl({
       userId: session.user.id,

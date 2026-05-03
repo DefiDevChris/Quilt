@@ -21,7 +21,7 @@ test.describe('User Management', () => {
 
   test.describe('Session', () => {
     test('session persists across page loads', async ({ page }) => {
-      await mockAuth(page, 'pro');
+      await mockAuth(page, 'free');
       try {
         await page.goto('/dashboard');
         // Just check page loads
@@ -272,7 +272,7 @@ test.describe('Orders Page', () => {
   });
 
   test('orders page loads for authenticated users', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.route('**/api/orders', async (route) => {
       await route.fulfill({
         status: 200,

@@ -1,11 +1,9 @@
 /**
  * Barrel re-export for backward compatibility.
  * Prefer importing directly from domain modules for better tree-shaking:
- *   import { ZOOM_MIN } from '@/lib/constants/canvas'
- *   import { PRO_PRICE_MONTHLY } from '@/lib/constants/pricing'
+ * import { ZOOM_MIN } from '@/lib/constants/canvas'
  */
 export * from './canvas';
-export * from './pricing';
 export * from './pagination';
 export * from './fabrics';
 

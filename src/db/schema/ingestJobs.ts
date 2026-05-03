@@ -7,7 +7,6 @@ import {
   timestamp,
   index,
 } from 'drizzle-orm/pg-core';
-import { retailers } from './retailers';
 
 export const ingestJobs = pgTable(
   'ingest_jobs',

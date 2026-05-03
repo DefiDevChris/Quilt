@@ -126,23 +126,9 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
   {
     id: 'ac-1',
     category: 'account',
-    title: 'What do I get with Pro?',
+    title: 'Do I need an account to use QuiltCorgi?',
     content:
-      'Pro gives you unlimited projects, the full Fabric Library, PDF export, and server-side project sync.',
-  },
-  {
-    id: 'ac-2',
-    category: 'account',
-    title: 'How do I upgrade to Pro?',
-    content:
-      'Click your avatar in the top-right corner and select "Upgrade to Pro." You can start with a free trial to try everything out before committing.',
-  },
-  {
-    id: 'ac-3',
-    category: 'account',
-    title: 'Can I cancel anytime?',
-    content:
-      'Absolutely. Go to Settings > Subscription and click "Cancel." Your Pro features stay active through the end of your billing period.',
+      "You can explore the block and fabric libraries without signing in, but you'll need a free account to save projects, create print lists, and download PDFs.",
   },
   // Sharing
   {

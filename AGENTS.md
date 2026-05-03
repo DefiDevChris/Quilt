@@ -5,10 +5,10 @@
 - **Next.js 16.2** (App Router, Turbopack), React 19.2, TypeScript strict
 - **Tailwind CSS v4** — `@theme` tokens in `src/app/globals.css`; no `tailwind.config.js`
 - **Fabric.js 7.2** — accessed only through Zustand stores; never import Fabric types directly in components
-- **Zustand** — one store per domain (12 stores in `src/stores/`)
-- **Drizzle ORM 0.45** — PostgreSQL, schema in `src/db/schema/` (10 table files + enums + index)
+- **Zustand** — one store per domain (10 stores in `src/stores/`)
+- **Drizzle ORM 0.45** — PostgreSQL, schema in `src/db/schema/` (11 table files + enums + index)
 - **Auth:** AWS Cognito (HTTP-only cookies, JWT via JWKS)
-- **Payments:** Stripe, **Storage:** S3 + CloudFront, **Rate limiting:** Upstash Redis
+- **Monetization:** Affiliate commissions, **Storage:** S3 + CloudFront, **Rate limiting:** Upstash Redis
 
 ## Quick commands
 
@@ -28,7 +28,8 @@ npm run db:push       # drizzle-kit push (direct schema sync, no migration files
 npm run db:generate   # drizzle-kit generate (creates migration files in src/db/migrations/)
 npm run db:migrate    # apply pending migrations
 npm run db:studio     # Drizzle Studio web UI
-npm run db:seed:blog  # seed blog posts
+npm run db:seed:blog # seed blog posts
+npm run db:seed:templates # seed layout templates
 ```
 
 **Single test file:** `npx vitest run src/lib/example.test.ts`
@@ -71,10 +72,10 @@ Use `rounded-full` (buttons/CTAs/tabs), `rounded-lg` (cards/inputs/dialogs), `sh
 - **Never create barrel `index.ts` files** — they break tree-shaking in App Router
 - **Fabric.js:** never import `fabric` types in components. Use the store (`useCanvasStore`) with `unknown` cast at boundaries
 - **Stores** use `useXxxStore(selector)` in components; `.getState()` only in callbacks/utilities outside React
-- **Canvas:** `clearFabricCanvas` helper (`src/lib/canvas/clearFabricCanvas.ts`), `applyLayoutConfig` helper (`src/lib/layout/applyLayoutConfig.ts`). Call `centerAndFitViewport()` after confirming `fabricCanvas` is non-null (subscribe via Zustand selector, not RAF)
+- **Canvas:** call `centerAndFitViewport()` after confirming `fabricCanvas` is non-null (subscribe via Zustand selector, not RAF)
 - **Layout store:** call `store.applyLayout()` **after** all setters
 - **Mobile:** Studio is desktop-only (`StudioGate` redirects mobile). Mobile shell has 3 nav items: Home, Upload FAB, Profile/Sign In
-- **Auth flow:** Cognito sign-in → HTTP-only cookies. `proxy.ts` verifies JWT via JWKS for protected routes. `getSession()` does DB lookup for role. Roles: `free | pro | admin` (`src/lib/role-utils.ts`)
+- **Auth flow:** Cognito sign-in → HTTP-only cookies. `proxy.ts` verifies JWT via JWKS for protected routes. `getSession()` does DB lookup for role. Roles: `free | admin` (`src/lib/role-utils.ts`)
 
 ## Testing
 
@@ -93,7 +94,8 @@ Use `rounded-full` (buttons/CTAs/tabs), `rounded-lg` (cards/inputs/dialogs), `sh
 
 ## Database
 
-- Schema in `src/db/schema/index.ts` (re-exports 10 table files + enums)
+- Schema in `src/db/schema/index.ts` (re-exports 11 table files + enums)
+- Tables: `users`, `projects`, `blocks`, `fabrics`, `userFabrics`, `blogPosts`, `layoutTemplates`, `printlists`, `retailers`, `ingestJobs`, `affiliateClicks`
 - Config: `drizzle.config.ts` reads `DATABASE_URL` from env
 - Migrations output: `src/db/migrations/`
 - Local: PostgreSQL 16 in Docker, user=`quiltcorgi`/pass=`localdev`/db=`quiltcorgi`

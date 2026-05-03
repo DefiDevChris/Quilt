@@ -6,7 +6,6 @@ export interface ToolDef {
   label: string;
   shortcut?: string;
   description?: string;
-  isProFeature?: boolean;
   mascot?: string;
   toolType?: ToolType;
   group?: string;
@@ -56,12 +55,11 @@ export function ToolIcon({
   if (tool.description) {
     return (
       <div className="my-1" {...(tool.dataTour ? { 'data-tour': tool.dataTour } : {})}>
-        <TooltipHint
-          name={tool.label}
-          shortcut={tool.shortcut}
-          description={tool.description}
-          isProFeature={tool.isProFeature}
-        >
+      <TooltipHint
+        name={tool.label}
+        shortcut={tool.shortcut}
+        description={tool.description}
+      >
           {button}
         </TooltipHint>
       </div>

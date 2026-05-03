@@ -3,7 +3,8 @@ import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blogPosts } from '@/db/schema';
 import { requireAdminSession } from '@/lib/auth-helpers';
-import { errorResponse } from '@/lib/api-responses';
+import { errorResponse, validationErrorResponse } from '@/lib/api-responses';
+import { adminPaginationSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,11 +13,20 @@ export async function GET(request: NextRequest) {
   const result = await requireAdminSession();
   if (result instanceof Response) return result;
 
+  const url = request.nextUrl;
+  const parsed = adminPaginationSchema.safeParse({
+    page: url.searchParams.get('page') ?? undefined,
+    limit: url.searchParams.get('limit') ?? undefined,
+  });
+
+  if (!parsed.success) {
+    return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid parameters');
+  }
+
+  const { page, limit } = parsed.data;
+  const offset = (page - 1) * limit;
+
   try {
-    const url = request.nextUrl;
-    const page = parseInt(url.searchParams.get('page') ?? '1', 10);
-    const limit = Math.min(parseInt(url.searchParams.get('limit') ?? '50', 10), 100);
-    const offset = (page - 1) * limit;
 
     const [rows, totalCountResult] = await Promise.all([
       db

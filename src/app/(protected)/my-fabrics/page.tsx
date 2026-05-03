@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { Search, Plus } from 'lucide-react';
 import { COLOR_FAMILIES, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 import { FabricUploadDialog } from '@/components/fabrics/FabricUploadDialog';
 import { COLORS, SHADOW, MOTION, OPACITY } from '@/lib/design-system';
 
@@ -194,7 +194,7 @@ export default function FabricsPage() {
       ) : fabrics.length === 0 ? (
         <div className="py-24 text-center">
           <div className="mb-6">
-            <QuiltPieceRow count={3} size={10} gap={4} className="mb-8" />
+            <Image src="/icons/quilt-09-measuring-tape-Photoroom.png" alt="Fabrics" width={96} height={96} className="mx-auto opacity-20" unoptimized />
           </div>
           <h3 className="text-headline-sm font-semibold text-[var(--color-text)] mb-3">
             No fabrics yet

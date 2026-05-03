@@ -11,7 +11,7 @@ test.describe('Dashboard Access', () => {
 
 test.describe('Dashboard Features (Authenticated)', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.route('**/api/projects', async (route) => {
       await route.fulfill({
         status: 200,
@@ -60,7 +60,7 @@ test.describe('Projects Page', () => {
 
   test.describe('Projects Page (Authenticated)', () => {
     test.beforeEach(async ({ page }) => {
-      await mockAuth(page, 'pro');
+      await mockAuth(page, 'free');
       await page.route('**/api/projects', async (route) => {
         await route.fulfill({
           status: 200,
@@ -104,7 +104,7 @@ test.describe('Settings Page', () => {
 
   test.describe('Settings Page (Authenticated)', () => {
     test.beforeEach(async ({ page }) => {
-      await mockAuth(page, 'pro');
+      await mockAuth(page, 'free');
     });
 
     test('settings page loads', async ({ page }) => {
@@ -128,7 +128,7 @@ test.describe('Profile Page', () => {
 
   test.describe('Profile Page (Authenticated)', () => {
     test.beforeEach(async ({ page }) => {
-      await mockAuth(page, 'pro');
+      await mockAuth(page, 'free');
     });
 
     test('profile page loads', async ({ page }) => {

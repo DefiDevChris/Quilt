@@ -1,17 +1,10 @@
 import { pgEnum } from 'drizzle-orm/pg-core';
 
-export const userRoleEnum = pgEnum('user_role', ['free', 'pro', 'admin']);
+export const userRoleEnum = pgEnum('user_role', ['free', 'admin']);
 export const userStatusEnum = pgEnum('user_status', ['active', 'suspended', 'banned']);
 export const unitSystemEnum = pgEnum('unit_system', ['imperial', 'metric']);
 export const paperSizeEnum = pgEnum('paper_size', ['letter', 'a4']);
-export const subscriptionPlanEnum = pgEnum('subscription_plan', ['free', 'pro']);
-export const subscriptionStatusEnum = pgEnum('subscription_status', [
-  'active',
-  'canceled',
-  'past_due',
-  'unpaid',
-  'trialing',
-]);
+
 
 export const blogPostStatusEnum = pgEnum('blog_post_status', ['draft', 'published', 'archived']);
 export const blogPostCategoryEnum = pgEnum('blog_post_category', [
@@ -31,22 +24,5 @@ export const blogPostLayoutEnum = pgEnum('blog_post_layout', [
   'staggered-media',
 ]);
 
-export const mobileUploadStatusEnum = pgEnum('mobile_upload_status', [
-  'pending',
-  'processing',
-  'completed',
-  'failed',
-]);
-
-export const mobileUploadTypeEnum = pgEnum('mobile_upload_type', [
-  'unassigned',
-  'fabric',
-  'block',
-  'quilt',
-]);
-
 export const projectModeEnum = pgEnum('project_mode', ['free-form', 'layout', 'template', 'photo-to-quilt']);
 export const gridGranularityEnum = pgEnum('grid_granularity', ['inch', 'half', 'quarter']);
-
-export const ingestSourceTypeEnum = pgEnum('ingest_source_type', ['awin-feed', 'scrapingbee', 'csv']);
-export const ingestJobStatusEnum = pgEnum('ingest_job_status', ['running', 'success', 'failed']);

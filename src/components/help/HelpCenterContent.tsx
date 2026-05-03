@@ -31,7 +31,6 @@ function FaqSection({
     'export',
     'account',
     'sharing',
-    'mobile',
   ];
 
   const filtered =

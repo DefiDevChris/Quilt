@@ -15,7 +15,7 @@ test.describe('Sketchbook', () => {
 
 test.describe('Project Creation', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.route('**/api/projects', async (route) => {
       if (route.request().method() === 'POST') {
         await route.fulfill({
@@ -71,7 +71,7 @@ test.describe('Project Creation', () => {
 
 test.describe('Project Management', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.route('**/api/projects', async (route) => {
       await route.fulfill({
         status: 200,
@@ -139,7 +139,7 @@ test.describe('Project Management', () => {
 
 test.describe('Recent Projects', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.route('**/api/projects', async (route) => {
       await route.fulfill({
         status: 200,

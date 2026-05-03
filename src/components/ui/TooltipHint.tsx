@@ -8,7 +8,6 @@ interface TooltipHintProps {
   readonly name: string;
   readonly shortcut?: string;
   readonly description: string;
-  readonly isProFeature?: boolean;
   readonly children: ReactNode;
 }
 
@@ -16,7 +15,6 @@ export function TooltipHint({
   name,
   shortcut,
   description,
-  isProFeature,
   children,
 }: TooltipHintProps) {
   const [showTooltip, setShowTooltip] = useState(false);

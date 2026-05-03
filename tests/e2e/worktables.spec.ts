@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas, mockProject } from './utils';
 
 test.describe('Worktable Management', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -85,7 +85,7 @@ test.describe('Worktable Management', () => {
 
 test.describe('Cross-Worktable Operations', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -130,7 +130,7 @@ test.describe('Cross-Worktable Operations', () => {
 
 test.describe('Worktable Auto-Save', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });

@@ -11,7 +11,6 @@ import {
 } from '@/lib/auth-helpers';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 import { z } from 'zod';
-import { isPro, type UserRole } from '@/lib/role-utils';
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
@@ -102,14 +101,6 @@ export async function POST(request: NextRequest) {
 
     // --- Duplicate project flow ---
     if (body.sourceProjectId) {
-      if (!isPro(session.user.role as UserRole)) {
-        return errorResponse(
-          'Duplicating projects requires a Pro subscription. Upgrade to Pro for $8/month.',
-          'PRO_REQUIRED',
-          403
-        );
-      }
-
       const duplicateParsed = duplicateProjectSchema.safeParse({
         sourceProjectId: body.sourceProjectId,
       });

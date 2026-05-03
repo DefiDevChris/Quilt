@@ -3,7 +3,7 @@ import { mockAuth } from './utils';
 
 test.describe('Dashboard Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.goto('/dashboard');
     await page.waitForTimeout(2000);
   });
@@ -25,7 +25,7 @@ test.describe('Dashboard Buttons', () => {
 
 test.describe('Projects Page Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.goto('/projects');
     await page.waitForTimeout(2000);
   });
@@ -68,7 +68,7 @@ test.describe('Projects Page Buttons', () => {
 
 test.describe('Block Library Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.goto('/dashboard');
     await page.waitForTimeout(2000);
   });
@@ -112,7 +112,7 @@ test.describe('Block Library Buttons', () => {
 
 test.describe('Fabric Library Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.goto('/dashboard');
     await page.waitForTimeout(2000);
   });
@@ -159,7 +159,7 @@ test.describe('Fabric Library Buttons', () => {
 
 test.describe('Export Dialog Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.goto('/dashboard');
     await page.waitForTimeout(2000);
   });
@@ -219,7 +219,7 @@ test.describe('Export Dialog Buttons', () => {
 
 test.describe('Settings Buttons', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.goto('/settings');
     await page.waitForTimeout(2000);
   });

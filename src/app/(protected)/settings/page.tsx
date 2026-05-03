@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
-import { BillingSection } from '@/components/billing/BillingSection';
+import Image from 'next/image';
 import { DeleteAccountSection } from '@/components/settings/DeleteAccountSection';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { COLORS } from '@/lib/design-system';
@@ -9,23 +9,18 @@ import { COLORS } from '@/lib/design-system';
 export default function SettingsPage() {
   return (
     <>
-      <PageHeader
-        label="Account"
-        title="Settings"
-        description="Manage your billing and account."
-      />
+      <div className="relative">
+        <PageHeader
+          label="Account"
+          title="Settings"
+          description="Manage your account."
+        />
+        <div className="absolute top-0 right-0 w-20 h-20 opacity-10 pointer-events-none hidden lg:block">
+          <Image src="/icons/quilt-settings.png" alt="Settings" fill className="object-contain" unoptimized />
+        </div>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         <section className="lg:col-span-7 space-y-10">
-          <Suspense
-            fallback={
-              <div className="space-y-4 py-8">
-                <div className="h-6 rounded-lg w-32" style={{ backgroundColor: COLORS.border }} />
-                <div className="h-24 rounded-lg" style={{ backgroundColor: COLORS.border }} />
-              </div>
-            }
-          >
-            <BillingSection />
-          </Suspense>
           <hr style={{ borderColor: COLORS.border }} />
           <DeleteAccountSection />
         </section>

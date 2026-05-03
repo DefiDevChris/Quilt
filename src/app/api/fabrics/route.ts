@@ -9,7 +9,6 @@ import {
   validationErrorResponse,
   errorResponse,
 } from '@/lib/auth-helpers';
-import { FREE_FABRIC_LIMIT } from '@/lib/constants';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
@@ -17,9 +16,6 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
   if (!session) return unauthorizedResponse();
-
-  const userRole = session.user.role;
-  const isPro = userRole === 'pro' || userRole === 'admin';
 
   const url = request.nextUrl;
   const parsed = fabricSearchSchema.safeParse({
@@ -39,10 +35,8 @@ export async function GET(request: NextRequest) {
   const offset = (page - 1) * limit;
 
   try {
-    const effectiveLimit = isPro ? limit : Math.min(limit, FREE_FABRIC_LIMIT);
-
-    // User scope: query user_fabrics table (Pro only)
-    if (isPro && scope === 'user') {
+    // User scope: query user_fabrics table
+    if (scope === 'user') {
       const conditions = [eq(userFabrics.userId, session.user.id)];
       if (manufacturer) conditions.push(eq(userFabrics.manufacturer, manufacturer));
       if (colorFamily) conditions.push(eq(userFabrics.colorFamily, colorFamily));
@@ -68,7 +62,7 @@ export async function GET(request: NextRequest) {
           .from(userFabrics)
           .where(whereClause)
           .orderBy(asc(userFabrics.name))
-          .limit(effectiveLimit)
+          .limit(limit)
           .offset(offset),
         db.select({ count: count() }).from(userFabrics).where(whereClause),
       ]);
@@ -78,13 +72,12 @@ export async function GET(request: NextRequest) {
         success: true,
         data: {
           fabrics: rows.map((r) => ({ ...r, isDefault: false as const })),
-          upgradeRequired: false,
-          pagination: { page, limit: effectiveLimit, total, totalPages: Math.ceil(total / limit) },
+          pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
         },
       });
     }
 
-    // System scope or free users: query system fabrics table
+    // System scope: query system fabrics table
     const conditions = [eq(fabrics.isDefault, true)];
     if (manufacturer) conditions.push(eq(fabrics.manufacturer, manufacturer));
     if (colorFamily) conditions.push(eq(fabrics.colorFamily, colorFamily));
@@ -95,44 +88,41 @@ export async function GET(request: NextRequest) {
 
     const whereClause = and(...conditions);
 
-    const [fabricRows, [totalRow]] = await Promise.all([
-      db
-        .select({
-          id: fabrics.id,
-          name: fabrics.name,
-          imageUrl: fabrics.imageUrl,
-          thumbnailUrl: fabrics.thumbnailUrl,
-          manufacturer: fabrics.manufacturer,
-          sku: fabrics.sku,
-          collection: fabrics.collection,
-          colorFamily: fabrics.colorFamily,
-          isDefault: fabrics.isDefault,
-        })
-        .from(fabrics)
-        .where(whereClause)
-        .orderBy(asc(fabrics.name))
-        .limit(effectiveLimit)
-        .offset(isPro ? offset : 0),
-      db.select({ count: count() }).from(fabrics).where(whereClause),
-    ]);
+  const [fabricRows, [totalRow]] = await Promise.all([
+    db
+      .select({
+        id: fabrics.id,
+        name: fabrics.name,
+        imageUrl: fabrics.imageUrl,
+        thumbnailUrl: fabrics.thumbnailUrl,
+        manufacturer: fabrics.manufacturer,
+        sku: fabrics.sku,
+        collection: fabrics.collection,
+        colorFamily: fabrics.colorFamily,
+        isDefault: fabrics.isDefault,
+      })
+      .from(fabrics)
+      .where(whereClause)
+      .orderBy(asc(fabrics.name))
+      .limit(limit)
+      .offset(offset),
+    db.select({ count: count() }).from(fabrics).where(whereClause),
+  ]);
 
-    const total = isPro
-      ? (totalRow?.count ?? 0)
-      : Math.min(totalRow?.count ?? 0, FREE_FABRIC_LIMIT);
+  const total = totalRow?.count ?? 0;
 
-    return Response.json({
-      success: true,
-      data: {
-        fabrics: fabricRows,
-        upgradeRequired: !isPro,
-        pagination: {
-          page: isPro ? page : 1,
-          limit: effectiveLimit,
-          total,
-          totalPages: isPro ? Math.ceil(total / limit) : 1,
-        },
+  return Response.json({
+    success: true,
+    data: {
+      fabrics: fabricRows,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
       },
-    });
+    },
+  });
   } catch (err) { console.error('[fabrics]', err);
     return errorResponse('Failed to fetch fabrics', 'INTERNAL_ERROR', 500);
   }
@@ -144,12 +134,6 @@ export async function POST(request: NextRequest) {
 
   const rl = await checkRateLimit(`fabrics:${session.user.id}`, API_RATE_LIMITS.fabrics);
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
-
-  const userRole = session.user.role;
-  const isPro = userRole === 'pro' || userRole === 'admin';
-  if (!isPro) {
-    return errorResponse('Fabric upload requires a Pro subscription.', 'PRO_REQUIRED', 403);
-  }
 
   try {
     const body = await request.json();

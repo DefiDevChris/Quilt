@@ -24,7 +24,6 @@ export interface BlockListItem {
   svgData: string | null;
   photoUrl: string | null;
   isDefault: boolean;
-  isLocked: boolean;
   blockType: BlockType;
   widthIn: number;
   heightIn: number;

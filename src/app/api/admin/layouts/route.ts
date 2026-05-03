@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { desc, count, eq } from 'drizzle-orm';
+import { desc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { layoutTemplates } from '@/db/schema';
 import { requireAdminSession } from '@/lib/auth-helpers';

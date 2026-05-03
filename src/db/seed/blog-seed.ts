@@ -106,23 +106,19 @@ const whyFreeQuiltTool: TiptapDoc = {
     heading(2, 'Our Philosophy'),
     bulletList(
       'Every quilter should be able to visualize their ideas digitally',
-      'Basic design tools should never be behind a paywall',
+      'Design tools should never be behind a paywall',
       'The community benefits when more people can share polished designs',
-      'Pro features should enhance the experience, not gate the basics'
+      'Revenue should come from helping quilters find the right fabrics, not from gating creativity'
     ),
-    heading(2, 'What Is Free vs. Pro?'),
+    heading(2, 'Everything Is Free'),
     p(
-      text('The '),
-      bold('free tier'),
       text(
-        ' includes the full design canvas, block library, fabric uploads, basic exports, and community sharing. '
-      ),
-      bold('Pro'),
-      text(' adds advanced features like PDF export, cutting charts, and priority support.')
+        'QuiltCorgi is completely free to use. The full design canvas, block library, fabric library, PDF export, cutting charts, and community sharing are available to every user with an account. '
+      )
     ),
     p(
       text(
-        'We believe this model lets us sustain the platform while keeping the door wide open for anyone who wants to start designing quilts.'
+        'When you find a fabric you love in our library and click through to purchase from one of our partner retailers, we may earn a small affiliate commission. This lets us keep the platform free while connecting you with the best fabrics for your designs.'
       )
     ),
   ],
@@ -431,7 +427,7 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
       content: [
         p(
           text(
-            'QuiltCorgi includes over 2,700 solid fabric swatches from 16 manufacturers. Pro users can also upload custom fabric images to build their own library.'
+            'QuiltCorgi includes over 2,700 solid fabric swatches from 16 manufacturers. You can also upload custom fabric images to build your own library.'
           )
         ),
         heading(2, 'Browsing the Fabric Library'),
@@ -446,10 +442,10 @@ export const blogSeedPosts: readonly BlogSeedPost[] = [
             'Drag any fabric onto a patch on the canvas to assign it. Each patch in a block can have its own fabric, giving you precise control over your design. Click a patch to see which fabric is assigned, or drag a new fabric to replace it.'
           )
         ),
-        heading(2, 'Uploading Custom Fabrics (Pro)'),
+        heading(2, 'Uploading Custom Fabrics'),
         p(
           text(
-            'Pro users can upload fabric photos from their computer or mobile device. Uploaded fabrics appear in the library alongside system fabrics and can be assigned to any patch. Use the scale calibration tool to ensure fabrics render at the correct size on screen.'
+            'Upload fabric photos from your computer or mobile device. Uploaded fabrics appear in your library alongside system fabrics and can be assigned to any patch. Use the scale calibration tool to ensure fabrics render at the correct size on screen.'
           )
         ),
       ],

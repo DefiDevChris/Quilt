@@ -556,8 +556,7 @@ test.describe('Authenticated User Flows', () => {
             id: 'test-user-123',
             email: 'test@example.com',
             name: 'Test User',
-            role: 'pro',
-            isPro: true,
+            role: 'free',
             isAdmin: false,
           })
         );
@@ -571,8 +570,7 @@ test.describe('Authenticated User Flows', () => {
             user: {
               id: 'test-user-123',
               email: 'test@example.com',
-              role: 'pro',
-              isPro: true,
+              role: 'free',
               isAdmin: false,
             },
           }),

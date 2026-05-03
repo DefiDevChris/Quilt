@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 
-export async function mockAuth(page: Page, role: 'free' | 'pro' | 'admin' = 'pro') {
+export async function mockAuth(page: Page, role: 'free' | 'admin' = 'free') {
   await page.addInitScript((role) => {
     // Mock localStorage
     localStorage.setItem('quiltcorgi-user', JSON.stringify({
@@ -26,7 +26,6 @@ export async function mockAuth(page: Page, role: 'free' | 'pro' | 'admin' = 'pro
           id: 'test-user-id',
           email: 'test@example.com',
           role: role,
-          isPro: role === 'pro' || role === 'admin',
           isAdmin: role === 'admin'
         }
       })

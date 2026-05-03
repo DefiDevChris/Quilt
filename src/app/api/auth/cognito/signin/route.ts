@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
-import { cognitoSignIn } from '@/lib/cognito';
+import { cognitoSignIn, cognitoGetUser } from '@/lib/cognito';
 import { setAuthCookies, setRoleCookie } from '@/lib/cognito-session';
 import { db } from '@/lib/db';
 import { users } from '@/db/schema';
@@ -63,7 +63,6 @@ export async function POST(request: NextRequest) {
     if (!existing) {
       // First sign-in: create user record synced from Cognito
       // Use onConflictDoNothing to handle race conditions from concurrent logins
-      const { cognitoGetUser } = await import('@/lib/cognito');
       const cognitoUser = await cognitoGetUser(tokens.accessToken);
 
       await db

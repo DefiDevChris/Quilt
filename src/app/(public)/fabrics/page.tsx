@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Search } from 'lucide-react';
 import type { FabricListItem } from '@/types/fabric';
 import type { PaginationInfo } from '@/types/api';
@@ -123,6 +124,7 @@ export default function FabricLibraryPage() {
           </div>
         ) : fabrics.length === 0 ? (
           <div className="text-center py-20">
+            <Image src="/icons/quilt-worktable.png" alt="Fabrics" width={96} height={96} className="mx-auto mb-6 opacity-20" unoptimized />
             <p className="text-[var(--color-text-dim)] text-lg">No fabrics found.</p>
             <p className="text-sm text-[var(--color-text-dim)] mt-2">
               Try adjusting your search or filters.

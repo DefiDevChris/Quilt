@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Layers, Palette, Printer } from 'lucide-react';
 import { COLORS } from '@/lib/design-system';
 import PublicNav from '@/components/landing/PublicNav';
 import Footer from '@/components/landing/Footer';
@@ -11,7 +10,7 @@ const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? 'QuiltCorgi';
 export const metadata: Metadata = {
   title: `${APP_NAME} Design Studio — Design Your Next Quilt in the Browser`,
   description:
-    'Design quilts in your browser with a growing block library, drag-and-drop fabrics, and 1:1 PDF export. Free to start.',
+    'Design quilts in your browser with a growing block library, drag-and-drop fabrics, and 1:1 PDF export. Completely free — create an account to save and export.',
   openGraph: {
     title: `${APP_NAME} Design Studio`,
     description: 'A modern, browser-based quilt design studio. Free to start.',
@@ -144,7 +143,7 @@ export default function DesignStudioLandingPage() {
                   className="rounded-lg p-2.5"
                   style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
                 >
-                  <Layers size={22} strokeWidth={2.5} />
+                  <Image src="/icons/quilt-02-needle-Photoroom.png" alt="Block Library" width={22} height={22} className="object-contain" unoptimized />
                 </div>
                 <h3 className="text-xl font-bold" style={{ color: COLORS.text }}>
                   100+ Block Library
@@ -173,7 +172,7 @@ export default function DesignStudioLandingPage() {
                   className="rounded-lg p-2.5"
                   style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
                 >
-                  <Palette size={22} strokeWidth={2.5} />
+                  <Image src="/icons/quilt-04-scissors-Photoroom.png" alt="Fabric Sandbox" width={22} height={22} className="object-contain" unoptimized />
                 </div>
                 <h3 className="text-xl font-bold" style={{ color: COLORS.text }}>
                   Live Fabric Sandbox
@@ -202,10 +201,10 @@ export default function DesignStudioLandingPage() {
                   className="rounded-lg p-2.5"
                   style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
                 >
-                  <Printer size={22} strokeWidth={2.5} />
+                  <Image src="/icons/quilt-12-ruler-Photoroom.png" alt="Pattern Export" width={22} height={22} className="object-contain" unoptimized />
                 </div>
                 <h3 className="text-xl font-bold" style={{ color: COLORS.text }}>
-                  Pro Pattern Export
+                  Pattern Export
                 </h3>
               </div>
               <p className="leading-relaxed" style={{ color: COLORS.textDim }}>
@@ -255,7 +254,7 @@ export default function DesignStudioLandingPage() {
               </Link>
             </div>
             <p className="mt-10 text-sm" style={{ color: COLORS.textDim }}>
-              Free forever for basic designing. Upgrade only when you need pattern export.
+              Free to design. Create an account to save projects, build print lists, and export patterns.
             </p>
           </div>
         </div>

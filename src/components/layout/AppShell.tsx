@@ -5,9 +5,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
-import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
-import { ProUpgradeModal } from '@/components/billing/ProUpgradeModal';
-import Mascot from '@/components/landing/Mascot';
 import { BrandLogo } from '@/components/layout/BrandLogo';
 import { Plus, Clock, Scissors, Settings, Folder, Images } from 'lucide-react';
 import { logout } from '@/lib/logout';
@@ -68,7 +65,6 @@ export function AppShell({
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isProModalOpen, setIsProModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
@@ -99,25 +95,18 @@ export function AppShell({
 
         <div className="flex items-center gap-10" ref={dropdownRef}>
           <div className="hidden lg:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-text)]/30">
-            <Link
-              href="/blog"
-              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-            >
-              Blog
-            </Link>
-            <button
-              type="button"
-              onClick={() => setIsProModalOpen(true)}
-              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-            >
-              QuiltCorgi Pro
-            </button>
-            <Link
-              href="/settings"
-              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-            >
-              My Account
-            </Link>
+        <Link
+          href="/blog"
+          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+        >
+          Blog
+        </Link>
+        <Link
+          href="/settings"
+          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+        >
+          My Account
+        </Link>
           </div>
 
           {isAuthenticated ? (
@@ -150,12 +139,7 @@ export function AppShell({
                   </div>
 
 
-                  {user?.role === 'free' && (
-                    <div className="px-4 py-2">
-                      <ProUpgradeButton variant="nav" />
-                    </div>
-                  )}
-                  <button
+                <button
                     type="button"
                     onClick={async () => {
                       await logout();
@@ -230,7 +214,6 @@ export function AppShell({
         </main>
       </div>
 
-      {isProModalOpen && <ProUpgradeModal onClose={() => setIsProModalOpen(false)} />}
-    </div>
+      </div>
   );
 }

@@ -87,23 +87,6 @@ test.describe('API Content Security', () => {
   });
 });
 
-test.describe('Webhook Endpoints', () => {
-  test('Stripe webhook requires signature', async ({ request }) => {
-    const response = await request.post('/api/webhooks/stripe', {
-      data: { type: 'test' }
-    });
-    expect(response.status()).toBe(400);
-  });
-
-  test('webhook validates signature', async ({ request }) => {
-    const response = await request.post('/api/webhooks/stripe', {
-      data: { type: 'test' },
-      headers: { 'stripe-signature': 'invalid' }
-    });
-    expect(response.status()).toBe(400);
-  });
-});
-
 test.describe('API Response Format', () => {
   test('blog API returns JSON', async ({ request }) => {
     const response = await request.get('/api/blog');

@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas, mockProject } from './utils';
 
 test.describe('Onboarding Tour', () => {
   test('tour overlay is visible in studio for first-time users', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
     await page.addInitScript(() => {
@@ -23,7 +23,7 @@ test.describe('Onboarding Tour', () => {
   });
 
   test('tooltip hints show on toolbar hover', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
     try {
@@ -44,7 +44,7 @@ test.describe('Onboarding Tour', () => {
   });
 
   test('tour can be dismissed', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
     await page.addInitScript(() => {
@@ -64,7 +64,7 @@ test.describe('Onboarding Tour', () => {
   });
 
   test('tour progresses through steps', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
     try {
@@ -81,7 +81,7 @@ test.describe('Onboarding Tour', () => {
   });
 
   test('tour completion is saved', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
     try {
@@ -100,7 +100,7 @@ test.describe('Onboarding Tour', () => {
 
 test.describe('Help Panel', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -181,7 +181,7 @@ test.describe('Help Panel', () => {
 
 test.describe('Keyboard Shortcuts Help', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });

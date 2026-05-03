@@ -28,7 +28,7 @@ test.describe('Studio Access', () => {
 test.describe('Studio Mobile Gate', () => {
   test('mobile users see desktop-only message', async ({ page, isMobile }) => {
     if (isMobile) {
-      await mockAuth(page, 'pro');
+      await mockAuth(page, 'free');
       await page.goto('/studio/test-project-id');
       const desktopMessage = page.getByText(/desktop/i);
       if (await desktopMessage.isVisible()) {
@@ -40,7 +40,7 @@ test.describe('Studio Mobile Gate', () => {
 
 test.describe('Studio Features (Authenticated)', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -75,7 +75,7 @@ test.describe('Studio Features (Authenticated)', () => {
 
 test.describe('Canvas Design Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -133,7 +133,7 @@ test.describe('Canvas Design Tools', () => {
 
 test.describe('Basic Canvas Operations', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -177,7 +177,7 @@ test.describe('Basic Canvas Operations', () => {
 
 test.describe('Drawing Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -234,7 +234,7 @@ test.describe('Drawing Tools', () => {
 
 test.describe('Shape Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -272,7 +272,7 @@ test.describe('Shape Tools', () => {
 
 test.describe('Block and Pattern Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -312,7 +312,7 @@ test.describe('Block and Pattern Tools', () => {
 
 test.describe('History and Undo/Redo', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -377,7 +377,7 @@ test.describe('History and Undo/Redo', () => {
 
 test.describe('Reference Images', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -420,7 +420,7 @@ test.describe('Reference Images', () => {
 
 test.describe('Worktable tabs are retired (Phase 9)', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -444,7 +444,7 @@ test.describe('Worktable tabs are retired (Phase 9)', () => {
 
 test.describe('Export and Save Functionality', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -542,7 +542,7 @@ test.describe('Export and Save Functionality', () => {
 
 test.describe('Yardage Calculator', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -608,7 +608,7 @@ test.describe('Yardage Calculator', () => {
 
 test.describe('Ungated Canvas', () => {
   test('empty project loads with default 4x4 grid without setup modal', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockEmptyProject(page, 'empty-project-1');
 
@@ -632,7 +632,7 @@ test.describe('Ungated Canvas', () => {
   });
 
   test('existing saved project loads without applying default layout', async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'saved-project-1');
 
@@ -651,7 +651,7 @@ test.describe('Ungated Canvas', () => {
 
 test.describe('Advanced Canvas Features', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'test-project-1');
   });
@@ -720,7 +720,7 @@ test.describe('Advanced Canvas Features', () => {
 
 test.describe('CanvasSelectionToolbar', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockEmptyProject(page, 'toolbar-test-project');
   });
@@ -891,7 +891,7 @@ test.describe('CanvasSelectionToolbar', () => {
 
 test.describe('EasyDraw and Bend Tools (Free-form mode)', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     // Mock a free-form project with all required fields
     await page.route('**/api/projects/freeform-test-project', async (route) => {
@@ -1089,7 +1089,7 @@ test.describe('EasyDraw and Bend Tools (Free-form mode)', () => {
 
 test.describe('Free-form Binding Flow', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     // Mock a free-form project with all required fields
     await page.route('**/api/projects/freeform-binding-test', async (route) => {

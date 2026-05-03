@@ -12,7 +12,6 @@ import { CommandPalette } from '@/components/studio/CommandPalette';
 import { SaveAsTemplateModal } from '@/components/studio/SaveAsTemplateModal';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
-import { ProUpgradeButton } from '@/components/billing/ProUpgradeButton';
 import { clearAllFabricsOnCanvas } from '@/lib/canvas-clear-fabrics';
 
 function formatTimestamp(date: Date | null): string {
@@ -235,7 +234,6 @@ export function StudioTopBar({
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [saveAsTemplateOpen, setSaveAsTemplateOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
-  const isPro = user?.role === 'pro' || user?.role === 'admin';
   const { toast } = useToast();
   const getCanvas = () => useCanvasStore.getState().fabricCanvas;
 
@@ -462,9 +460,7 @@ export function StudioTopBar({
             </TooltipHint>
           )}
 
-          {!isPro && <ProUpgradeButton variant="studio" />}
-
-          <EditPreviewToggle />
+      <EditPreviewToggle />
           <ReferenceImageToggle />
         </div>
       </div>

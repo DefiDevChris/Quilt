@@ -59,16 +59,8 @@ export default function TermsPage() {
               </p>
             </section>
 
-            <section>
-              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>5. Subscriptions and Payments</h2>
-              <p>
-                QuiltCorgi offers both free and paid subscription plans. Paid subscriptions are billed in advance on a
-                monthly or annual basis. You may cancel your subscription at any time.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>6. Disclaimer of Warranties</h2>
+        <section>
+          <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>5. Disclaimer of Warranties</h2>
               <p>
                 The service is provided on an &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; basis without any warranties
                 of any kind.
@@ -76,7 +68,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>7. Limitation of Liability</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>6. Limitation of Liability</h2>
               <p>
                 In no event shall QuiltCorgi be liable for any indirect, incidental, special, consequential, or punitive
                 damages.
@@ -84,7 +76,7 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>8. Governing Law</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>7. Governing Law</h2>
               <p>
                 These terms shall be governed by and construed in accordance with the laws of the United States, without
                 regard to its conflict of law provisions.
@@ -92,14 +84,14 @@ export default function TermsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>9. Changes to Terms</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>8. Changes to Terms</h2>
               <p>
                 We reserve the right to modify these terms at any time. We will provide notice of significant changes.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>10. Contact Us</h2>
+              <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>9. Contact Us</h2>
               <p>
                 If you have any questions about these Terms, please contact us at:
                 <a href="mailto:legal@quiltcorgi.com" className="text-primary">

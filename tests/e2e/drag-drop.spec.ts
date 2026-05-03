@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas, mockProject, mockEmptyProject } from './utils';
 
 test.describe('Block Drag-and-Drop', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'dd-test-project');
     await page.route('**/api/blocks', async (route) => {
@@ -125,7 +125,7 @@ test.describe('Block Drag-and-Drop', () => {
 
 test.describe('Fabric Drag-and-Drop', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockProject(page, 'dd-fabric-project');
     await page.route('**/api/fabrics**', async (route) => {
@@ -232,7 +232,7 @@ test.describe('Fabric Drag-and-Drop', () => {
 
 test.describe('StudioDropZone Routing', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await mockEmptyProject(page, 'dd-route-project');
   });

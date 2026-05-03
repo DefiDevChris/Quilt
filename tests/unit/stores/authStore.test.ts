@@ -35,33 +35,6 @@ describe('authStore', () => {
     expect(useAuthStore.getState().user).toBeNull();
   });
 
-  it('isPro returns true for pro role', () => {
-    useAuthStore.getState().setUser({
-      ...defaultUser,
-      role: 'pro',
-    });
-
-    expect(getAuthDerived().isPro).toBe(true);
-  });
-
-  it('isPro returns true for admin role', () => {
-    useAuthStore.getState().setUser({
-      ...defaultUser,
-      role: 'admin',
-    });
-
-    expect(getAuthDerived().isPro).toBe(true);
-  });
-
-  it('isPro returns false for free role', () => {
-    useAuthStore.getState().setUser({
-      ...defaultUser,
-      role: 'free',
-    });
-
-    expect(getAuthDerived().isPro).toBe(false);
-  });
-
   it('isAdmin returns true only for admin role', () => {
     useAuthStore.getState().setUser({
       ...defaultUser,
@@ -71,10 +44,10 @@ describe('authStore', () => {
     expect(getAuthDerived().isAdmin).toBe(true);
   });
 
-  it('isAdmin returns false for pro role', () => {
+  it('isAdmin returns false for free role', () => {
     useAuthStore.getState().setUser({
       ...defaultUser,
-      role: 'pro',
+      role: 'free',
     });
 
     expect(getAuthDerived().isAdmin).toBe(false);

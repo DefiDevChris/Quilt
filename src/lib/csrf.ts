@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
-const EXEMPT_PATHS = ['/api/stripe/webhook', '/api/auth/cognito/signout'];
+const EXEMPT_PATHS = ['/api/auth/cognito/signout'];
 
 /**
  * Verify CSRF by checking the Origin (or Referer fallback) header

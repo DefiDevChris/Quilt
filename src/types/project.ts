@@ -1,3 +1,5 @@
+import type { UnitSystem } from './canvas';
+
 /**
  * One-shot setup payload written by the New Project wizard into
  * `project.canvasData.initialSetup`. The studio bootstrap reads it on
@@ -27,7 +29,7 @@ export interface Project {
     initialSetup?: InitialSetupConfig;
   };
   worktables: Worktable[];
-  unitSystem: 'imperial' | 'metric';
+  unitSystem: UnitSystem;
   gridSettings: import('./grid').GridSettings;
   fabricPresets?: Array<{ id: string; name: string; imageUrl: string }>;
   canvasWidth: number;

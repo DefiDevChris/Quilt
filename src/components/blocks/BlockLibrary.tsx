@@ -4,7 +4,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { AlertCircle, Inbox, X } from 'lucide-react';
 import { useBlockStore } from '@/stores/blockStore';
 import { useAuthDerived } from '@/stores/authStore';
-import { useCanvasStore } from '@/stores/canvasStore';
 import { BlockSearch } from '@/components/blocks/BlockSearch';
 import { BlockCard } from '@/components/blocks/BlockCard';
 import { BlockPreview } from '@/components/blocks/BlockPreview';

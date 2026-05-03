@@ -8,14 +8,6 @@ import { useQuiltTools, type ToolbarCallbacks } from './ToolbarConfig';
 
 type ToolbarProps = ToolbarCallbacks;
 
-const GROUP_LABELS: Record<string, string> = {
-  tools: '',
-  shapes: '',
-  history: '',
-  zoom: '',
-  default: '',
-};
-
 export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarProps) {
   const activeTool = useCanvasStore((s) => s.activeTool);
   const setActiveTool = useCanvasStore((s) => s.setActiveTool);

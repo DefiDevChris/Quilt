@@ -3,7 +3,7 @@ import { mockAuth, mockCanvas } from './utils';
 
 test.describe('Canvas Right-Click Context Menu', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await page.goto('/studio/test-project-1');
     await page.waitForTimeout(2000);
@@ -45,7 +45,7 @@ test.describe('Canvas Right-Click Context Menu', () => {
 
 test.describe('Object Right-Click Context Menu', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await page.goto('/studio/test-project-1');
     await page.waitForTimeout(2000);
@@ -176,7 +176,7 @@ test.describe('Object Right-Click Context Menu', () => {
 
 test.describe('Worktable Tab Right-Click Menu', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await mockCanvas(page);
     await page.goto('/studio/test-project-1');
     await page.waitForTimeout(2000);
@@ -237,7 +237,7 @@ test.describe('Worktable Tab Right-Click Menu', () => {
 
 test.describe('Project Card Right-Click Menu', () => {
   test.beforeEach(async ({ page }) => {
-    await mockAuth(page, 'pro');
+    await mockAuth(page, 'free');
     await page.goto('/projects');
     await page.waitForTimeout(2000);
   });

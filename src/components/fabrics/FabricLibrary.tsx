@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useCanvasStore } from '@/stores/canvasStore';
-import { useAuthDerived } from '@/stores/authStore';
 import { FabricCard } from '@/components/fabrics/FabricCard';
 import { FabricPreviewModal } from '@/components/fabrics/FabricPreviewModal';
 import { SkeletonGrid } from '@/components/ui/skeleton';
@@ -12,7 +11,6 @@ import { COLORS } from '@/lib/design-system';
 import type { FabricListItem } from '@/types/fabric';
 
 type TabType = 'library' | 'myfabrics' | 'uploads';
-type FabricPickerTargetType = 'selection' | 'background';
 
 const QUICK_APPLY_FABRICS: Array<{ id: string; name: string; hex: string }> = [
   { id: 'qa-white', name: 'White', hex: COLORS.surface },
@@ -44,7 +42,6 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
   const fetchUserFabrics = useFabricStore((s) => s.fetchUserFabrics);
   const fetchUploadedFabrics = useFabricStore((s) => s.fetchUploadedFabrics);
   const deleteUserFabric = useFabricStore((s) => s.deleteUserFabric);
-  const { isPro } = useAuthDerived();
 
   const fabricPickerTarget = useCanvasStore((s) => s.fabricPickerTarget);
   const setFabricPickerTarget = useCanvasStore((s) => s.setFabricPickerTarget);
@@ -62,16 +59,16 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
   }, [fabricItems.length, isLoading, fetchFabrics]);
 
   useEffect(() => {
-    if (activeTab === 'myfabrics' && isPro) {
+    if (activeTab === 'myfabrics') {
       fetchUserFabrics();
     }
-  }, [activeTab, isPro, fetchUserFabrics]);
+  }, [activeTab, fetchUserFabrics]);
 
   useEffect(() => {
-    if (activeTab === 'uploads' && isPro) {
+    if (activeTab === 'uploads') {
       fetchUploadedFabrics();
     }
-  }, [activeTab, isPro, fetchUploadedFabrics]);
+  }, [activeTab, fetchUploadedFabrics]);
 
   const handleDragStart = useCallback(
     (e: React.DragEvent, fabric: FabricListItem) => {
@@ -251,20 +248,14 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
           </>
         ) : activeTab === 'myfabrics' ? (
           <>
-            <div className="flex-1 overflow-y-auto px-3 py-2">
-              {!isPro ? (
-                <div className="py-8 text-center">
-                  <p className="text-sm text-[var(--color-text-dim)]">
-                    Upgrade to Pro to save custom fabrics
-                  </p>
-                </div>
-              ) : isLoadingUserFabrics ? (
-                <SkeletonGrid count={6} columns={3} />
-              ) : userFabrics.length === 0 ? (
-                <div className="py-8 text-center">
-                  <p className="text-sm text-[var(--color-text-dim)]">No fabrics saved yet</p>
-                </div>
-              ) : (
+      <div className="flex-1 overflow-y-auto px-3 py-2">
+        {isLoadingUserFabrics ? (
+          <SkeletonGrid count={6} columns={3} />
+        ) : userFabrics.length === 0 ? (
+          <div className="py-8 text-center">
+            <p className="text-sm text-[var(--color-text-dim)]">No fabrics saved yet</p>
+          </div>
+        ) : (
                 <div className="grid grid-cols-3 gap-2">
                   {userFabrics.map((fabric) => (
                     <div key={fabric.id} className="group relative">
@@ -305,26 +296,20 @@ export function FabricLibrary({ onFabricDragStart, onOpenUpload }: FabricLibrary
           </>
         ) : (
           <>
-            {isPro && onOpenUpload && (
-              <div className="px-3 py-2 border-b border-[var(--color-border)]/20">
-                <button
-                  type="button"
-                  onClick={onOpenUpload}
-                  className="w-full rounded-full bg-[var(--color-primary)] text-[var(--color-text)] px-4 py-2 text-[14px] leading-[20px] hover:bg-[var(--color-primary)] transition-colors duration-150 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
-                >
-                  + Upload fabric
-                </button>
-              </div>
-            )}
+      {onOpenUpload && (
+        <div className="px-3 py-2 border-b border-[var(--color-border)]/20">
+          <button
+            type="button"
+            onClick={onOpenUpload}
+            className="w-full rounded-full bg-[var(--color-primary)] text-[var(--color-text)] px-4 py-2 text-[14px] leading-[20px] hover:bg-[var(--color-primary)] transition-colors duration-150 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"
+          >
+            + Upload fabric
+          </button>
+        </div>
+      )}
 
-            <div className="flex-1 overflow-y-auto px-3 py-2">
-              {!isPro ? (
-                <div className="py-8 text-center">
-                  <p className="text-sm text-[var(--color-text-dim)]">
-                    Upgrade to Pro to upload fabrics
-                  </p>
-                </div>
-              ) : isLoadingUploads ? (
+      <div className="flex-1 overflow-y-auto px-3 py-2">
+        {isLoadingUploads ? (
                 <SkeletonGrid count={6} columns={3} />
               ) : uploadedFabrics.length === 0 ? (
                 <div className="py-8 text-center">

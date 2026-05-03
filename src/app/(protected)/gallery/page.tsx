@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Sparkles } from 'lucide-react';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { QuiltPieceRow } from '@/components/decorative/QuiltPiece';
 import { COLORS, SHADOW, MOTION } from '@/lib/design-system';
 
 export default function GalleryPage() {
@@ -23,7 +23,7 @@ export default function GalleryPage() {
         }}
       >
         <div className="mb-6">
-          <QuiltPieceRow count={5} size={10} gap={4} className="mb-8" />
+          <Image src="/icons/quilt-profile.png" alt="Gallery" width={96} height={96} className="mx-auto opacity-20" unoptimized />
         </div>
         <div
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4"
