@@ -25,14 +25,12 @@ export const blogPostCategoryEnum = pgEnum('blog_post_category', [
   'Organization',
 ]);
 
-// Blog post layout types
 export const blogPostLayoutEnum = pgEnum('blog_post_layout', [
   'standard',
   'hero-cover',
   'staggered-media',
 ]);
 
-// Mobile uploads
 export const mobileUploadStatusEnum = pgEnum('mobile_upload_status', [
   'pending',
   'processing',
@@ -49,3 +47,6 @@ export const mobileUploadTypeEnum = pgEnum('mobile_upload_type', [
 
 export const projectModeEnum = pgEnum('project_mode', ['free-form', 'layout', 'template', 'photo-to-quilt']);
 export const gridGranularityEnum = pgEnum('grid_granularity', ['inch', 'half', 'quarter']);
+
+export const ingestSourceTypeEnum = pgEnum('ingest_source_type', ['awin-feed', 'scrapingbee', 'csv']);
+export const ingestJobStatusEnum = pgEnum('ingest_job_status', ['running', 'success', 'failed']);
