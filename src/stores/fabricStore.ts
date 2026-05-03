@@ -20,6 +20,10 @@ interface FabricStoreState {
   isPanelOpen: boolean;
   whereUsedFabricId: string | null;
   whereUsedFabricUrl: string | null;
+  /** Internal abort controllers for in-flight fetches */
+  _fabricsAbort: AbortController | null;
+  _userFabricsAbort: AbortController | null;
+  _uploadsAbort: AbortController | null;
 
   setSearch: (search: string) => void;
   setManufacturer: (manufacturer: string) => void;
@@ -37,8 +41,6 @@ interface FabricStoreState {
   reset: () => void;
 }
 
-let fabricAbortController: AbortController | null = null;
-let userFabricAbortController: AbortController | null = null;
 
 const INITIAL_STATE = {
   fabrics: [] as FabricListItem[],
@@ -59,6 +61,9 @@ const INITIAL_STATE = {
   isPanelOpen: false,
   whereUsedFabricId: null as string | null,
   whereUsedFabricUrl: null as string | null,
+  _fabricsAbort: null as AbortController | null,
+  _userFabricsAbort: null as AbortController | null,
+  _uploadsAbort: null as AbortController | null,
 };
 
 export const useFabricStore = create<FabricStoreState>((set, get) => ({
@@ -110,8 +115,9 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
   },
 
   fetchFabrics: async () => {
-    fabricAbortController?.abort();
-    fabricAbortController = new AbortController();
+    get()._fabricsAbort?.abort();
+    const controller = new AbortController();
+    set({ _fabricsAbort: controller });
     const { search, manufacturer, colorFamily, value, sortBy, page } = get();
     set({ isLoading: true, error: null });
 
@@ -127,7 +133,7 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
       params.set('scope', 'all');
 
       const res = await fetch(`/api/fabrics?${params.toString()}`, {
-        signal: fabricAbortController.signal,
+        signal: controller.signal,
       });
       const json = await res.json();
 
@@ -151,16 +157,16 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
   },
 
   fetchUserFabrics: async () => {
-    userFabricAbortController?.abort();
-    userFabricAbortController = new AbortController();
-    set({ isLoadingUserFabrics: true });
+    get()._userFabricsAbort?.abort();
+    const controller = new AbortController();
+    set({ _userFabricsAbort: controller, isLoadingUserFabrics: true });
     try {
       const params = new URLSearchParams();
       params.set('scope', 'user');
       params.set('limit', '100');
 
       const res = await fetch(`/api/fabrics?${params.toString()}`, {
-        signal: userFabricAbortController.signal,
+        signal: controller.signal,
       });
       const json = await res.json();
 
@@ -177,13 +183,17 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
   },
 
   fetchUploadedFabrics: async () => {
-    set({ isLoadingUploads: true });
+    get()._uploadsAbort?.abort();
+    const controller = new AbortController();
+    set({ _uploadsAbort: controller, isLoadingUploads: true });
     try {
       const params = new URLSearchParams();
       params.set('source', 'upload');
       params.set('limit', '100');
 
-      const res = await fetch(`/api/fabrics?${params.toString()}`);
+      const res = await fetch(`/api/fabrics?${params.toString()}`, {
+        signal: controller.signal,
+      });
       const json = await res.json();
 
       if (!res.ok) {
@@ -217,10 +227,9 @@ export const useFabricStore = create<FabricStoreState>((set, get) => ({
   },
 
   reset: () => {
-    fabricAbortController?.abort();
-    fabricAbortController = null;
-    userFabricAbortController?.abort();
-    userFabricAbortController = null;
+    get()._fabricsAbort?.abort();
+    get()._userFabricsAbort?.abort();
+    get()._uploadsAbort?.abort();
     set({ ...INITIAL_STATE });
   },
 }));

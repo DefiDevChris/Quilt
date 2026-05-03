@@ -94,94 +94,74 @@ function isLockedForDecoration(state: { layoutLocked: boolean; layoutType: Layou
   return state.layoutType !== 'free-form';
 }
 
-export const useLayoutStore = create<LayoutStoreState>((set, get) => ({
-  ...INITIAL_STATE,
+export const useLayoutStore = create<LayoutStoreState>((set, get) => {
+  /** Generic guarded setter: skips update when guard returns true. */
+  function makeSetter<T>(
+    guard: (state: LayoutStoreState) => boolean,
+    mapper: (value: T) => Partial<LayoutStoreState>
+  ) {
+    return (value: T) => {
+      if (guard(get())) return;
+      set(mapper(value));
+    };
+  }
 
-  setLayoutType: (layoutType) => {
-    if (isLockedForStructure(get())) return;
-    set({ layoutType });
-  },
+  return {
+    ...INITIAL_STATE,
 
-  setSelectedPreset: (selectedPresetId) => {
-    if (isLockedForStructure(get())) return;
-    set({ selectedPresetId });
-  },
+    setLayoutType: makeSetter<LayoutType>(isLockedForStructure, (layoutType) => ({ layoutType })),
+    setSelectedPreset: makeSetter<string | null>(isLockedForStructure, (selectedPresetId) => ({ selectedPresetId })),
+    setExpandedCardId: makeSetter<string | null>(isLockedForStructure, (expandedCardId) => ({ expandedCardId })),
+    setRows: makeSetter<number>(isLockedForStructure, (rows) => ({ rows: Math.max(1, Math.min(20, rows)) })),
+    setCols: makeSetter<number>(isLockedForStructure, (cols) => ({ cols: Math.max(1, Math.min(20, cols)) })),
+    setBlockSize: makeSetter<number>(isLockedForStructure, (blockSize) => ({ blockSize: Math.max(1, Math.min(24, blockSize)) })),
 
-  setExpandedCardId: (expandedCardId) => {
-    if (isLockedForStructure(get())) return;
-    set({ expandedCardId });
-  },
+    setSashing: (updates) => {
+      if (isLockedForStructure(get())) return;
+      set((state) => ({
+        sashing: { ...state.sashing, ...updates },
+      }));
+    },
 
-  setRows: (rows) => {
-    if (isLockedForStructure(get())) return;
-    set({ rows: Math.max(1, Math.min(20, rows)) });
-  },
+    setBorders: makeSetter<BorderConfig[]>(isLockedForDecoration, (borders) => ({ borders })),
 
-  setCols: (cols) => {
-    if (isLockedForStructure(get())) return;
-    set({ cols: Math.max(1, Math.min(20, cols)) });
-  },
+    addBorder: () => {
+      if (isLockedForDecoration(get())) return;
+      set((state) => {
+        if (state.borders.length >= 5) return state;
+        return { borders: [...state.borders, createBorder()] };
+      });
+    },
 
-  setBlockSize: (blockSize) => {
-    if (isLockedForStructure(get())) return;
-    set({ blockSize: Math.max(1, Math.min(24, blockSize)) });
-  },
+    updateBorder: (index, updates) => {
+      if (isLockedForDecoration(get())) return;
+      set((state) => ({
+        borders: state.borders.map((b, i) => (i === index ? { ...b, ...updates } : b)),
+      }));
+    },
 
-  setSashing: (updates) => {
-    if (isLockedForStructure(get())) return;
-    set((state) => ({
-      sashing: { ...state.sashing, ...updates },
-    }));
-  },
+    removeBorder: (index) => {
+      if (isLockedForDecoration(get())) return;
+      set((state) => ({
+        borders: state.borders.filter((_, i) => i !== index),
+      }));
+    },
 
-  setBorders: (borders) => {
-    if (isLockedForDecoration(get())) return;
-    set({ borders });
-  },
+    setHasCornerstones: makeSetter<boolean>(isLockedForStructure, (hasCornerstones) => ({ hasCornerstones })),
+    setBindingWidth: makeSetter<number>(isLockedForDecoration, (bindingWidth) => ({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) })),
 
-  addBorder: () => {
-    if (isLockedForDecoration(get())) return;
-    set((state) => {
-      if (state.borders.length >= 5) return state;
-      return { borders: [...state.borders, createBorder()] };
-    });
-  },
+    setPreviewMode: (previewMode) => set({ previewMode }),
 
-  updateBorder: (index, updates) => {
-    if (isLockedForDecoration(get())) return;
-    set((state) => ({
-      borders: state.borders.map((b, i) => (i === index ? { ...b, ...updates } : b)),
-    }));
-  },
+    applyLayout: () => set({ previewMode: false, hasAppliedLayout: true }),
 
-  removeBorder: (index) => {
-    if (isLockedForDecoration(get())) return;
-    set((state) => ({
-      borders: state.borders.filter((_, i) => i !== index),
-    }));
-  },
+    applyLayoutAndLock: () =>
+      set({ previewMode: false, hasAppliedLayout: true, layoutLocked: true }),
 
-  setHasCornerstones: (hasCornerstones) => {
-    if (isLockedForStructure(get())) return;
-    set({ hasCornerstones });
-  },
+    clearLayout: () => {
+      if (get().layoutLocked) return;
+      set({ ...INITIAL_STATE });
+    },
 
-  setBindingWidth: (bindingWidth) => {
-    if (isLockedForDecoration(get())) return;
-    set({ bindingWidth: Math.max(0, Math.min(2, bindingWidth)) });
-  },
-
-  setPreviewMode: (previewMode) => set({ previewMode }),
-
-  applyLayout: () => set({ previewMode: false, hasAppliedLayout: true }),
-
-  applyLayoutAndLock: () =>
-    set({ previewMode: false, hasAppliedLayout: true, layoutLocked: true }),
-
-  clearLayout: () => {
-    if (get().layoutLocked) return;
-    set({ ...INITIAL_STATE });
-  },
-
-  reset: () => set({ ...INITIAL_STATE }),
-}));
+    reset: () => set({ ...INITIAL_STATE }),
+  };
+});

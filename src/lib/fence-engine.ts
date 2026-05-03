@@ -8,10 +8,12 @@
  * Zero React / DOM / Fabric.js dependencies — fully testable in Vitest.
  */
 
-import type { LayoutTemplate, LayoutCategory } from '@/types/layout';
+import { pointInPolygon } from './math-utils';
+import type { LayoutTemplate } from '@/types/layout';
 import type { FenceArea } from '@/types/fence';
 import {
   computeLayout,
+  computeLayoutDimensions,
   type LayoutConfig,
   type LayoutResult,
   type LayoutType,
@@ -32,36 +34,21 @@ export interface LayoutTemplateSource {
   bindingWidth: number;
 }
 
-/** Map template category to the internal LayoutType used by computeLayout. */
-const CATEGORY_TO_LAYOUT_TYPE: Record<LayoutCategory, 'grid' | 'sashing' | 'on-point'> = {
-  straight: 'grid',
-  sashing: 'sashing',
-  'on-point': 'on-point',
-  medallion: 'grid',
-  strippy: 'grid',
-};
-
 /**
  * Map template category to the internal LayoutType used by computeLayout.
+ * Medallion and strippy are handled by custom geometry; everything else falls
+ * back to grid math for the base footprint.
  */
-function categoryToLayoutType(category: LayoutCategory): 'grid' | 'sashing' | 'on-point' {
-  return CATEGORY_TO_LAYOUT_TYPE[category];
+function categoryToLayoutType(category: LayoutType): 'grid' | 'sashing' | 'on-point' {
+  if (category === 'sashing') return 'sashing';
+  if (category === 'on-point') return 'on-point';
+  return 'grid';
 }
 
 export function layoutSourceToTemplate(source: LayoutTemplateSource): LayoutTemplate | null {
   if (source.layoutType === 'free-form') return null;
 
-  const categoryMap: Record<LayoutType, LayoutTemplate['category'] | null> = {
-    'free-form': null,
-    grid: 'straight',
-    sashing: 'sashing',
-    'on-point': 'on-point',
-    strippy: 'strippy',
-    medallion: 'medallion',
-  };
-
-  const category = categoryMap[source.layoutType];
-  if (!category) return null;
+  const category = source.layoutType;
 
   return {
     id: source.selectedPresetId ?? 'custom',
@@ -82,30 +69,12 @@ export function layoutSourceToTemplate(source: LayoutTemplateSource): LayoutTemp
   };
 }
 
-function pointInPolygon(points: Array<{ x: number; y: number }>, x: number, y: number): boolean {
-  let inside = false;
-
-  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
-    const xi = points[i].x;
-    const yi = points[i].y;
-    const xj = points[j].x;
-    const yj = points[j].y;
-
-    const intersects = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-9) + xi;
-    if (intersects) {
-      inside = !inside;
-    }
-  }
-
-  return inside;
-}
-
 export function pointInFenceArea(area: FenceArea, x: number, y: number): boolean {
-  if (area.points && area.points.length >= 3) {
+  if (area.role === 'setting-triangle') {
     return pointInPolygon(area.points, x, y);
   }
 
-  if (area.rotation) {
+  if (area.role === 'block-cell' && area.rotation) {
     const centerX = area.x + area.width / 2;
     const centerY = area.y + area.height / 2;
     const radians = (-area.rotation * Math.PI) / 180;
@@ -152,36 +121,25 @@ export function findFenceAreaAtPoint(
 function computeTemplateFootprint(
   template: LayoutTemplate
 ): { width: number; height: number } | null {
-  if (template.category === 'medallion' || template.category === 'strippy') {
+  if (template.category === 'medallion' || template.category === 'strippy' || template.category === 'free-form') {
     return null;
   }
 
-  const totalBorderWidth = template.borders.reduce((sum, b) => sum + b.width, 0);
-  const bindingExtra = template.bindingWidth * 2;
+  const dims = computeLayoutDimensions({
+    type: template.category,
+    rows: template.gridRows,
+    cols: template.gridCols,
+    blockSize: template.defaultBlockSize,
+    sashingWidth: template.sashingWidth,
+    borders: template.borders.map((b) => ({
+      width: b.width,
+      color: '',
+      fabricId: null,
+    })),
+    bindingWidth: template.bindingWidth,
+  });
 
-  let innerW: number;
-  let innerH: number;
-
-  if (template.category === 'on-point') {
-    const diagonal = template.defaultBlockSize * Math.SQRT2;
-    innerW = template.gridCols * diagonal;
-    innerH = template.gridRows * diagonal;
-  } else if (template.category === 'sashing') {
-    innerW =
-      template.gridCols * template.defaultBlockSize +
-      Math.max(0, template.gridCols - 1) * template.sashingWidth;
-    innerH =
-      template.gridRows * template.defaultBlockSize +
-      Math.max(0, template.gridRows - 1) * template.sashingWidth;
-  } else {
-    innerW = template.gridCols * template.defaultBlockSize;
-    innerH = template.gridRows * template.defaultBlockSize;
-  }
-
-  return {
-    width: innerW + totalBorderWidth * 2 + bindingExtra,
-    height: innerH + totalBorderWidth * 2 + bindingExtra,
-  };
+  return { width: dims.width, height: dims.height };
 }
 
 /**
@@ -206,7 +164,6 @@ function convertResultToFenceAreas(result: LayoutResult, template: LayoutTemplat
       width: cell.size,
       height: cell.size,
       rotation: cell.rotation || undefined,
-      assignedBlockId: undefined,
       assignedFabricId: null,
     });
   }
@@ -422,12 +379,21 @@ function renderFenceTemplate(template: LayoutTemplate, pxPerUnit: number): Fence
 
   if (offsetPx <= 0) return areas;
 
-  return areas.map((area) => ({
-    ...area,
-    x: area.x + offsetPx,
-    y: area.y + offsetPx,
-    points: area.points ? area.points.map((p) => ({ x: p.x + offsetPx, y: p.y + offsetPx })) : undefined,
-  }));
+  return areas.map((area) => {
+    if (area.role === 'setting-triangle') {
+      return {
+        ...area,
+        x: area.x + offsetPx,
+        y: area.y + offsetPx,
+        points: area.points.map((p) => ({ x: p.x + offsetPx, y: p.y + offsetPx })),
+      };
+    }
+    return {
+      ...area,
+      x: area.x + offsetPx,
+      y: area.y + offsetPx,
+    };
+  });
 }
 
 /**
@@ -458,7 +424,6 @@ function computeStrippyAreas(template: LayoutTemplate, pxPerUnit: number): Fence
           y: r * blockPx,
           width: blockPx,
           height: blockPx,
-          assignedBlockId: null,
           assignedFabricId: null,
         });
       }
@@ -501,7 +466,6 @@ function computeMedallionAreas(template: LayoutTemplate, pxPerUnit: number): Fen
     y: totalBorderWidth,
     width: blockPx,
     height: blockPx,
-    assignedBlockId: null,
     assignedFabricId: null,
   });
 
@@ -605,27 +569,31 @@ export function computeFenceAreas(
     const offsetX = (quiltWPx - maxX * fit) / 2;
     const offsetY = (quiltHPx - maxY * fit) / 2;
 
-    return naturalAreas.map((area) => ({
+  return naturalAreas.map((area) => {
+    if (area.role === 'setting-triangle') {
+      return {
+        ...area,
+        x: area.x * fit + offsetX,
+        y: area.y * fit + offsetY,
+        width: area.width * fit,
+        height: area.height * fit,
+        points: area.points.map((p) => ({ x: p.x * fit + offsetX, y: p.y * fit + offsetY })),
+      };
+    }
+    return {
       ...area,
       x: area.x * fit + offsetX,
       y: area.y * fit + offsetY,
       width: area.width * fit,
       height: area.height * fit,
-      points: area.points
-        ? area.points.map((p) => ({ x: p.x * fit + offsetX, y: p.y * fit + offsetY }))
-        : undefined,
-    }));
-  }
+    };
+  });
+}
 
   if (footprint.width <= 0 || footprint.height <= 0) {
     return [];
   }
 
-  // Scale layout to exactly fill the quilt dimensions using independent
-  // X/Y scale factors. This ensures fence areas perfectly cover the quilt
-  // grid with no gaps or overflow — block cells become non-square when the
-  // quilt aspect ratio differs from the layout's natural ratio, which is
-  // correct for quilting (blocks stretch to fit the available space).
   const scaleX = quiltWidthIn / footprint.width;
   const scaleY = quiltHeightIn / footprint.height;
 
@@ -633,7 +601,6 @@ export function computeFenceAreas(
     return [];
   }
 
-  // Render at natural size, then apply non-uniform transform to fill quilt exactly
   const areas = renderFenceTemplate(template, pxPerUnit);
 
   const naturalWPx = footprint.width * pxPerUnit;
@@ -647,14 +614,23 @@ export function computeFenceAreas(
   const offsetX = (quiltWPx - naturalWPx * fit) / 2;
   const offsetY = (quiltHPx - naturalHPx * fit) / 2;
 
-  return areas.map((area) => ({
-    ...area,
-    x: area.x * fit + offsetX,
-    y: area.y * fit + offsetY,
-    width: area.width * fit,
-    height: area.height * fit,
-    points: area.points
-      ? area.points.map((p) => ({ x: p.x * fit + offsetX, y: p.y * fit + offsetY }))
-      : undefined,
-  }));
+  return areas.map((area) => {
+    if (area.role === 'setting-triangle') {
+      return {
+        ...area,
+        x: area.x * fit + offsetX,
+        y: area.y * fit + offsetY,
+        width: area.width * fit,
+        height: area.height * fit,
+        points: area.points.map((p) => ({ x: p.x * fit + offsetX, y: p.y * fit + offsetY })),
+      };
+    }
+    return {
+      ...area,
+      x: area.x * fit + offsetX,
+      y: area.y * fit + offsetY,
+      width: area.width * fit,
+      height: area.height * fit,
+    };
+  });
 }

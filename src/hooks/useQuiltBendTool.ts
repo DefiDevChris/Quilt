@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { cursorForTool } from '@/lib/canvas-utils';
+import { cursorForTool, getGridGranularityMultiplier } from '@/lib/canvas-utils';
 import { snapToGridCorner } from '@/lib/snap-utils';
 import {
   createBentSegment,
@@ -38,7 +38,7 @@ interface BendState {
   previewPath: unknown | null;
 }
 
-export function useBendTool() {
+export function useQuiltBendTool() {
   const fabricCanvas = useCanvasStore((s) => s.fabricCanvas);
   const activeTool = useCanvasStore((s) => s.activeTool);
   const mode = useProjectStore((s) => s.mode);
@@ -105,13 +105,7 @@ export function useBendTool() {
 
       function getGridSizeIn(): number {
         const { gridSettings } = stateRef.current;
-        const multiplier =
-          gridSettings.granularity === 'half'
-            ? 0.5
-            : gridSettings.granularity === 'quarter'
-              ? 0.25
-              : 1;
-        return gridSettings.size * multiplier;
+        return gridSettings.size * getGridGranularityMultiplier(gridSettings.granularity);
       }
 
       function snapPoint(point: Point): Point {

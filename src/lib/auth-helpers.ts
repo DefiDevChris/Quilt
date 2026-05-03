@@ -1,14 +1,11 @@
 import { getSession } from '@/lib/cognito-session';
-import { isAdmin } from '@/lib/role-utils';
 import { unauthorizedResponse, forbiddenResponse } from '@/lib/api-responses';
 
-export {
-  unauthorizedResponse,
-  forbiddenResponse,
-  notFoundResponse,
-  validationErrorResponse,
-  errorResponse,
-} from '@/lib/api-responses';
+type UserRole = 'free' | 'admin';
+
+function isAdmin(role: UserRole | string | null): boolean {
+  return role === 'admin';
+}
 
 export async function getRequiredSession() {
   const session = await getSession();

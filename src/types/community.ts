@@ -1,8 +1,4 @@
-// ============================================================================
-// Tiptap Editor Types
-// Canonical definitions for Tiptap rich text document structure.
-// Used by RichTextEditor, TiptapRenderer, read-time, and blog seed data.
-// ============================================================================
+/** Tiptap rich-text node types (no runtime Tiptap dependency). */
 
 export interface TiptapMark {
   readonly type: string;

@@ -6,7 +6,7 @@ import FeaturedCarousel from '@/components/blog/FeaturedCarousel';
 import AsymmetricPostFeed from '@/components/blog/AsymmetricPostFeed';
 import Mascot from '@/components/landing/Mascot';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Stories — QuiltCorgi',

@@ -3,86 +3,27 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import {
+  ArrowLeft,
+  LayoutDashboard,
+  LayoutGrid,
+  LayoutTemplate,
+  Library,
+  Menu,
+  Newspaper,
+  Settings,
+} from 'lucide-react';
 import { SectionTitle } from '@/components/ui/SectionTitle';
 import { COLORS, withAlpha } from '@/lib/design-system';
 
 const NAV_ITEMS = [
-  { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
-  { href: '/admin/blocks', label: 'Blocks', icon: 'blocks' },
-  { href: '/admin/layouts', label: 'Layouts', icon: 'layouts' },
-  { href: '/admin/blog', label: 'Blog', icon: 'blog' },
-  { href: '/admin/libraries', label: 'Libraries', icon: 'libraries' },
-  { href: '/admin/settings', label: 'Settings', icon: 'settings' },
+  { href: '/admin', label: 'Dashboard', Icon: LayoutDashboard },
+  { href: '/admin/blocks', label: 'Blocks', Icon: LayoutGrid },
+  { href: '/admin/layouts', label: 'Layouts', Icon: LayoutTemplate },
+  { href: '/admin/blog', label: 'Blog', Icon: Newspaper },
+  { href: '/admin/libraries', label: 'Libraries', Icon: Library },
+  { href: '/admin/settings', label: 'Settings', Icon: Settings },
 ] as const;
-
-const ICONS: Record<string, React.ReactNode> = {
-  dashboard: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"
-      />
-    </svg>
-  ),
-  blocks: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
-      />
-    </svg>
-  ),
-  layouts: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z"
-      />
-    </svg>
-  ),
-  blog: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-      />
-    </svg>
-  ),
-  libraries: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-      />
-    </svg>
-  ),
-  settings: (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-      />
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-      />
-    </svg>
-  ),
-};
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -114,19 +55,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div className="px-6 py-5 border-b border-default">
           <Link href="/admin" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <svg
-                className="w-5 h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
-                />
-              </svg>
+              <LayoutGrid className="w-5 h-5 text-[var(--color-text-on-primary)]" />
             </div>
             <span className="text-lg font-semibold text-default">Admin</span>
           </Link>
@@ -150,7 +79,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   : undefined
               }
             >
-              {ICONS[item.icon]}
+              <item.Icon className="w-5 h-5" />
               {item.label}
             </Link>
           ))}
@@ -162,14 +91,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             href="/dashboard"
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-dim hover:text-default hover:bg-default transition-colors duration-150"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
+            <ArrowLeft className="w-5 h-5" />
             Back to Dashboard
           </Link>
         </div>
@@ -185,30 +107,16 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             className="lg:hidden p-2 rounded-lg hover:bg-default transition-colors duration-150"
             aria-label="Open sidebar"
           >
-            <svg className="w-5 h-5 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <Menu className="w-5 h-5 text-dim" />
           </button>
           <div className="flex-1">
             <SectionTitle>{getPageTitle(pathname)}</SectionTitle>
           </div>
           <Link
             href="/dashboard"
-            className="group flex items-center gap-2 px-3 py-1.5 rounded-lg bg-default text-sm font-medium text-dim transition-colors duration-150 hover:bg-[var(--color-bg)/80]"
+            className="group flex items-center gap-2 px-3 py-1.5 rounded-lg bg-default text-sm font-medium text-dim transition-colors duration-150 hover:bg-[var(--color-bg)]/80"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
+            <ArrowLeft className="w-4 h-4" />
             Exit Admin
           </Link>
         </header>

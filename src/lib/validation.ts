@@ -6,8 +6,8 @@ import {
   BLOCKS_PAGINATION_MAX_LIMIT,
   FABRICS_PAGINATION_DEFAULT_LIMIT,
   FABRICS_PAGINATION_MAX_LIMIT,
-  ACCEPTED_IMAGE_TYPES,
-} from '@/lib/constants';
+} from '@/lib/constants/pagination';
+import { ACCEPTED_IMAGE_TYPES } from '@/lib/constants/fabrics';
 
 /**
  * Validate that a URL is an HTTPS URL pointing to the app's CloudFront or S3 domain.
@@ -66,6 +66,10 @@ export const createProjectSchema = z.object({
   canvasHeight: z.number().min(1).max(200).default(48),
   gridSettings: gridSettingsSchema.default({ enabled: true, size: 1, snapToGrid: true }),
   canvasData: z.record(z.string(), z.unknown()).optional(),
+});
+
+export const duplicateProjectSchema = z.object({
+  sourceProjectId: z.string().uuid('Invalid source project ID'),
 });
 
 export const updateProjectSchema = z.object({
@@ -233,6 +237,51 @@ export const templateQuerySchema = z.object({
 
 // --- Admin Schemas ---
 
+export const createTemplateSchema = z.object({
+  name: z.string().min(1).max(255),
+  category: z.string().min(1).max(100).default('custom'),
+  description: z.string().max(2000).optional(),
+  isPublished: z.boolean().optional(),
+  thumbnailSvg: z.string().max(200_000).optional(),
+  templateData: z
+    .object({
+      canvasJson: z.record(z.string(), z.unknown()),
+      canvasWidth: z.number().positive(),
+      canvasHeight: z.number().positive(),
+      layoutConfig: z
+        .object({
+          layoutType: z.string(),
+          rows: z.number().int().nonnegative(),
+          cols: z.number().int().nonnegative(),
+          blockSize: z.number().nonnegative(),
+          sashing: z
+            .object({
+              width: z.number().nonnegative(),
+              color: z.string().optional(),
+              fabricId: z.string().nullable().optional(),
+            })
+            .optional(),
+          borders: z
+            .array(
+              z.object({
+                width: z.number().nonnegative(),
+                color: z.string().optional(),
+                fabricId: z.string().nullable().optional(),
+              })
+            )
+            .optional(),
+          hasCornerstones: z.boolean().optional(),
+          bindingWidth: z.number().nonnegative().optional(),
+        })
+        .passthrough(),
+    })
+    .passthrough(),
+});
+
+export const adminUpdateTemplateSchema = createTemplateSchema.partial().extend({
+  isDefault: z.boolean().optional(),
+});
+
 export const adminPaginationSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(50),
@@ -248,6 +297,8 @@ export const adminCreateBlockSchema = z.object({
   isDefault: z.boolean().default(false),
   thumbnailUrl: z.string().url().optional(),
 });
+
+export const adminUpdateBlockSchema = adminCreateBlockSchema.omit({ isDefault: true }).partial();
 
 export const adminCreateFabricSchema = z.object({
   name: z.string().min(1).max(255),

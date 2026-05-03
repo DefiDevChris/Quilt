@@ -1,13 +1,36 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { unstable_cache } from 'next/cache';
 import { db } from '@/lib/db';
 import { blogPosts, users } from '@/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, lt, gt, asc } from 'drizzle-orm';
 import { TiptapRenderer } from '@/components/editor/TiptapRenderer';
 import Link from 'next/link';
 import PostNavigation from '@/components/blog/PostNavigation';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+
+const getPostBySlug = unstable_cache(
+  async (slug: string) => {
+    const [post] = await db
+      .select({
+        title: blogPosts.title,
+        excerpt: blogPosts.excerpt,
+        content: blogPosts.content,
+        featuredImageUrl: blogPosts.featuredImageUrl,
+        category: blogPosts.category,
+        publishedAt: blogPosts.publishedAt,
+        authorName: users.name,
+      })
+      .from(blogPosts)
+      .leftJoin(users, eq(blogPosts.authorId, users.id))
+      .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, 'published')))
+      .limit(1);
+    return post ?? null;
+  },
+  ['blog-post'],
+  { revalidate: 60 }
+);
 
 export async function generateMetadata({
   params,
@@ -15,11 +38,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const [post] = await db
-    .select({ title: blogPosts.title, excerpt: blogPosts.excerpt })
-    .from(blogPosts)
-    .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, 'published')))
-    .limit(1);
+  const post = await getPostBySlug(slug);
 
   if (!post) return { title: 'Post Not Found' };
   return { title: post.title, description: post.excerpt || 'Read more on QuiltCorgi.' };
@@ -28,31 +47,29 @@ export async function generateMetadata({
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const [post] = await db
-    .select({
-      title: blogPosts.title,
-      content: blogPosts.content,
-      featuredImageUrl: blogPosts.featuredImageUrl,
-      category: blogPosts.category,
-      publishedAt: blogPosts.publishedAt,
-      authorName: users.name,
-    })
-    .from(blogPosts)
-    .leftJoin(users, eq(blogPosts.authorId, users.id))
-    .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, 'published')))
-    .limit(1);
-
+  const post = await getPostBySlug(slug);
   if (!post?.content) notFound();
 
-  const allPosts = await db
-    .select({ slug: blogPosts.slug, title: blogPosts.title })
-    .from(blogPosts)
-    .where(eq(blogPosts.status, 'published'))
-    .orderBy(desc(blogPosts.publishedAt));
+  const publishedAt = post.publishedAt;
+  const [prevResult, nextResult] = publishedAt
+    ? await Promise.all([
+        db
+          .select({ slug: blogPosts.slug, title: blogPosts.title })
+          .from(blogPosts)
+          .where(and(eq(blogPosts.status, 'published'), lt(blogPosts.publishedAt, publishedAt)))
+          .orderBy(desc(blogPosts.publishedAt))
+          .limit(1),
+        db
+          .select({ slug: blogPosts.slug, title: blogPosts.title })
+          .from(blogPosts)
+          .where(and(eq(blogPosts.status, 'published'), gt(blogPosts.publishedAt, publishedAt)))
+          .orderBy(asc(blogPosts.publishedAt))
+          .limit(1),
+      ])
+    : [[], []];
 
-  const currentIndex = allPosts.findIndex((p) => p.slug === slug);
-  const prev = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
-  const next = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
+  const prev = prevResult[0] ?? null;
+  const next = nextResult[0] ?? null;
 
   return (
     <article className="min-h-screen">
@@ -101,7 +118,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </div>
 
           <h1
-            className="text-[40px] leading-[52px] md:text-[40px] md:leading-[52px] text-default mb-10"
+            className="text-[40px] leading-[52px] text-default mb-10"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
             {post.title}

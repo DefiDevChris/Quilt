@@ -3,11 +3,12 @@ import { eq, and, ilike, count, asc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema';
 import { validationErrorResponse, errorResponse } from '@/lib/api-responses';
+import { escapeLikePattern } from '@/lib/escape-like';
+import { COLOR_FAMILIES } from '@/lib/constants/fabrics';
 import {
   FABRICS_PAGINATION_DEFAULT_LIMIT,
   FABRICS_PAGINATION_MAX_LIMIT,
-  COLOR_FAMILIES,
-} from '@/lib/constants';
+} from '@/lib/constants/pagination';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 import { z } from 'zod';
 
@@ -56,8 +57,7 @@ export async function GET(request: NextRequest) {
     }
     if (value) conditions.push(eq(fabrics.value, value));
     if (search) {
-      const escaped = search.replace(/[%_\\]/g, '\\$&');
-      conditions.push(ilike(fabrics.name, `%${escaped}%`));
+      conditions.push(ilike(fabrics.name, `%${escapeLikePattern(search)}%`));
     }
 
     const whereClause = and(...conditions);

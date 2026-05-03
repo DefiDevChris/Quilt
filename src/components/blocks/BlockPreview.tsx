@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { BlockListItem, Block } from '@/types/block';
+import type { BlockListItem, BlockDetail } from '@/types/block';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 
@@ -11,7 +11,7 @@ interface BlockPreviewProps {
 }
 
 export function BlockPreview({ block, onClose }: BlockPreviewProps) {
-  const [fullBlock, setFullBlock] = useState<Block | null>(null);
+  const [fullBlock, setFullBlock] = useState<BlockDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const dialogRef = useFocusTrap<HTMLDivElement>(true, onClose);

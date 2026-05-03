@@ -1,7 +1,8 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { S3_UPLOAD_EXPIRY_SECONDS } from '@/lib/constants';
 import { sanitizeFilename } from '@/lib/string-utils';
+
+const S3_UPLOAD_EXPIRY_SECONDS = 300;
 
 const awsVarsPresent =
   process.env.AWS_ACCESS_KEY_ID || process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_S3_BUCKET;
@@ -126,5 +127,20 @@ export async function downloadCanvasDataFromS3(
     return bodyString ? JSON.parse(bodyString) : null;
   } catch {
     return null;
+  }
+}
+
+export async function uploadToS3(
+  uploadUrl: string,
+  blob: Blob,
+  contentType: string
+): Promise<void> {
+  const res = await fetch(uploadUrl, {
+    method: 'PUT',
+    body: blob,
+    headers: { 'Content-Type': contentType },
+  });
+  if (!res.ok) {
+    throw new Error(`S3 upload failed: ${res.status}`);
   }
 }

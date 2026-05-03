@@ -3,6 +3,8 @@
  * Canonical grid settings interfaces used across the codebase.
  */
 
+export type UnitSystem = 'imperial' | 'metric';
+
 export type GridGranularity = 'inch' | 'half' | 'quarter';
 
 export interface GridSettings {

@@ -1,15 +1,12 @@
 export default function DashboardLoading() {
   return (
-    <div className="animate-pulse p-6 space-y-8">
-      {/* Header skeleton */}
-      <div className="h-4 w-48 bg-[var(--color-border)] rounded-full" />
-      <div className="h-20 w-80 bg-[var(--color-border)] rounded-full" />
-      <div className="h-4 w-64 bg-[var(--color-border)] rounded-full" />
-      {/* Bento grid skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="h-40 bg-[var(--color-border)] rounded-lg border-2 border-[var(--color-text)]" />
-        <div className="h-40 bg-[var(--color-border)] rounded-lg border-2 border-[var(--color-text)]" />
-      </div>
+    <div className="animate-pulse grid grid-cols-1 lg:grid-cols-[1fr_1fr_0.75fr] gap-8">
+      <div className="h-[280px] bg-[var(--color-border)] rounded-lg border border-[var(--color-text)]/[0.03]" />
+      <div className="h-[280px] bg-[var(--color-border)] rounded-lg border border-[var(--color-text)]/[0.03]" />
+      <div className="h-full bg-[var(--color-border)] rounded-lg border border-[var(--color-primary)]/20 lg:row-span-2" />
+      <div className="h-[280px] bg-[var(--color-border)] rounded-lg border border-[var(--color-text)]/[0.03]" />
+      <div className="h-[280px] bg-[var(--color-border)] rounded-lg border border-[var(--color-text)]/[0.03]" />
+      <div className="h-[280px] bg-[var(--color-border)] rounded-lg border border-black/[0.03]" />
     </div>
   );
 }

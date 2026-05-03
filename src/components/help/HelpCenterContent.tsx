@@ -7,7 +7,7 @@ import {
   type FaqEntry,
   type FaqCategory,
 } from '@/lib/help-content';
-import { SUPPORT_EMAIL } from '@/lib/constants';
+const SUPPORT_EMAIL = 'support@quiltcorgi.com';
 
 function FaqSection({
   entries,

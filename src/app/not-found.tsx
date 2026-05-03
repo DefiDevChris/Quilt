@@ -10,23 +10,20 @@ export default function NotFound() {
       <main className="min-h-[60vh] flex items-center justify-center px-6 bg-default">
         <div className="text-center max-w-md">
           <Mascot pose="walking" size="lg" className="mx-auto mb-6 opacity-30" />
-          <h1
-            className="text-[40px] leading-[52px] font-normal text-primary mb-4"
-            style={{ fontFamily: 'var(--font-heading)' }}
-          >
+          <h1 className="text-4xl leading-snug font-normal text-primary mb-4">
             404
           </h1>
-          <h2 className="text-[24px] leading-[32px] font-normal text-default mb-4">
+          <h2 className="text-2xl font-normal text-default mb-4">
             Page Not Found
           </h2>
-          <p className="text-[18px] leading-[28px] text-dim mb-8">
+          <p className="text-lg text-dim mb-8">
             Sorry, we couldn&apos;t find the page you&apos;re looking for. It might have been moved,
             deleted, or never existed.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/dashboard"
-              className="inline-flex items-center justify-center px-6 py-2 bg-primary text-default rounded-full font-normal hover:bg-primary-dark transition-colors duration-150"
+              className="inline-flex items-center justify-center px-6 py-2 bg-primary text-default rounded-full font-normal hover:bg-primary-hover transition-colors duration-150"
               >
               Go to Dashboard
             </Link>

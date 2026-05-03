@@ -6,9 +6,8 @@ import { Search } from 'lucide-react';
 import type { FabricListItem } from '@/types/fabric';
 import type { PaginationInfo } from '@/types/api';
 import { FabricBrowseCard } from '@/components/fabrics/FabricBrowseCard';
-import { COLOR_FAMILIES, FABRIC_MANUFACTURERS, FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants';
-import PublicNav from '@/components/landing/PublicNav';
-import Footer from '@/components/landing/Footer';
+import { COLOR_FAMILIES, FABRIC_MANUFACTURERS } from '@/lib/constants/fabrics';
+import { FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants/pagination';
 
 export default function FabricLibraryPage() {
   const [fabrics, setFabrics] = useState<FabricListItem[]>([]);
@@ -58,9 +57,7 @@ export default function FabricLibraryPage() {
   }
 
   return (
-    <>
-      <PublicNav />
-      <div className="min-h-screen bg-[var(--color-bg)]">
+    <div className="min-h-screen bg-[var(--color-bg)]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12">
         <div className="mb-10">
           <h1
@@ -166,7 +163,5 @@ export default function FabricLibraryPage() {
         )}
       </div>
     </div>
-    <Footer />
-    </>
   );
 }

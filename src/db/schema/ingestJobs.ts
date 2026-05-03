@@ -7,13 +7,14 @@ import {
   timestamp,
   index,
 } from 'drizzle-orm/pg-core';
+import { ingestSourceTypeEnum } from './enums';
 
 export const ingestJobs = pgTable(
   'ingest_jobs',
   {
     id: uuid('id').primaryKey().defaultRandom(),
     retailerSlug: varchar('retailerSlug', { length: 100 }).notNull(),
-    sourceType: varchar('sourceType', { length: 50 }).notNull(),
+    sourceType: ingestSourceTypeEnum('sourceType').notNull(),
     status: varchar('status', { length: 20 }).notNull().default('running'),
     startedAt: timestamp('startedAt', { mode: 'date', withTimezone: true }).notNull(),
     finishedAt: timestamp('finishedAt', { mode: 'date', withTimezone: true }),

@@ -1,5 +1,5 @@
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
-import type { UnitSystem } from '@/types/canvas';
+import type { UnitSystem } from '@/types/grid';
 
 /**
  * Snap utilities for two-mode snapping behavior.

@@ -18,7 +18,7 @@ import {
   Frame,
   Box,
 } from 'lucide-react';
-import { ZOOM_FACTOR } from '@/lib/constants';
+import { ZOOM_FACTOR } from '@/lib/constants/canvas';
 
 export interface ToolbarCallbacks {
   onOpenImageExport?: () => void;
@@ -40,6 +40,8 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
   const layoutType = useLayoutStore((s) => s.layoutType);
   const layoutLocked = useLayoutStore((s) => s.layoutLocked);
   const projectMode = useProjectStore((s) => s.mode);
+  const canvasWidth = useProjectStore((s) => s.canvasWidth);
+  const canvasHeight = useProjectStore((s) => s.canvasHeight);
   const showDrawingTools = !hasAppliedLayout || layoutType === 'free-form';
 
   // Free-form Phase 2 actions: Add Border / Add Edging (binding) directly
@@ -122,7 +124,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       isDisabled: !canUndo,
       onClick: () => {
         if (!canUndo) return;
-        performUndo();
+        performUndo(fabricCanvas);
       },
       isActive: () => false,
       icon: <Undo2 size={20} />,
@@ -136,7 +138,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       isDisabled: !canRedo,
       onClick: () => {
         if (!canRedo) return;
-        performRedo();
+        performRedo(fabricCanvas);
       },
       isActive: () => false,
       icon: <Redo2 size={20} />,
@@ -148,7 +150,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'Ctrl+=',
       description: 'Zoom in on the canvas',
       group: 'zoom',
-      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom * ZOOM_FACTOR, fabricCanvas),
+      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom * ZOOM_FACTOR, fabricCanvas, canvasWidth, canvasHeight),
       isActive: () => false,
       icon: <ZoomIn size={20} />,
     },
@@ -158,7 +160,7 @@ export function useQuiltTools(callbacks: ToolbarCallbacks): ToolDef[] {
       shortcut: 'Ctrl+-',
       description: 'Zoom out on the canvas',
       group: 'zoom',
-      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom / ZOOM_FACTOR, fabricCanvas),
+      onClick: () => useCanvasStore.getState().zoomAtPoint(zoom / ZOOM_FACTOR, fabricCanvas, canvasWidth, canvasHeight),
       isActive: () => false,
       icon: <ZoomOut size={20} />,
     },

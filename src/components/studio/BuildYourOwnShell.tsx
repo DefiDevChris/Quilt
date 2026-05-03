@@ -8,8 +8,8 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { QUILT_SIZE_PRESETS } from '@/lib/constants/canvas';
 import { LAYOUT_PRESETS } from '@/lib/layout-library';
-import { computeLayoutSize } from '@/lib/layout-size-utils';
-import type { LayoutType } from '@/lib/layout-utils';
+import { computeLayoutDimensions, type LayoutType } from '@/lib/layout-utils';
+import { SliderRow } from '@/components/ui/SliderRow';
 
 interface BuildYourOwnShellProps {
   onCommit: (projectId: string) => void;
@@ -146,7 +146,7 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
               <h3 className="text-xs font-semibold text-[var(--color-text-dim)] uppercase tracking-wide">Grid</h3>
               <SliderRow label="Rows" value={rows} min={2} max={12} onChange={setRows} />
               <SliderRow label="Columns" value={cols} min={2} max={12} onChange={setCols} />
-              <SliderRow label="Block size" value={blockSize} min={2} max={18} step={0.5} onChange={setBlockSize} unit="in" />
+              <SliderRow label="Block size" value={blockSize} min={2} max={18} step={0.5} onChange={setBlockSize} format={(v) => `${v}in`} />
             </div>
           )}
 
@@ -168,12 +168,12 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
                 </button>
               </div>
               {sashing.width > 0 && (
-                <SliderRow label="Width" value={sashing.width} min={0.5} max={4} step={0.25} onChange={(v) => setSashing({ width: v })} unit="in" />
+                <SliderRow label="Width" value={sashing.width} min={0.5} max={4} step={0.25} onChange={(v) => setSashing({ width: v })} format={(v) => `${v}in`} />
               )}
             </div>
           )}
 
-          <SliderRow label="Binding" value={bindingWidth} min={0} max={1} step={0.125} onChange={setBindingWidth} unit="in" />
+          <SliderRow label="Binding" value={bindingWidth} min={0} max={1} step={0.125} onChange={setBindingWidth} format={(v) => `${v}in`} />
         </div>
 
         {/* Center — blank canvas area (transparent, clicks pass through) */}
@@ -211,8 +211,8 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
 
           <div className="space-y-3 pt-2 border-t border-[var(--color-border)]">
             <h3 className="text-xs font-semibold text-[var(--color-text-dim)] uppercase tracking-wide">Custom</h3>
-            <SliderRow label="Width" value={baseQuiltWidth} min={12} max={120} onChange={(v) => lockBaseQuiltSize(v, baseQuiltHeight)} unit="in" />
-            <SliderRow label="Height" value={baseQuiltHeight} min={12} max={120} onChange={(v) => lockBaseQuiltSize(baseQuiltWidth, v)} unit="in" />
+            <SliderRow label="Width" value={baseQuiltWidth} min={12} max={120} onChange={(v) => lockBaseQuiltSize(v, baseQuiltHeight)} format={(v) => `${v}in`} />
+            <SliderRow label="Height" value={baseQuiltHeight} min={12} max={120} onChange={(v) => lockBaseQuiltSize(baseQuiltWidth, v)} format={(v) => `${v}in`} />
           </div>
 
           <div className="space-y-3 pt-2 border-t border-[var(--color-border)]">
@@ -241,38 +241,3 @@ export function BuildYourOwnShell({ onCommit }: BuildYourOwnShellProps) {
   );
 }
 
-function SliderRow({
-  label,
-  value,
-  min,
-  max,
-  step = 1,
-  onChange,
-  unit,
-}: {
-  readonly label: string;
-  readonly value: number;
-  readonly min: number;
-  readonly max: number;
-  readonly step?: number;
-  readonly onChange: (v: number) => void;
-  readonly unit?: string;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <label className="text-xs text-[var(--color-text-dim)] w-14 shrink-0">{label}</label>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="flex-1 accent-[var(--color-primary)]"
-      />
-      <span className="text-xs text-[var(--color-text)] w-12 text-right tabular-nums">
-        {value}{unit ?? ''}
-      </span>
-    </div>
-  );
-}

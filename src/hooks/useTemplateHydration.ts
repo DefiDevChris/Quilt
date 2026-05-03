@@ -81,16 +81,6 @@ export function useTemplateHydration(): void {
     if (parsed.kind === 'user') {
       // User-saved template: full canvas snapshot is already in templateData.
       const tpl = parsed.template;
-      const cfg = tpl.templateData.layoutConfig;
-      const ls = useLayoutStore.getState();
-      // Seed layout store from the saved config so the fence renderer matches.
-      // Note: the layoutStore lock guards prevent these calls from doing
-      // anything if we've already locked. So we seed BEFORE locking would
-      // normally happen — but we are here AFTER applyLayoutAndLock, which
-      // means setters are no-ops. That's fine: the user template's
-      // canvasJson already contains the visual fence and we can rely on
-      // the snapshot rather than re-running fence engine.
-      void ls; // intentionally unused — keep import for future re-seed work
 
       useProjectStore
         .getState()

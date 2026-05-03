@@ -44,7 +44,7 @@ import { useProjectStore } from '@/stores/projectStore';
 import { useBlockStore } from '@/stores/blockStore';
 import { useFabricStore } from '@/stores/fabricStore';
 import { useYardageStore } from '@/stores/yardageStore';
-import { ZOOM_FACTOR } from '@/lib/constants';
+import { ZOOM_FACTOR } from '@/lib/constants/canvas';
 
 interface CommandPaletteProps {
   isOpen: boolean;

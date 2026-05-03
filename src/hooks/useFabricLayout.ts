@@ -8,8 +8,8 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import { saveRecentFabric } from '@/lib/recent-fabrics';
 import { loadImage } from '@/lib/image-processing';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
-import { computeFenceAreas, findFenceAreaAtPoint, layoutSourceToTemplate } from '@/lib/fence-engine';
-import { getPixelsPerUnit } from '@/lib/canvas-utils';
+import { findFenceAreaAtPoint } from '@/lib/fence-engine';
+import { getComputedLayoutAreas } from '@/lib/layout-areas';
 import { CANVAS } from '@/lib/design-system';
 
 const FABRIC_HIGHLIGHT_COLOR = CANVAS.fabricHighlight;
@@ -18,37 +18,9 @@ const ALLOWED_FABRIC_ROLES = [
   'cornerstone',
   'border',
   'binding',
-  'edging',
   'setting-triangle',
 ] as const;
 
-function getComputedLayoutAreas() {
-  const layoutState = useLayoutStore.getState();
-  const projectState = useProjectStore.getState();
-  const { unitSystem } = useCanvasStore.getState();
-  const template = layoutSourceToTemplate({
-    layoutType: layoutState.layoutType,
-    selectedPresetId: layoutState.selectedPresetId,
-    rows: layoutState.rows,
-    cols: layoutState.cols,
-    blockSize: layoutState.blockSize,
-    sashing: layoutState.sashing,
-    borders: layoutState.borders,
-    hasCornerstones: layoutState.hasCornerstones,
-    bindingWidth: layoutState.bindingWidth,
-  });
-
-  if (!template) {
-    return [];
-  }
-
-  return computeFenceAreas(
-    template,
-    projectState.canvasWidth,
-    projectState.canvasHeight,
-    getPixelsPerUnit(unitSystem)
-  );
-}
 
 /**
  * Hook for drag-from-library-to-shape fabric application.

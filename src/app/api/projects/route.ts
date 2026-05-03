@@ -2,15 +2,14 @@ import { NextRequest } from 'next/server';
 import { eq, desc, asc, count } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { projects } from '@/db/schema';
-import { createProjectSchema, paginationSchema } from '@/lib/validation';
+import { createProjectSchema, paginationSchema, duplicateProjectSchema } from '@/lib/validation';
+import { getRequiredSession } from '@/lib/auth-helpers';
 import {
-  getRequiredSession,
   unauthorizedResponse,
   validationErrorResponse,
   errorResponse,
-} from '@/lib/auth-helpers';
+} from '@/lib/api-responses';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
-import { z } from 'zod';
 
 export async function GET(request: NextRequest) {
   const session = await getRequiredSession();
@@ -84,10 +83,6 @@ export async function GET(request: NextRequest) {
     return errorResponse('Failed to fetch projects', 'INTERNAL_ERROR', 500);
   }
 }
-
-const duplicateProjectSchema = z.object({
-  sourceProjectId: z.string().uuid('Invalid source project ID'),
-});
 
 export async function POST(request: NextRequest) {
   const session = await getRequiredSession();

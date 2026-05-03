@@ -5,7 +5,8 @@ import { useCanvasStore } from '@/stores/canvasStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { computeCanvasGeometry } from '@/lib/canvas-utils';
-import { computeFenceAreas, layoutSourceToTemplate } from '@/lib/fence-engine';
+import { computeFenceAreas } from '@/lib/fence-engine';
+import { getLayoutTemplateFromStores } from '@/lib/layout-areas';
 import { FENCE, CANVAS } from '@/lib/design-system';
 import type { LayoutTemplate } from '@/types/layout';
 
@@ -68,18 +69,7 @@ export function useFenceRenderer() {
     const applyFence = async () => {
       if (disposed) return;
 
-      const layoutState = useLayoutStore.getState();
-      const template = layoutSourceToTemplate({
-        layoutType: layoutState.layoutType,
-        selectedPresetId: layoutState.selectedPresetId,
-        rows: layoutState.rows,
-        cols: layoutState.cols,
-        blockSize: layoutState.blockSize,
-        sashing: layoutState.sashing,
-        borders: layoutState.borders,
-        hasCornerstones: layoutState.hasCornerstones,
-        bindingWidth: layoutState.bindingWidth,
-      });
+      const template = getLayoutTemplateFromStores();
       const project = useProjectStore.getState();
       const quiltWidth = project.canvasWidth;
       const quiltHeight = project.canvasHeight;
@@ -186,22 +176,20 @@ export function useFenceRenderer() {
 
         let shape: FabricObject;
 
-        if (area.points && area.points.length >= 3) {
-          // Render polygon areas (setting triangles) as Fabric.js Polygon
-          shape = new fabric.Polygon(area.points, {
-            ...sharedProps,
-          }) as unknown as FabricObject;
-        } else {
-          // Render rectangular areas as Fabric.js Rect
-          shape = new fabric.Rect({
-            left: area.x,
-            top: area.y,
-            width: area.width,
-            height: area.height,
-            angle: area.rotation ?? 0,
-            ...sharedProps,
-          }) as unknown as FabricObject;
-        }
+    if (area.role === 'setting-triangle') {
+      shape = new fabric.Polygon(area.points, {
+        ...sharedProps,
+      }) as unknown as FabricObject;
+    } else {
+      shape = new fabric.Rect({
+        left: area.x,
+        top: area.y,
+        width: area.width,
+        height: area.height,
+        angle: area.role === 'block-cell' ? (area.rotation ?? 0) : 0,
+        ...sharedProps,
+      }) as unknown as FabricObject;
+    }
 
         const r = shape as unknown as Record<string, unknown>;
         r[FENCE_MARKER] = true;
@@ -217,15 +205,15 @@ export function useFenceRenderer() {
           // For polygon areas (setting triangles), compute the centroid as the
           // average of all vertices so the label sits inside the shape rather
           // than at the bounding-box center (which can land on the hypotenuse).
-          let labelX: number;
-          let labelY: number;
-          if (area.points && area.points.length >= 3) {
-            labelX = area.points.reduce((sum, p) => sum + p.x, 0) / area.points.length;
-            labelY = area.points.reduce((sum, p) => sum + p.y, 0) / area.points.length;
-          } else {
-            labelX = area.x + area.width / 2;
-            labelY = area.y + area.height / 2;
-          }
+      let labelX: number;
+      let labelY: number;
+      if (area.role === 'setting-triangle') {
+        labelX = area.points.reduce((sum, p) => sum + p.x, 0) / area.points.length;
+        labelY = area.points.reduce((sum, p) => sum + p.y, 0) / area.points.length;
+      } else {
+        labelX = area.x + area.width / 2;
+        labelY = area.y + area.height / 2;
+      }
 
           const textObj = new fabric.FabricText(area.label, {
             left: labelX,

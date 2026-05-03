@@ -1,10 +1,11 @@
 import { clearAuthCookies, getSession } from '@/lib/cognito-session';
 import { cognitoGlobalSignOut } from '@/lib/cognito';
+import { unauthorizedResponse } from '@/lib/api-responses';
 
 export async function POST() {
   const session = await getSession();
   if (!session) {
-    return Response.json({ success: false, error: 'Not authenticated' }, { status: 401 });
+    return unauthorizedResponse('Not authenticated');
   }
 
   // Revoke tokens server-side so stolen tokens can't be reused

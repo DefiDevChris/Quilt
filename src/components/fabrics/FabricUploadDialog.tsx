@@ -6,10 +6,10 @@ import {
   processImage,
   generateThumbnail,
   canvasToBlob,
-  uploadToS3,
   type CropRect,
 } from '@/lib/image-processing';
-import { MAX_FILE_SIZE_BYTES, ACCEPTED_IMAGE_TYPES } from '@/lib/constants';
+import { uploadToS3 } from '@/lib/s3';
+import { MAX_FILE_SIZE_BYTES, ACCEPTED_IMAGE_TYPES } from '@/lib/constants/fabrics';
 import {
   computeCalibration,
   SCANNER_PRESETS,
@@ -39,8 +39,6 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
   const [uploadProgress, setUploadProgress] = useState('');
   const [calibrationMethod, setCalibrationMethod] = useState<CalibrationMethod>('scanner-preset');
   const [manualDpi, setManualDpi] = useState(300);
-  const [rulerPixels, setRulerPixels] = useState(0);
-  const [rulerInches, setRulerInches] = useState(0);
   const [scannerPreset, setScannerPreset] = useState<ScannerPreset>('300');
   const [calibratedPpi, setCalibratedPpi] = useState<number | null>(null);
 
@@ -60,8 +58,6 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
     setUploadProgress('');
     setCalibrationMethod('scanner-preset');
     setManualDpi(300);
-    setRulerPixels(0);
-    setRulerInches(0);
     setScannerPreset('300');
     setCalibratedPpi(null);
     imgRef.current = null;
@@ -402,7 +398,6 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
               {[
                 { value: 'scanner-preset' as const, label: 'Standard Scanner DPI' },
                 { value: 'manual-dpi' as const, label: 'I Know the DPI' },
-                { value: 'ruler-reference' as const, label: 'Use Ruler Reference' },
               ].map((opt) => (
                 <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -453,36 +448,6 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
               </div>
             )}
 
-            {calibrationMethod === 'ruler-reference' && (
-              <div className="space-y-2">
-                <div>
-                  <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
-                    Ruler length in pixels
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={rulerPixels}
-                    onChange={(e) => setRulerPixels(Number(e.target.value))}
-                    className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[var(--color-text-dim)] mb-1">
-                    Ruler length in inches
-                  </label>
-                  <input
-                    type="number"
-                    min={0.1}
-                    step={0.1}
-                    value={rulerInches}
-                    onChange={(e) => setRulerInches(Number(e.target.value))}
-                    className="w-full rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-sm text-[var(--color-text)]"
-                  />
-                </div>
-              </div>
-            )}
-
             <div className="flex gap-2 justify-end pt-2">
               <button
                 type="button"
@@ -507,10 +472,6 @@ export function FabricUploadDialog({ isOpen, onClose, onUploaded }: FabricUpload
                   const result = computeCalibration({
                     method: calibrationMethod,
                     manualDpi: calibrationMethod === 'manual-dpi' ? manualDpi : undefined,
-                    rulerLengthPixels:
-                      calibrationMethod === 'ruler-reference' ? rulerPixels : undefined,
-                    rulerLengthInches:
-                      calibrationMethod === 'ruler-reference' ? rulerInches : undefined,
                     scannerPreset:
                       calibrationMethod === 'scanner-preset' ? scannerPreset : undefined,
                   });

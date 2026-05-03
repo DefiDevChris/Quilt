@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { FabricThumbnail } from '@/components/fabrics/FabricThumbnail';
 import type { FabricListItem } from '@/types/fabric';
 
 interface FabricBrowseCardProps {
@@ -18,16 +19,10 @@ export function FabricBrowseCard({ fabric }: FabricBrowseCardProps) {
       className="group block bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg overflow-hidden transition-colors duration-150 hover:border-[var(--color-border-strong)]"
     >
       <div className="aspect-square overflow-hidden">
-        {fabric.hex ? (
-          <div className="w-full h-full" style={{ backgroundColor: fabric.hex }} />
-        ) : (
-          <img
-            src={fabric.thumbnailUrl ?? fabric.imageUrl}
-            alt={fabric.name}
-            className="w-full h-full object-cover transition-colors duration-150"
-            loading="lazy"
-          />
-        )}
+        <FabricThumbnail
+          fabric={fabric}
+          imgClassName="transition-colors duration-150"
+        />
       </div>
 
       <div className="p-3 space-y-1">

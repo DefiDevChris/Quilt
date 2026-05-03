@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<div className="h-8 w-8 animate-pulse rounded-lg bg-secondary" />}>
       <VerifyEmailForm />
     </Suspense>
   );

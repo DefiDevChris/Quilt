@@ -5,7 +5,7 @@ import { blogPosts } from '@/db/schema';
 import { requireAdminSession } from '@/lib/auth-helpers';
 import { errorResponse, validationErrorResponse } from '@/lib/api-responses';
 import { updateBlogPostSchema } from '@/lib/validation';
-import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
+import { generateSlug, appendSlugSuffix } from '@/lib/string-utils';
 
 export const dynamic = 'force-dynamic';
 

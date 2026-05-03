@@ -1,4 +1,4 @@
-import { THUMBNAIL_SIZE, FABRIC_IMAGE_MAX_SIZE } from '@/lib/constants';
+import { THUMBNAIL_SIZE, FABRIC_IMAGE_MAX_SIZE } from '@/lib/constants/fabrics';
 
 export interface CropRect {
   x: number;
@@ -116,19 +116,4 @@ export function canvasToBlob(
       quality
     );
   });
-}
-
-export async function uploadToS3(
-  uploadUrl: string,
-  blob: Blob,
-  contentType: string
-): Promise<void> {
-  const res = await fetch(uploadUrl, {
-    method: 'PUT',
-    body: blob,
-    headers: { 'Content-Type': contentType },
-  });
-  if (!res.ok) {
-    throw new Error(`S3 upload failed: ${res.status}`);
-  }
 }

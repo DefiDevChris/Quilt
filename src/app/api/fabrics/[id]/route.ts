@@ -2,13 +2,12 @@ import { NextRequest } from 'next/server';
 import { eq, and } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { userFabrics } from '@/db/schema';
+import { getRequiredSession } from '@/lib/auth-helpers';
 import {
-  getRequiredSession,
   unauthorizedResponse,
   notFoundResponse,
   errorResponse,
-} from '@/lib/auth-helpers';
-
+} from '@/lib/api-responses';
 export const dynamic = 'force-dynamic';
 
 export async function DELETE(

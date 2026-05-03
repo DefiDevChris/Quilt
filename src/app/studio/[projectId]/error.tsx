@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { AlertCircle } from 'lucide-react';
 
 export default function StudioError({
   error,
@@ -12,20 +13,13 @@ export default function StudioError({
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] p-4">
       <div className="bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg p-8 max-w-md w-full text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error/10 flex items-center justify-center">
-          <svg className="w-8 h-8 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-            />
-          </svg>
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[var(--color-error)]/10 flex items-center justify-center">
+          <AlertCircle size={32} strokeWidth={1.5} className="text-[var(--color-error)]" />
         </div>
         <h2 className="text-lg font-semibold text-[var(--color-text)] mb-2">
           Something went wrong in the studio
         </h2>
-        <p className="text-sm text-secondary mb-6">
+        <p className="text-sm text-[var(--color-secondary)] mb-6">
           {error.message || 'An unexpected error occurred while loading your project.'}
         </p>
         <div className="flex gap-3 justify-center">

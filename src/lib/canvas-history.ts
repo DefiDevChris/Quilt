@@ -17,19 +17,11 @@ interface UndoableCanvas {
 }
 
 /**
- * Get the current canvas cast to the undo-able interface, or null.
- * Returns null — callers must pass the canvas explicitly.
- */
-function getCanvas(): UndoableCanvas | null {
-  return null;
-}
-
-/**
  * Undo the last canvas action. Returns true if undo was applied.
  */
-export async function performUndo(canvas?: UndoableCanvas | null): Promise<boolean> {
-  const c = canvas ?? getCanvas();
-  if (!c) return false;
+export async function performUndo(canvas?: unknown): Promise<boolean> {
+  if (!canvas) return false;
+  const c = canvas as UndoableCanvas;
 
   // Deactivate shade view before undo to prevent stale Pattern references
   if (useCanvasStore.getState().shadeViewActive) {
@@ -55,9 +47,9 @@ export async function performUndo(canvas?: UndoableCanvas | null): Promise<boole
 /**
  * Redo the last undone canvas action. Returns true if redo was applied.
  */
-export async function performRedo(canvas?: UndoableCanvas | null): Promise<boolean> {
-  const c = canvas ?? getCanvas();
-  if (!c) return false;
+export async function performRedo(canvas?: unknown): Promise<boolean> {
+  if (!canvas) return false;
+  const c = canvas as UndoableCanvas;
 
   // Deactivate shade view before redo to prevent stale Pattern references
   if (useCanvasStore.getState().shadeViewActive) {

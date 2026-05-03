@@ -3,6 +3,7 @@ import { createHash } from 'crypto';
 import { db } from '@/lib/db';
 import { fabrics, retailers, affiliateClicks } from '@/db/schema';
 import { buildDeeplink } from '@/lib/affiliate/deeplink';
+import { notFoundResponse } from '@/lib/api-responses';
 
 const BOT_UA_REGEX =
   /(googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|ahrefsbot|semrushbot|mj12bot|dotbot|petalbot|curl|wget|python-requests|node-fetch|axios|java\/|go-http-client)/i;
@@ -36,7 +37,7 @@ export async function GET(
     .limit(1);
 
   if (!row || !row.isAffiliate || !row.retailerId) {
-    return new Response('Not Found', { status: 404 });
+    return notFoundResponse('Fabric not found.');
   }
 
   const retailer = {

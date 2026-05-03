@@ -1,19 +1,3 @@
-export interface Block {
-  id: string;
-  userId: string | null;
-  name: string;
-  category: string;
-  subcategory: string | null;
-  svgData: string;
-  fabricJsData: Record<string, unknown> | null;
-  tags: string[];
-  isDefault: boolean;
-  thumbnailUrl: string | null;
-  createdAt: Date;
-}
-
-export type BlockType = 'svg' | 'custom' | 'photo';
-
 export interface BlockListItem {
   id: string;
   name: string;
@@ -24,7 +8,18 @@ export interface BlockListItem {
   svgData: string | null;
   photoUrl: string | null;
   isDefault: boolean;
-  blockType: BlockType;
   widthIn: number;
   heightIn: number;
+}
+
+/** Full block shape returned by GET /api/blocks/[id]. */
+export interface BlockDetail {
+  id: string;
+  name: string;
+  category: string;
+  subcategory: string | null;
+  svgData: string;
+  fabricJsData: Record<string, unknown> | null;
+  tags: string[];
+  isDefault: boolean;
 }

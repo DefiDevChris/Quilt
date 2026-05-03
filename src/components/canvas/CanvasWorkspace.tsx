@@ -6,7 +6,7 @@ import { useCanvasInit } from '@/hooks/useCanvasInit';
 import { useDrawingTool } from '@/hooks/useDrawingTool';
 import { usePolygonTool } from '@/hooks/usePolygonTool';
 import { useEasyDrawTool } from '@/hooks/useEasyDrawTool';
-import { useBendTool } from '@/hooks/useBendTool';
+import { useQuiltBendTool } from '@/hooks/useQuiltBendTool';
 import { useCanvasZoomPan } from '@/hooks/useCanvasZoomPan';
 import { useCanvasKeyboard } from '@/hooks/useCanvasKeyboard';
 import { useAutoSave } from '@/hooks/useAutoSave';
@@ -27,7 +27,7 @@ export function CanvasWorkspace({ project }: CanvasWorkspaceProps) {
   useDrawingTool();
   usePolygonTool();
   useEasyDrawTool();
-  useBendTool();
+  useQuiltBendTool();
   useCanvasZoomPan();
   useCanvasKeyboard();
   useFenceRenderer();

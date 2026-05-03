@@ -7,7 +7,11 @@ export interface ShadeBreakdown {
   readonly unknown: number;
 }
 
-/** Minimal patch representation for the engine (no Fabric.js dependency). */
+/**
+ * Minimal patch representation for the shade engine.
+ * `__` prefixed keys are Fabric.js custom properties attached to canvas
+ * objects; they are stripped from this type to keep the engine pure.
+ */
 export interface PatchDescriptor {
   readonly __isBlockGroup?: boolean;
   readonly __pieceRole?: string;

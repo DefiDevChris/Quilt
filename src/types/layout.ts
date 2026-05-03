@@ -1,3 +1,5 @@
+import type { LayoutType } from '@/lib/layout-utils';
+
 /**
  * Layout Template types for the quilt layout system.
  *
@@ -6,15 +8,12 @@
  * the category taxonomy for quilt layouts.
  */
 
-export type LayoutCategory = 'straight' | 'sashing' | 'on-point' | 'medallion' | 'strippy';
-
 export type LayoutAreaRole =
   | 'block-cell'
   | 'sashing'
   | 'cornerstone'
   | 'border'
   | 'binding'
-  | 'edging'
   | 'setting-triangle';
 
 interface TemplateBorderConfig {
@@ -25,7 +24,7 @@ interface TemplateBorderConfig {
 export interface LayoutTemplate {
   id: string;
   name: string;
-  category: LayoutCategory;
+  category: LayoutType;
   gridRows: number;
   gridCols: number;
   defaultBlockSize: number; // inches

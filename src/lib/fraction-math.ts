@@ -10,7 +10,7 @@ export interface Fraction {
   readonly denominator: number;
 }
 
-export function fraction(numerator: number, denominator: number): Fraction {
+function fraction(numerator: number, denominator: number): Fraction {
   if (denominator === 0) {
     throw new Error('Denominator cannot be zero');
   }
@@ -21,78 +21,10 @@ export function fraction(numerator: number, denominator: number): Fraction {
   return { numerator, denominator };
 }
 
-export function simplify(f: Fraction): Fraction {
+function simplify(f: Fraction): Fraction {
   if (f.numerator === 0) return fraction(0, 1);
   const g = gcd(f.numerator, f.denominator);
   return fraction(f.numerator / g, f.denominator / g);
-}
-
-export function parseFraction(input: string): Fraction {
-  const trimmed = input.trim();
-  if (trimmed === '') {
-    throw new Error('Cannot parse empty string as fraction');
-  }
-
-  // Decimal: contains a dot
-  if (trimmed.includes('.')) {
-    return decimalToFraction(parseFloat(trimmed));
-  }
-
-  // Mixed number: "2 1/4" or "-2 1/4"
-  const mixedMatch = trimmed.match(/^(-?\d+)\s+(\d+)\/(\d+)$/);
-  if (mixedMatch) {
-    const whole = parseInt(mixedMatch[1], 10);
-    const num = parseInt(mixedMatch[2], 10);
-    const den = parseInt(mixedMatch[3], 10);
-    if (den === 0) throw new Error('Denominator cannot be zero');
-    const sign = whole < 0 ? -1 : 1;
-    const totalNum = Math.abs(whole) * den + num;
-    return simplify(fraction(sign * totalNum, den));
-  }
-
-  // Simple fraction: "3/4" or "-3/4"
-  const fractionMatch = trimmed.match(/^(-?\d+)\/(\d+)$/);
-  if (fractionMatch) {
-    const num = parseInt(fractionMatch[1], 10);
-    const den = parseInt(fractionMatch[2], 10);
-    if (den === 0) throw new Error('Denominator cannot be zero');
-    return simplify(fraction(num, den));
-  }
-
-  // Whole number: "5" or "-5"
-  const wholeMatch = trimmed.match(/^-?\d+$/);
-  if (wholeMatch) {
-    return fraction(parseInt(trimmed, 10), 1);
-  }
-
-  throw new Error(`Cannot parse "${input}" as a fraction`);
-}
-
-export function add(a: Fraction, b: Fraction): Fraction {
-  const num = a.numerator * b.denominator + b.numerator * a.denominator;
-  const den = a.denominator * b.denominator;
-  return simplify(fraction(num, den));
-}
-
-export function subtract(a: Fraction, b: Fraction): Fraction {
-  const num = a.numerator * b.denominator - b.numerator * a.denominator;
-  const den = a.denominator * b.denominator;
-  return simplify(fraction(num, den));
-}
-
-export function multiply(a: Fraction, b: Fraction): Fraction {
-  return simplify(fraction(a.numerator * b.numerator, a.denominator * b.denominator));
-}
-
-export function divide(a: Fraction, b: Fraction): Fraction {
-  if (b.numerator === 0) {
-    throw new Error('Cannot divide by zero');
-  }
-  return simplify(fraction(a.numerator * b.denominator, a.denominator * b.numerator));
-}
-
-export function toDecimal(f: Fraction): number {
-  return f.numerator / f.denominator;
 }
 
 export function toMixedNumberString(f: Fraction): string {
@@ -148,22 +80,8 @@ export function decimalToFraction(decimal: number): Fraction {
   return simplify(fraction(sign * h1, k1));
 }
 
-export function toFractionString(f: Fraction): string {
-  const s = simplify(f);
-  if (s.denominator === 1) return `${s.numerator}`;
-  return `${s.numerator}/${s.denominator}`;
-}
-
-export function inchesToCm(inches: number): number {
-  return inches * 2.54;
-}
-
-export function cmToInches(cm: number): number {
-  return cm / 2.54;
-}
-
 // Quilters cut in 1/8" increments, so any finer precision is cosmetic.
-export function roundToEighthNearest(value: number): number {
+function roundToEighthNearest(value: number): number {
   return Math.round(value * 8) / 8;
 }
 

@@ -28,4 +28,30 @@ export function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
+/**
+ * Check if a point (x, y) is inside a polygon defined by vertices.
+ * Uses the ray casting algorithm.
+ */
+export function pointInPolygon(
+  points: Array<{ x: number; y: number }>,
+  x: number,
+  y: number,
+): boolean {
+  let inside = false;
+
+  for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
+    const xi = points[i].x;
+    const yi = points[i].y;
+    const xj = points[j].x;
+    const yj = points[j].y;
+
+    const intersects = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-9) + xi;
+    if (intersects) {
+      inside = !inside;
+    }
+  }
+
+  return inside;
+}
+
 

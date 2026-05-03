@@ -1,7 +1,5 @@
 'use client';
 
-import { RADIUS } from '@/lib/design-system';
-
 export default function GlobalError({
   reset,
 }: {
@@ -11,28 +9,14 @@ export default function GlobalError({
   return (
     <html>
       <body>
-        <div
-          style={{
-            padding: '2rem',
-            fontFamily: 'var(--font-sans)',
-            maxWidth: '600px',
-            margin: '0 auto',
-          }}
-        >
-          <h1 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Something went wrong</h1>
-          <p style={{ marginBottom: '1.5rem', color: 'var(--color-secondary)' }}>
+        <div className="p-8 font-sans max-w-xl mx-auto">
+          <h1 className="text-2xl mb-4">Something went wrong</h1>
+          <p className="mb-6 text-[var(--color-secondary)]">
             We&apos;re sorry, but something unexpected happened. Please try refreshing the page.
           </p>
           <button
             onClick={reset}
-            style={{
-              padding: '0.75rem 1.5rem',
-              background: 'var(--color-text)',
-              color: 'var(--color-surface)',
-              border: 'none',
-              borderRadius: RADIUS.full,
-              cursor: 'pointer',
-            }}
+            className="px-6 py-3 bg-[var(--color-text)] text-[var(--color-bg)] rounded-full cursor-pointer"
           >
             Try again
           </button>

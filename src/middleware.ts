@@ -25,15 +25,20 @@ function logAudit(event: string, details: Record<string, string>) {
   console.log(JSON.stringify(logEntry));
 }
 
-const protectedRoutes = ['/dashboard', '/studio', '/settings', '/admin'];
+const protectedRoutes = ['/dashboard', '/studio', '/settings', '/gallery', '/my-fabrics', '/projects'];
 const authRoutes = ['/auth/signin', '/auth/signup', '/auth/forgot-password', '/auth/verify-email'];
+
+let cachedJwks: ReturnType<typeof createRemoteJWKSet> | null = null;
 
 // Lazy initialization of JWKS
 function getJwks() {
   const userPoolId = getUserPoolId();
   if (!userPoolId) return null;
-  const jwksUrl = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
-  return createRemoteJWKSet(new URL(jwksUrl));
+  if (!cachedJwks) {
+    const jwksUrl = `https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
+    cachedJwks = createRemoteJWKSet(new URL(jwksUrl));
+  }
+  return cachedJwks;
 }
 
 async function verifyIdToken(
@@ -84,10 +89,11 @@ export async function middleware(req: NextRequest) {
       logAudit('CSRF_REJECTED', { path: pathname, method: req.method });
       return csrfResponse;
     }
+    // Skip JWT verification for API routes — handled by route handlers (proxy.ts)
+    return NextResponse.next();
   }
 
   const idToken = req.cookies.get('qc_id_token')?.value;
-
   const user = idToken ? await verifyIdToken(idToken) : null;
   const isAuthenticated = !!user;
 
@@ -114,7 +120,9 @@ export async function middleware(req: NextRequest) {
   // has already been verified above, so `user.groups` is authoritative.
   if (pathname.startsWith('/admin')) {
     if (!user) {
-      return NextResponse.redirect(new URL('/auth/signin', req.url));
+      const signInUrl = new URL('/auth/signin', req.url);
+      signInUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(signInUrl);
     }
     if (!user.groups.includes('admin')) {
       logAudit('UNAUTHORIZED_ADMIN_ACCESS', { path: pathname, sub: user.sub });
@@ -131,6 +139,9 @@ export const config = {
     '/dashboard/:path*',
     '/studio/:path*',
     '/settings/:path*',
+    '/gallery/:path*',
+    '/my-fabrics/:path*',
+    '/projects/:path*',
     '/admin/:path*',
     '/auth/:path*',
   ],

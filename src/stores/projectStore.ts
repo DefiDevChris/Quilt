@@ -1,18 +1,10 @@
 import { create } from 'zustand';
-import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/lib/constants';
-import type { Worktable } from '@/types/project';
+import { DEFAULT_CANVAS_WIDTH, DEFAULT_CANVAS_HEIGHT } from '@/lib/constants/canvas';
+import type { Worktable, ProjectMode, FabricPreset } from '@/types/project';
 
 export type SaveStatus = 'saved' | 'saving' | 'unsaved' | 'error';
 
-export interface FabricPreset {
-  readonly id: string;
-  readonly name: string;
-  readonly imageUrl: string;
-}
-
-export type { Worktable } from '@/types/project';
-
-export type ProjectMode = 'free-form' | 'layout' | 'template' | 'photo-to-quilt';
+export type { Worktable, ProjectMode, FabricPreset } from '@/types/project';
 
 interface ProjectStoreState {
   projectId: string | null;

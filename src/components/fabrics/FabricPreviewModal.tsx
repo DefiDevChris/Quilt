@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { X, ExternalLink } from 'lucide-react';
+import { FabricThumbnail } from '@/components/fabrics/FabricThumbnail';
 import type { FabricListItem } from '@/types/fabric';
 
 interface FabricPreviewModalProps {
@@ -49,15 +50,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
         </button>
 
         <div className="aspect-square w-full">
-          {fabric.hex ? (
-            <div className="w-full h-full" style={{ backgroundColor: fabric.hex }} />
-          ) : (
-            <img
-              src={fabric.thumbnailUrl ?? fabric.imageUrl}
-              alt={fabric.name}
-              className="w-full h-full object-cover"
-            />
-          )}
+          <FabricThumbnail fabric={fabric} />
         </div>
 
         <div className="p-5 space-y-3">

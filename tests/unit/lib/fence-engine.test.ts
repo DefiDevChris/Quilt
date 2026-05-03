@@ -376,15 +376,15 @@ describe('computeFenceAreas', () => {
       });
     });
 
-    it('should initialize assignedBlockId as undefined/null for block cells', () => {
-      const template = createTemplate({ gridRows: 2, gridCols: 2, defaultBlockSize: 10 });
-      const areas = computeFenceAreas(template, 20, 20, 96);
+  it('should not set assignedBlockId on block cells by default', () => {
+    const template = createTemplate({ gridRows: 2, gridCols: 2, defaultBlockSize: 10 });
+    const areas = computeFenceAreas(template, 20, 20, 96);
 
-      const blockCells = areas.filter((a) => a.role === 'block-cell');
-      blockCells.forEach((cell) => {
-        expect(cell.assignedBlockId).toBeUndefined();
-      });
+    const blockCells = areas.filter((a) => a.role === 'block-cell');
+    blockCells.forEach((cell) => {
+      expect(cell.assignedBlockId).toBeUndefined();
     });
+  });
   });
 
   describe('on-point setting triangles', () => {

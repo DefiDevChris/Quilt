@@ -27,5 +27,5 @@ export const retailers = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date()),
   },
-  (table) => [index('idx_retailers_slug').on(table.slug)],
+  () => [],
 );

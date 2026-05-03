@@ -29,7 +29,7 @@ function SidebarNavItem({ icon: Icon, label, href, active = false }: SidebarNavI
   return (
     <Link
       href={href}
-      className={`flex items-center gap-4 px-6 py-3 transition-quilt border-r-4 ${
+      className={`flex items-center gap-4 px-6 py-3 transition duration-200 border-r-4 ${
         active
           ? 'border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/5'
           : 'border-transparent text-[var(--color-text)]/40 hover:text-[var(--color-primary)] hover:bg-[var(--color-text)]/[0.02]'
@@ -97,13 +97,13 @@ export function AppShell({
           <div className="hidden lg:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-text)]/30">
         <Link
           href="/blog"
-          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+          className="hover:text-[var(--color-primary)] transition duration-200 cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
         >
           Blog
         </Link>
         <Link
           href="/settings"
-          className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+          className="hover:text-[var(--color-primary)] transition duration-200 cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
         >
           My Account
         </Link>
@@ -118,7 +118,7 @@ export function AppShell({
                 aria-label="User menu"
                 aria-expanded={dropdownOpen}
                 aria-haspopup="true"
-                className="w-10 h-10 rounded-full bg-[var(--color-secondary)] border-2 border-[var(--color-surface)] shadow-[var(--shadow-quilt)] overflow-hidden shrink-0 hover:opacity-80 transition-quilt"
+                className="w-10 h-10 rounded-full bg-[var(--color-secondary)] border-2 border-[var(--color-surface)] shadow-elevated overflow-hidden shrink-0 hover:opacity-80 transition duration-200"
               >
                 <Image
                   src="/mascots&avatars/corgi29.png"
@@ -146,7 +146,7 @@ export function AppShell({
                       router.push('/');
                       router.refresh();
                     }}
-                    className="w-full text-left px-4 py-2 text-sm text-[var(--color-error)] hover:bg-[var(--color-bg)] transition-quilt"
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--color-error)] hover:bg-[var(--color-bg)] transition duration-200"
                   >
                     Sign Out
                   </button>
@@ -157,7 +157,7 @@ export function AppShell({
             <div className="flex items-center gap-4">
               <Link
                 href="/auth/signup"
-                className="bg-[var(--color-primary)] text-[var(--color-text)] px-5 py-2 rounded-full text-[11px] tracking-[0.1em] font-bold uppercase hover:opacity-90 transition-quilt shadow-[var(--shadow-quilt)]"
+                className="bg-[var(--color-primary)] text-[var(--color-text)] px-5 py-2 rounded-full text-[11px] tracking-[0.1em] font-bold uppercase hover:opacity-90 transition duration-200 shadow-elevated"
               >
                 Start Designing
               </Link>
@@ -172,7 +172,7 @@ export function AppShell({
             <div className="p-8 flex flex-col h-full">
               <div className="mb-14">
                 <button
-                  className="w-full py-4 rounded-full text-[10px] font-bold uppercase tracking-[0.4em] shadow-[var(--shadow-quilt)] transition-quilt flex items-center justify-center gap-3 bg-[var(--color-primary)] text-[var(--color-text)] hover:opacity-95"
+                  className="w-full py-4 rounded-full text-[10px] font-bold uppercase tracking-[0.4em] shadow-elevated transition duration-200 flex items-center justify-center gap-3 bg-[var(--color-primary)] text-[var(--color-text)] hover:opacity-95"
                 >
                   <Plus size={14} />
                   <span>New Project</span>

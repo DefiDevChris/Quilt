@@ -3,12 +3,13 @@ import { eq, and, ilike, count, asc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { fabrics, userFabrics } from '@/db/schema';
 import { fabricSearchSchema, createFabricSchema } from '@/lib/validation';
+import { escapeLikePattern } from '@/lib/escape-like';
+import { getRequiredSession } from '@/lib/auth-helpers';
 import {
-  getRequiredSession,
   unauthorizedResponse,
   validationErrorResponse,
   errorResponse,
-} from '@/lib/auth-helpers';
+} from '@/lib/api-responses';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
@@ -41,8 +42,7 @@ export async function GET(request: NextRequest) {
       if (manufacturer) conditions.push(eq(userFabrics.manufacturer, manufacturer));
       if (colorFamily) conditions.push(eq(userFabrics.colorFamily, colorFamily));
       if (search) {
-        const escaped = search.replace(/[%_\\]/g, '\\$&');
-        conditions.push(ilike(userFabrics.name, `%${escaped}%`));
+        conditions.push(ilike(userFabrics.name, `%${escapeLikePattern(search)}%`));
       }
 
       const whereClause = and(...conditions);
@@ -82,8 +82,7 @@ export async function GET(request: NextRequest) {
     if (manufacturer) conditions.push(eq(fabrics.manufacturer, manufacturer));
     if (colorFamily) conditions.push(eq(fabrics.colorFamily, colorFamily));
     if (search) {
-      const escaped = search.replace(/[%_\\]/g, '\\$&');
-      conditions.push(ilike(fabrics.name, `%${escaped}%`));
+      conditions.push(ilike(fabrics.name, `%${escapeLikePattern(search)}%`));
     }
 
     const whereClause = and(...conditions);

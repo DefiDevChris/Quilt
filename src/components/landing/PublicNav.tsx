@@ -42,7 +42,7 @@ export default function PublicNav() {
           <Link
             key={link.href}
             href={link.href}
-            className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+            className="hover:text-[var(--color-primary)] transition duration-200 cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
           >
             {link.label}
           </Link>
@@ -59,7 +59,7 @@ export default function PublicNav() {
           <div className="flex items-center gap-4">
             <Link
               href="/auth/signin"
-              className="hover:text-[var(--color-primary)] transition-quilt cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
+              className="hover:text-[var(--color-primary)] transition duration-200 cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
             >
               Sign In
             </Link>
@@ -112,7 +112,7 @@ export default function PublicNav() {
           {isAuthenticated ? (
             <Link
               href="/dashboard"
-              className="block text-center px-6 py-2 bg-primary text-default rounded-full font-semibold hover:bg-primary-dark transition-colors duration-150"
+              className="block text-center px-6 py-2 bg-primary text-default rounded-full font-semibold hover:bg-primary-hover transition-colors duration-150"
               onClick={() => setMenuOpen(false)}
             >
               Go to Dashboard
@@ -121,7 +121,7 @@ export default function PublicNav() {
             <>
               <Link
                 href="/auth/signup"
-                className="block text-center px-6 py-2 bg-primary text-default rounded-full font-semibold hover:bg-primary-dark transition-colors duration-150"
+                className="block text-center px-6 py-2 bg-primary text-default rounded-full font-semibold hover:bg-primary-hover transition-colors duration-150"
                 onClick={() => setMenuOpen(false)}
               >
                 Start Designing

@@ -28,7 +28,7 @@ import {
   type BindingYardageResult,
   type WOF,
 } from '@/lib/yardage-utils';
-import { PIXELS_PER_INCH, DEFAULT_WASTE_MARGIN } from '@/lib/constants';
+import { PIXELS_PER_INCH, DEFAULT_WASTE_MARGIN } from '@/lib/constants/canvas';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
 
 /**

@@ -8,9 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
-      <ResponsiveShell>{children}</ResponsiveShell>
-    </div>
-  );
+  return <ResponsiveShell>{children}</ResponsiveShell>;
 }

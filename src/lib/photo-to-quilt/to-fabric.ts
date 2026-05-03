@@ -1,4 +1,4 @@
-import { PIXELS_PER_INCH } from '@/lib/constants';
+import { PIXELS_PER_INCH } from '@/lib/constants/canvas';
 
 /**
  * Minimal Pattern types duplicated here so this lib module does not import a

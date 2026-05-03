@@ -1,12 +1,12 @@
 import { NextRequest } from 'next/server';
 import { presignedUrlSchema } from '@/lib/validation';
 import { generatePresignedUrl } from '@/lib/s3';
+import { getRequiredSession } from '@/lib/auth-helpers';
 import {
-  getRequiredSession,
   unauthorizedResponse,
   validationErrorResponse,
   errorResponse,
-} from '@/lib/auth-helpers';
+} from '@/lib/api-responses';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';

@@ -16,9 +16,6 @@ import { TooltipHint } from '@/components/ui/TooltipHint';
 
 type GridGranularity = 'inch' | 'half' | 'quarter';
 
-function cn(...classes: (string | boolean | undefined)[]): string {
-  return classes.filter(Boolean).join(' ');
-}
 
 /**
  * BottomBar — viewport / grid status row.
@@ -70,8 +67,8 @@ export function BottomBar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [granularityPopoverOpen]);
 
-  const handleZoomIn = () => setZoom(Math.min(zoom * 1.25, 4));
-  const handleZoomOut = () => setZoom(Math.max(zoom / 1.25, 0.1));
+  const handleZoomIn = () => setZoom(Math.min(zoom * 1.25, 4), canvasWidth, canvasHeight);
+  const handleZoomOut = () => setZoom(Math.max(zoom / 1.25, 0.1), canvasWidth, canvasHeight);
   const handleFit = () => {
     const canvas = useCanvasStore.getState().fabricCanvas;
     if (canvas) {
@@ -79,7 +76,7 @@ export function BottomBar() {
       store.centerAndFitViewport(canvas as never, canvasWidth, canvasHeight);
     }
   };
-  const handle100 = () => setZoom(1);
+  const handle100 = () => setZoom(1, canvasWidth, canvasHeight);
 
   const toggleGrid = () => setGridSettings({ enabled: !gridSettings?.enabled });
   const toggleViewportLock = () => {
@@ -158,12 +155,11 @@ export function BottomBar() {
           <button
             type="button"
             onClick={toggleGrid}
-            className={cn(
-              'w-7 h-7 flex items-center justify-center rounded-full transition-colors duration-150',
+            className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors duration-150 ${
               gridSettings?.enabled
                 ? 'text-primary bg-primary/10'
-                : 'text-[var(--color-text)] hover:bg-[var(--color-border)]',
-            )}
+                : 'text-[var(--color-text)] hover:bg-[var(--color-border)]'
+            }`}
             aria-label="Toggle grid"
             aria-pressed={gridSettings?.enabled}
           >
@@ -180,12 +176,11 @@ export function BottomBar() {
               <button
                 type="button"
                 onClick={() => setGranularityPopoverOpen((o) => !o)}
-                className={cn(
-                  'w-7 h-7 flex items-center justify-center rounded-full transition-colors duration-150',
+                className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors duration-150 ${
                   granularityPopoverOpen
                     ? 'text-primary bg-primary/10'
-                    : 'text-[var(--color-text)] hover:bg-[var(--color-border)]',
-                )}
+                    : 'text-[var(--color-text)] hover:bg-[var(--color-border)]'
+                }`}
                 aria-label="Snap granularity settings"
                 aria-expanded={granularityPopoverOpen}
                 aria-haspopup="dialog"
@@ -223,12 +218,11 @@ export function BottomBar() {
                           setGranularityPopoverOpen(false);
                         }}
                         aria-pressed={active}
-                        className={cn(
-                          'flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg text-[12px] transition-colors duration-150',
+                        className={`flex items-center justify-between gap-2 px-2 py-1.5 rounded-lg text-[12px] transition-colors duration-150 ${
                           active
                             ? 'bg-primary/10 text-primary font-medium'
-                            : 'text-[var(--color-text)] hover:bg-[var(--color-border)]',
-                        )}
+                            : 'text-[var(--color-text)] hover:bg-[var(--color-border)]'
+                        }`}
                       >
                         <span aria-hidden="true">{label}</span>
                         <span className="text-[10px] text-[var(--color-text-dim)]">{desc}</span>
@@ -261,12 +255,11 @@ export function BottomBar() {
           <button
             type="button"
             onClick={toggleViewportLock}
-            className={cn(
-              'w-7 h-7 flex items-center justify-center rounded-full transition-colors duration-150',
+            className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors duration-150 ${
               isViewportLocked
                 ? 'text-primary bg-primary/10'
-                : 'text-[var(--color-text)] hover:bg-[var(--color-border)]',
-            )}
+                : 'text-[var(--color-text)] hover:bg-[var(--color-border)]'
+            }`}
             aria-label={isViewportLocked ? 'Unlock viewport' : 'Lock viewport'}
             aria-pressed={isViewportLocked}
           >

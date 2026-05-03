@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { TOOLTIP_DELAY_MS } from '@/lib/constants';
+const TOOLTIP_DELAY_MS = 400;
 
 interface TooltipHintProps {
   readonly name: string;

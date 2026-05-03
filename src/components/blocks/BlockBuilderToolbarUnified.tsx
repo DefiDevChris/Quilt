@@ -2,6 +2,7 @@
 
 import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { ToolDef } from '@/components/ui/ToolIcon';
+import { groupToolsByGroup } from '@/lib/tool-utils';
 import type { BlockBuilderMode } from '@/components/studio/BlockBuilderWorktable';
 
 export interface BlockBuilderCallbacks {
@@ -204,18 +205,7 @@ export function BlockBuilderToolbarUnified({
 }) {
   const tools = useBlockBuilderTools(callbacks);
 
-  // Group tools by group
-  const groups: { name: string; items: ToolDef[] }[] = [];
-  let currentGroup = '';
-  for (const tool of tools) {
-    const group = tool.group ?? 'default';
-    if (group !== currentGroup) {
-      groups.push({ name: group, items: [tool] });
-      currentGroup = group;
-    } else {
-      groups[groups.length - 1].items.push(tool);
-    }
-  }
+  const groups = groupToolsByGroup(tools);
 
   return (
     <nav

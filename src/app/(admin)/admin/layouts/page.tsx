@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { AdminModal } from '@/components/admin/AdminModal';
+import { Pagination } from '@/components/admin/Pagination';
 import { COLORS, withAlpha } from '@/lib/design-system';
 import { PaginationInfo } from '@/types/api';
 
@@ -104,7 +106,7 @@ useEffect(() => {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-[var(--color-surface)] font-medium hover:bg-primary-dark transition-colors duration-150"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-[var(--color-surface)] font-medium hover:bg-primary-hover transition-colors duration-150"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -219,7 +221,7 @@ useEffect(() => {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => setEditingLayout(layout)}
-                          className="text-sm font-medium text-primary hover:text-primary-dark transition-colors duration-150"
+                          className="text-sm font-medium text-primary hover:text-primary-hover transition-colors duration-150"
                         >
                           Edit
                         </button>
@@ -239,38 +241,11 @@ useEffect(() => {
             </table>
           </div>
 
-          {pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-dim">
-                Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of{' '}
-                {pagination.total} layouts
-              </p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() =>
-                    setPagination((prev: PaginationInfo) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
-                  }
-                  disabled={pagination.page === 1}
-                  className="px-3 py-1.5 rounded-full border border-default text-sm font-medium text-dim hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() =>
-                    setPagination((prev: PaginationInfo) => ({
-                      ...prev,
-                      page: Math.min(prev.totalPages, prev.page + 1),
-                    }))
-                  }
-                  disabled={pagination.page >= pagination.totalPages}
-                  className="px-3 py-1.5 rounded-full border border-default text-sm font-medium text-dim hover:bg-[var(--color-bg)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+          <Pagination
+            pagination={pagination}
+            onPageChange={(page) => setPagination((prev) => ({ ...prev, page }))}
+            itemName="layouts"
+          />
         </>
       )}
 
@@ -375,45 +350,12 @@ function LayoutFormModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8"
-      style={{ backgroundColor: withAlpha(COLORS.text, 0.4) }}
+    <AdminModal
+      title={isEditing ? 'Edit Layout' : 'Create New Layout'}
+      error={error}
+      onClose={onClose}
     >
-      <div className="bg-[var(--color-bg)] border border-default rounded-lg p-6 max-w-2xl w-full mx-4 space-y-5 shadow-[0_1px_2px_rgba(54,49,45,0.08)]">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-default">
-            {isEditing ? 'Edit Layout' : 'Create New Layout'}
-          </h3>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 rounded-full hover:bg-[var(--color-bg)] transition-colors duration-150"
-          >
-            <svg className="w-5 h-5 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {error && (
-          <div
-            className="rounded-lg px-4 py-3 text-sm font-medium"
-            style={{
-              backgroundColor: withAlpha(COLORS.error, 0.05),
-              color: COLORS.error,
-              borderColor: withAlpha(COLORS.error, 0.2),
-            }}
-          >
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="layout-name" className="text-sm font-medium text-default">
@@ -516,13 +458,12 @@ function LayoutFormModal({
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 text-sm font-semibold text-[var(--color-surface)] bg-primary rounded-full disabled:opacity-50 hover:bg-primary-dark transition-colors duration-150"
+              className="px-5 py-2 text-sm font-semibold text-[var(--color-surface)] bg-primary rounded-full disabled:opacity-50 hover:bg-primary-hover transition-colors duration-150"
             >
               {saving ? 'Saving...' : isEditing ? 'Update Layout' : 'Create Layout'}
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </AdminModal>
   );
 }

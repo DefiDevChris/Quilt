@@ -1,6 +1,5 @@
-import { PIXELS_PER_INCH, PIXELS_PER_CM, ZOOM_MAX } from '@/lib/constants';
-import type { UnitSystem } from '@/types/canvas';
-import type { GridSettings } from '@/types/grid';
+import { PIXELS_PER_INCH, PIXELS_PER_CM, ZOOM_MAX } from '@/lib/constants/canvas';
+import type { UnitSystem, GridGranularity, GridSettings } from '@/types/grid';
 
 const _PENCIL_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path d="M11 1L15 5L4 15L0 11Z" fill="lightyellow" stroke="black" stroke-width="0.8"/><path d="M11 1L15 5L13 7L9 3Z" fill="lightpink"/><path d="M0 11L4 15L0 15Z" fill="dimgray"/></svg>';
 const _PENCIL_CURSOR = `url("data:image/svg+xml,${encodeURIComponent(_PENCIL_SVG)}") 0 15, crosshair`;
@@ -42,6 +41,14 @@ export function getPixelsPerUnit(unitSystem: UnitSystem): number {
 export function snapToGrid(value: number, gridSizePx: number): number {
   if (gridSizePx <= 0) return value;
   return Math.round(value / gridSizePx) * gridSizePx;
+}
+
+/**
+ * Convert a grid granularity setting to its inch multiplier.
+ * inch → 1, half → 0.5, quarter → 0.25
+ */
+export function getGridGranularityMultiplier(granularity: GridGranularity): number {
+  return granularity === 'half' ? 0.5 : granularity === 'quarter' ? 0.25 : 1;
 }
 
 export function fitToScreenZoom(
@@ -183,4 +190,20 @@ export function clampPan(
   }
 
   return { panX: clampedX, panY: clampedY };
+}
+
+/**
+ * Compute uniform scale factor for dropping a block into a fence cell.
+ * Uses min(cellW/blockW, cellH/blockH) to ensure the block fits within
+ * the cell while maintaining aspect ratio.
+ */
+export function computeBlockDropScale(
+  cellWidth: number,
+  cellHeight: number,
+  blockWidth: number,
+  blockHeight: number
+): number {
+  if (blockWidth <= 0 || blockHeight <= 0) return 1;
+  if (cellWidth <= 0 || cellHeight <= 0) return 1;
+  return Math.min(cellWidth / blockWidth, cellHeight / blockHeight);
 }

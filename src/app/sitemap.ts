@@ -1,10 +1,9 @@
-export const dynamic = 'force-dynamic';
-
 import type { MetadataRoute } from 'next';
 import { db } from '@/lib/db';
 import { blogPosts } from '@/db/schema';
+import { getBaseUrl } from '@/lib/url';
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://quiltcorgi.com';
+const BASE_URL = getBaseUrl();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [

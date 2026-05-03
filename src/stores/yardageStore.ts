@@ -5,7 +5,7 @@ import type {
   BackingYardageResult,
   BindingYardageResult,
 } from '@/lib/yardage-utils';
-import { DEFAULT_WOF, DEFAULT_WASTE_MARGIN } from '@/lib/constants';
+import { DEFAULT_WOF, DEFAULT_WASTE_MARGIN } from '@/lib/constants/canvas';
 import { clamp } from '@/lib/math-utils';
 
 interface YardageStoreState {

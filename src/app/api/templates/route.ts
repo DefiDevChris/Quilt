@@ -1,62 +1,16 @@
 import { NextRequest } from 'next/server';
 import { eq, desc, and } from 'drizzle-orm';
-import { z } from 'zod';
 import { db } from '@/lib/db';
 import { layoutTemplates } from '@/db/schema';
+import { getRequiredSession } from '@/lib/auth-helpers';
 import {
-  getRequiredSession,
   unauthorizedResponse,
   validationErrorResponse,
   errorResponse,
-} from '@/lib/auth-helpers';
+} from '@/lib/api-responses';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
+import { createTemplateSchema } from '@/lib/validation';
 import type { TemplateDataPayload, UserLayoutTemplate } from '@/types/layoutTemplate';
-
-/**
- * Body schema for `POST /api/templates`. Mirrors the shape produced by
- * SaveAsTemplateModal in the Studio top bar. Strict-validates the inner
- * templateData payload so we never persist garbage.
- */
-const createTemplateSchema = z.object({
-  name: z.string().min(1).max(255),
-  category: z.string().min(1).max(100).default('custom'),
-  description: z.string().max(2000).optional(),
-  isPublished: z.boolean().optional(),
-  thumbnailSvg: z.string().max(200_000).optional(),
-  templateData: z
-    .object({
-      canvasJson: z.record(z.string(), z.unknown()),
-      canvasWidth: z.number().positive(),
-      canvasHeight: z.number().positive(),
-      layoutConfig: z
-        .object({
-          layoutType: z.string(),
-          rows: z.number().int().nonnegative(),
-          cols: z.number().int().nonnegative(),
-          blockSize: z.number().nonnegative(),
-          sashing: z
-            .object({
-              width: z.number().nonnegative(),
-              color: z.string().optional(),
-              fabricId: z.string().nullable().optional(),
-            })
-            .optional(),
-          borders: z
-            .array(
-              z.object({
-                width: z.number().nonnegative(),
-                color: z.string().optional(),
-                fabricId: z.string().nullable().optional(),
-              })
-            )
-            .optional(),
-          hasCornerstones: z.boolean().optional(),
-          bindingWidth: z.number().nonnegative().optional(),
-        })
-        .passthrough(),
-    })
-    .passthrough(),
-});
 
 interface DbLayoutTemplateRow {
   id: string;

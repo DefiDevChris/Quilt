@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import type { UnitSystem } from '@/types/canvas';
-import type { CanvasGridSettings, GridGranularity } from '@/types/grid';
+import type { UnitSystem, CanvasGridSettings, GridGranularity } from '@/types/grid';
 import {
   ZOOM_DEFAULT,
   ZOOM_MIN,
@@ -10,23 +9,25 @@ import {
   GRID_DEFAULT_SIZE,
   GRID_DEFAULT_ENABLED,
   GRID_DEFAULT_SNAP,
-} from '@/lib/constants';
+} from '@/lib/constants/canvas';
 import { DEFAULT_CANVAS } from '@/lib/design-system';
 import { clamp } from '@/lib/math-utils';
 import { fitToScreenZoom, computeViewportTransform, clampPan } from '@/lib/canvas-utils';
-import { useProjectStore } from '@/stores/projectStore';
 
 /**
  * Lower bound for zoom: fit-to-screen for the current quilt in the given
  * canvas wrapper. Falls back to the hard-coded ZOOM_MIN when dimensions are
  * unavailable. Keeps the quilt from shrinking below fully-visible.
  */
-function getDynamicMinZoom(canvas: unknown): number {
+function getDynamicMinZoom(
+  canvas: unknown,
+  canvasWidth: number,
+  canvasHeight: number,
+  unitSystem: UnitSystem
+): number {
   const fabricCanvas = canvas as { wrapperEl?: HTMLElement } | null;
   const el = fabricCanvas?.wrapperEl;
   if (!el) return ZOOM_MIN;
-  const { canvasWidth, canvasHeight } = useProjectStore.getState();
-  const { unitSystem } = useCanvasStore.getState();
   const fit = fitToScreenZoom(
     el.clientWidth,
     el.clientHeight,
@@ -65,7 +66,6 @@ interface CanvasStoreState {
   undoStack: string[];
   redoStack: string[];
   isViewportLocked: boolean;
-  blockBuilderMode: 'straight' | 'smooth';
   toolSettings: Record<
     ToolType,
     { fillColor?: string; strokeColor?: string; strokeWidth?: number }
@@ -89,7 +89,7 @@ interface CanvasStoreState {
   /** Active tab in the right-hand ContextPanel. */
   contextPanelTab: 'blocks' | 'fabrics';
 
-  setZoom: (zoom: number) => void;
+  setZoom: (zoom: number, canvasWidth: number, canvasHeight: number) => void;
   setUnitSystem: (unit: UnitSystem) => void;
   setGridSettings: (settings: Partial<CanvasGridSettings>) => void;
   setSelectedObjectIds: (ids: string[]) => void;
@@ -112,9 +112,8 @@ interface CanvasStoreState {
     canvasWidth?: number,
     canvasHeight?: number
   ) => void;
-  setBlockBuilderMode: (mode: 'straight' | 'smooth') => void;
   centerAndFitViewport: (canvas: unknown, canvasWidth: number, canvasHeight: number) => void;
-  zoomAtPoint: (newZoom: number, canvas: unknown, screenX?: number, screenY?: number) => void;
+  zoomAtPoint: (newZoom: number, canvas: unknown, canvasWidth: number, canvasHeight: number, screenX?: number, screenY?: number) => void;
   saveToolSettings: (tool: ToolType) => void;
   loadToolSettings: (tool: ToolType) => void;
   setClipboard: (objects: unknown[]) => void;
@@ -152,7 +151,6 @@ const INITIAL_STATE = {
   undoStack: [] as string[],
   redoStack: [] as string[],
   isViewportLocked: false,
-  blockBuilderMode: 'straight' as const,
   toolSettings: {} as Record<
     ToolType,
     { fillColor?: string; strokeColor?: string; strokeWidth?: number }
@@ -170,9 +168,9 @@ const INITIAL_STATE = {
 export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
   ...INITIAL_STATE,
 
-  setZoom: (zoom) => {
-    const { fabricCanvas } = get();
-    const min = getDynamicMinZoom(fabricCanvas);
+  setZoom: (zoom, canvasWidth, canvasHeight) => {
+    const { fabricCanvas, unitSystem } = get();
+    const min = getDynamicMinZoom(fabricCanvas, canvasWidth, canvasHeight, unitSystem);
     set({ zoom: clamp(zoom, min, ZOOM_MAX) });
   },
 
@@ -246,7 +244,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
     }
   },
 
-  setBlockBuilderMode: (mode) => set({ blockBuilderMode: mode }),
 
   centerAndFitViewport: (canvas: unknown, canvasWidth: number, canvasHeight: number) => {
     const { unitSystem } = get();
@@ -279,12 +276,13 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
    * recentering the canvas. Preserves the user's pan position so successive
    * zoom clicks feel smooth instead of jumping back to center.
    */
-  zoomAtPoint: (newZoom: number, canvas: unknown, screenX?: number, screenY?: number) => {
+  zoomAtPoint: (newZoom: number, canvas: unknown, canvasWidth: number, canvasHeight: number, screenX?: number, screenY?: number) => {
     const fabricCanvas = canvas as { wrapperEl: HTMLElement } | null;
     if (!fabricCanvas) return;
     const el = fabricCanvas.wrapperEl;
     if (!el) return;
-    const clamped = clamp(newZoom, getDynamicMinZoom(fabricCanvas), ZOOM_MAX);
+    const { unitSystem } = get();
+    const clamped = clamp(newZoom, getDynamicMinZoom(fabricCanvas, canvasWidth, canvasHeight, unitSystem), ZOOM_MAX);
     const px = screenX ?? el.clientWidth / 2;
     const py = screenY ?? el.clientHeight / 2;
     // Lazy import to avoid pulling fabric into the store at module load
@@ -298,8 +296,6 @@ export const useCanvasStore = create<CanvasStoreState>((set, get) => ({
       c.zoomToPoint(new fabric.Point(px, py), clamped);
       const vt = c.viewportTransform;
       if (vt) {
-        const { canvasWidth, canvasHeight } = useProjectStore.getState();
-        const { unitSystem } = get();
         const clampedPan = clampPan(
           vt[4],
           vt[5],

@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
+import { maybeSnap, cursorForTool, getGridGranularityMultiplier } from '@/lib/canvas-utils';
 import { snapToGridCorner } from '@/lib/snap-utils';
 import { showDrawingHud, hideDrawingHud, formatLength } from '@/lib/drawing-hud';
 import type { CanvasGridSettings } from '@/types/grid';
@@ -53,11 +53,10 @@ export function useDrawingTool() {
     if (!fabricCanvas) return;
 
     let isMounted = true;
-    let fabric: typeof import('fabric') | null = null;
     let cleanup: (() => void) | null = null;
 
     (async () => {
-      fabric = await import('fabric');
+      const fabric = await import('fabric');
       if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
@@ -117,13 +116,7 @@ export function useDrawingTool() {
         const s = stateRef.current;
         const { mode } = useProjectStore.getState();
         if (mode === 'free-form') {
-          const gridSizeIn =
-            s.gridSettings.size *
-            (s.gridSettings.granularity === 'half'
-              ? 0.5
-              : s.gridSettings.granularity === 'quarter'
-                ? 0.25
-                : 1);
+          const gridSizeIn = s.gridSettings.size * getGridGranularityMultiplier(s.gridSettings.granularity);
           return snapToGridCorner(pt, gridSizeIn, useCanvasStore.getState().zoom);
         }
         return {
@@ -214,8 +207,6 @@ export function useDrawingTool() {
 
       function onMouseDown(e: { e: MouseEvent }) {
         if (stateRef.current.isSpacePressed) return;
-        if (!fabric || !canvas) return;
-
         const pointer = canvas.getScenePoint(e.e);
         const { mode } = useProjectStore.getState();
 
@@ -300,7 +291,6 @@ export function useDrawingTool() {
       }
 
       function onMouseMove(e: { e: MouseEvent }) {
-        if (!fabric || !canvas) return;
         if (!isDrawing || !previewShape) return;
 
         lastEvent = e.e;
@@ -347,7 +337,6 @@ export function useDrawingTool() {
       }
 
       function onMouseUp(e?: { e?: MouseEvent }) {
-        if (!fabric || !canvas) return;
         if (!isDrawing || !previewShape) return;
         isDrawing = false;
 

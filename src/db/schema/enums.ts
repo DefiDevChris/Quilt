@@ -26,3 +26,4 @@ export const blogPostLayoutEnum = pgEnum('blog_post_layout', [
 
 export const projectModeEnum = pgEnum('project_mode', ['free-form', 'layout', 'template', 'photo-to-quilt']);
 export const gridGranularityEnum = pgEnum('grid_granularity', ['inch', 'half', 'quarter']);
+export const ingestSourceTypeEnum = pgEnum('ingest_source_type', ['awin-feed', 'scrapingbee', 'csv']);

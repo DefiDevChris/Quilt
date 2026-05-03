@@ -9,7 +9,7 @@ import { useFabricStore } from '@/stores/fabricStore';
 import { saveProject } from '@/lib/save-project';
 import { performUndo, performRedo } from '@/lib/canvas-history';
 import { isInputElement } from '@/lib/dom-utils';
-import { ZOOM_FACTOR } from '@/lib/constants';
+import { ZOOM_FACTOR } from '@/lib/constants/canvas';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
 
 export function useCanvasKeyboard() {
@@ -31,19 +31,19 @@ export function useCanvasKeyboard() {
 
         if (isCtrl && e.key === 'z' && !e.shiftKey) {
           e.preventDefault();
-          performUndo();
+          performUndo(fabricCanvas);
           return;
         }
 
         if (isCtrl && e.key === 'z' && e.shiftKey) {
           e.preventDefault();
-          performRedo();
+          performRedo(fabricCanvas);
           return;
         }
 
         if (isCtrl && e.key === 'y') {
           e.preventDefault();
-          performRedo();
+          performRedo(fabricCanvas);
           return;
         }
 
@@ -69,14 +69,16 @@ export function useCanvasKeyboard() {
         if (isCtrl && (e.key === '=' || e.key === '+')) {
           e.preventDefault();
           const { zoom, zoomAtPoint } = useCanvasStore.getState();
-          zoomAtPoint(zoom * ZOOM_FACTOR, canvas);
+          const { canvasWidth, canvasHeight } = useProjectStore.getState();
+          zoomAtPoint(zoom * ZOOM_FACTOR, canvas, canvasWidth, canvasHeight);
           return;
         }
 
         if (isCtrl && e.key === '-') {
           e.preventDefault();
           const { zoom, zoomAtPoint } = useCanvasStore.getState();
-          zoomAtPoint(zoom / ZOOM_FACTOR, canvas);
+          const { canvasWidth, canvasHeight } = useProjectStore.getState();
+          zoomAtPoint(zoom / ZOOM_FACTOR, canvas, canvasWidth, canvasHeight);
           return;
         }
 

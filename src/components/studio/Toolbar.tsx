@@ -4,6 +4,7 @@ import { useCanvasStore, type ToolType } from '@/stores/canvasStore';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { ToolDef, ToolIcon } from '@/components/ui/ToolIcon';
 import { Separator } from '@/components/ui/Separator';
+import { groupToolsByGroup } from '@/lib/tool-utils';
 import { useQuiltTools, type ToolbarCallbacks } from './ToolbarConfig';
 
 type ToolbarProps = ToolbarCallbacks;
@@ -30,18 +31,7 @@ export function Toolbar({ onOpenImageExport, onSaveBlock, onNewBlock }: ToolbarP
 
   if (!shouldRender) return null;
 
-  // Group tools by group name
-  const groups: { name: string; items: ToolDef[] }[] = [];
-  let currentGroup = '';
-  for (const tool of tools) {
-    const group = tool.group ?? 'default';
-    if (group !== currentGroup) {
-      groups.push({ name: group, items: [tool] });
-      currentGroup = group;
-    } else {
-      groups[groups.length - 1].items.push(tool);
-    }
-  }
+  const groups = groupToolsByGroup(tools);
 
   return (
     <nav

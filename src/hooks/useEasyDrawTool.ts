@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
+import { maybeSnap, cursorForTool, getGridGranularityMultiplier } from '@/lib/canvas-utils';
 import { snapToGridCorner } from '@/lib/snap-utils';
 import type { CanvasGridSettings } from '@/types/grid';
 import { CANVAS } from '@/lib/design-system';
@@ -205,13 +205,7 @@ export function useEasyDrawTool() {
             const snapToGrid = (pt: { x: number; y: number }) => {
               if (!gridSettings.snapToGrid) return pt;
               if (mode === 'free-form') {
-                const gridSizeIn =
-                  gridSettings.size *
-                  (gridSettings.granularity === 'half'
-                    ? 0.5
-                    : gridSettings.granularity === 'quarter'
-                      ? 0.25
-                      : 1);
+                const gridSizeIn = gridSettings.size * getGridGranularityMultiplier(gridSettings.granularity);
                 return snapToGridCorner(pt, gridSizeIn, zoom);
               }
               return {
@@ -292,13 +286,7 @@ export function useEasyDrawTool() {
         if (!s.gridSettings.snapToGrid) return pt;
         const { mode } = useProjectStore.getState();
         if (mode === 'free-form') {
-          const gridSizeIn =
-            s.gridSettings.size *
-            (s.gridSettings.granularity === 'half'
-              ? 0.5
-              : s.gridSettings.granularity === 'quarter'
-                ? 0.25
-                : 1);
+          const gridSizeIn = s.gridSettings.size * getGridGranularityMultiplier(s.gridSettings.granularity);
           return snapToGridCorner(pt, gridSizeIn, useCanvasStore.getState().zoom);
         }
         return {

@@ -14,6 +14,9 @@ interface BlockStoreState {
   error: string | null;
   isPanelOpen: boolean;
   selectedBlockId: string | null;
+  /** Internal abort controllers for in-flight fetches */
+  _blocksAbort: AbortController | null;
+  _userBlocksAbort: AbortController | null;
 
   setSearch: (search: string) => void;
   setCategory: (category: string) => void;
@@ -27,8 +30,6 @@ interface BlockStoreState {
   reset: () => void;
 }
 
-let blockAbortController: AbortController | null = null;
-let userBlockAbortController: AbortController | null = null;
 
 const INITIAL_STATE = {
   blocks: [] as BlockListItem[],
@@ -43,6 +44,8 @@ const INITIAL_STATE = {
   error: null as string | null,
   isPanelOpen: false,
   selectedBlockId: null as string | null,
+  _blocksAbort: null as AbortController | null,
+  _userBlocksAbort: null as AbortController | null,
 };
 
 export const useBlockStore = create<BlockStoreState>((set, get) => ({
@@ -79,8 +82,9 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
   },
 
   fetchBlocks: async () => {
-    blockAbortController?.abort();
-    blockAbortController = new AbortController();
+    get()._blocksAbort?.abort();
+    const controller = new AbortController();
+    set({ _blocksAbort: controller });
     const { search, category, page } = get();
     set({ isLoading: true, error: null });
 
@@ -93,7 +97,7 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
       params.set('scope', 'system');
 
       const res = await fetch(`/api/blocks?${params.toString()}`, {
-        signal: blockAbortController.signal,
+        signal: controller.signal,
       });
       const json = await res.json();
 
@@ -117,16 +121,16 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
   },
 
   fetchUserBlocks: async () => {
-    userBlockAbortController?.abort();
-    userBlockAbortController = new AbortController();
-    set({ isLoadingUserBlocks: true });
+    get()._userBlocksAbort?.abort();
+    const controller = new AbortController();
+    set({ _userBlocksAbort: controller, isLoadingUserBlocks: true });
     try {
       const params = new URLSearchParams();
       params.set('scope', 'user');
       params.set('limit', '100');
 
       const res = await fetch(`/api/blocks?${params.toString()}`, {
-        signal: userBlockAbortController.signal,
+        signal: controller.signal,
       });
       const json = await res.json();
 
@@ -162,10 +166,8 @@ export const useBlockStore = create<BlockStoreState>((set, get) => ({
   },
 
   reset: () => {
-    blockAbortController?.abort();
-    blockAbortController = null;
-    userBlockAbortController?.abort();
-    userBlockAbortController = null;
+    get()._blocksAbort?.abort();
+    get()._userBlocksAbort?.abort();
     set({ ...INITIAL_STATE });
   },
 }));

@@ -1,8 +1,8 @@
 import { computeCanvasGeometry } from '@/lib/canvas-utils';
 import { decimalToFraction, toMixedNumberString } from '@/lib/fraction-math';
 import { CANVAS, FENCE, GRID } from '@/lib/design-system';
-import type { UnitSystem } from '@/types/canvas';
-import type { ProjectMode } from '@/stores/projectStore';
+import type { UnitSystem } from '@/types/grid';
+import type { ProjectMode } from '@/types/project';
 import type { FenceArea } from '@/types/fence';
 
 interface GridRenderOptions {
@@ -103,7 +103,7 @@ function renderLayoutAreas(ctx: CanvasRenderingContext2D, areas: FenceArea[], zo
       ctx.setLineDash([6 / zoom, 4 / zoom]);
     }
 
-    if (area.points && area.points.length >= 3) {
+    if (area.role === 'setting-triangle') {
       ctx.beginPath();
       ctx.moveTo(area.points[0].x, area.points[0].y);
       for (let i = 1; i < area.points.length; i += 1) {
@@ -116,7 +116,7 @@ function renderLayoutAreas(ctx: CanvasRenderingContext2D, areas: FenceArea[], zo
       continue;
     }
 
-    if (area.rotation) {
+    if (area.role === 'block-cell' && area.rotation) {
       const centerX = area.x + area.width / 2;
       const centerY = area.y + area.height / 2;
       ctx.translate(centerX, centerY);

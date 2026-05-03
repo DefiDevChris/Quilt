@@ -4,14 +4,14 @@ import { db } from '@/lib/db';
 import { blogPosts, users } from '@/db/schema';
 import { blogSearchSchema, createBlogPostSchema } from '@/lib/validation';
 import { escapeLikePattern } from '@/lib/escape-like';
+import { getRequiredSession } from '@/lib/auth-helpers';
 import {
-  getRequiredSession,
   unauthorizedResponse,
   validationErrorResponse,
   errorResponse,
-} from '@/lib/auth-helpers';
+} from '@/lib/api-responses';
 import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
-import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
+import { generateSlug, appendSlugSuffix } from '@/lib/string-utils';
 import { calculateReadTime } from '@/lib/read-time';
 
 export const dynamic = 'force-dynamic';
@@ -138,43 +138,28 @@ export async function POST(request: NextRequest) {
       slug = appendSlugSuffix(slug);
     }
 
-    // Attempt insert with retry logic for race condition handling
-    let attempts = 0;
-    const maxAttempts = 3;
+    try {
+      const [created] = await db
+        .insert(blogPosts)
+        .values({
+          authorId: session.user.id,
+          title,
+          slug,
+          content: content ?? null,
+          excerpt: excerpt ?? null,
+          featuredImageUrl: featuredImageUrl ?? null,
+          category,
+          tags,
+        })
+        .returning();
 
-    while (attempts < maxAttempts) {
-      try {
-        const [created] = await db
-          .insert(blogPosts)
-          .values({
-            authorId: session.user.id,
-            title,
-            slug,
-            content: content ?? null,
-            excerpt: excerpt ?? null,
-            featuredImageUrl: featuredImageUrl ?? null,
-            category,
-            tags,
-          })
-          .returning();
-
-        return Response.json({ success: true, data: created }, { status: 201 });
-      } catch (err) {
-        // Check for unique constraint violation (PostgreSQL error code 23505)
-        if (err && typeof err === 'object' && 'code' in err && err.code === '23505') {
-          attempts++;
-          if (attempts >= maxAttempts) {
-            break;
-          }
-          // Generate new slug with different suffix and retry
-          slug = appendSlugSuffix(slug);
-        } else {
-          throw err;
-        }
+      return Response.json({ success: true, data: created }, { status: 201 });
+    } catch (err) {
+      if (err && typeof err === 'object' && 'code' in err && err.code === '23505') {
+        return errorResponse('Failed to create blog post: slug conflict', 'SLUG_CONFLICT', 409);
       }
+      throw err;
     }
-
-    return errorResponse('Failed to create blog post: slug conflict', 'SLUG_CONFLICT', 409);
   } catch (err) { console.error('[blog]', err);
     return errorResponse('Failed to create blog post', 'INTERNAL_ERROR', 500);
   }

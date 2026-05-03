@@ -155,7 +155,8 @@ export function useCanvasZoomPan() {
         const factor = Math.exp(-delta * 0.001);
         const currentZoom = useCanvasStore.getState().zoom;
         const nextZoom = currentZoom * factor;
-        useCanvasStore.getState().zoomAtPoint(nextZoom, canvas, evt.offsetX, evt.offsetY);
+        const { canvasWidth, canvasHeight } = useProjectStore.getState();
+        useCanvasStore.getState().zoomAtPoint(nextZoom, canvas, canvasWidth, canvasHeight, evt.offsetX, evt.offsetY);
       }
 
       canvas.on('mouse:down', onMouseDown as never);

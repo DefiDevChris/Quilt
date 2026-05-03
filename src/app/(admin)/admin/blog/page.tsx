@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { Pagination } from '@/components/admin/Pagination';
 import { COLORS, withAlpha } from '@/lib/design-system';
 import { PaginationInfo } from '@/types/api';
 
@@ -132,7 +133,7 @@ useEffect(() => {
         <p className="text-sm text-dim">Manage your blog content</p>
         <Link
           href="/admin/blog/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-surface font-medium hover:bg-primary-dark transition-colors duration-150"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-surface font-medium hover:bg-primary-hover transition-colors duration-150"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -194,7 +195,7 @@ useEffect(() => {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => handleTogglePublish(post.id, post.status)}
-                        className="text-sm font-medium text-primary hover:text-primary-dark transition-colors duration-150"
+                        className="text-sm font-medium text-primary hover:text-primary-hover transition-colors duration-150"
                         disabled={deletingId === post.id}
                       >
                         {post.status === 'published' ? 'Unpublish' : 'Publish'}
@@ -223,38 +224,11 @@ useEffect(() => {
         </table>
       </div>
 
-      {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-dim">
-            Showing {(pagination.page - 1) * pagination.limit + 1} to{' '}
-            {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}{' '}
-            posts
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={() =>
-                setPagination((prev: PaginationInfo) => ({ ...prev, page: Math.max(1, prev.page - 1) }))
-              }
-              disabled={pagination.page === 1}
-              className="px-3 py-1.5 rounded-full border border-default text-sm font-medium text-dim hover:bg-default disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() =>
-                setPagination((prev: PaginationInfo) => ({
-                  ...prev,
-                  page: Math.min(prev.totalPages, prev.page + 1),
-                }))
-              }
-              disabled={pagination.page >= pagination.totalPages}
-              className="px-3 py-1.5 rounded-full border border-default text-sm font-medium text-dim hover:bg-default disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        pagination={pagination}
+        onPageChange={(page) => setPagination((prev) => ({ ...prev, page }))}
+        itemName="posts"
+      />
     </div>
   );
 }

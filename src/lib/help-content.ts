@@ -58,13 +58,6 @@ export const FAQ_ENTRIES: readonly FaqEntry[] = [
       'Head to your dashboard and click "New Project." Give it a name, set your quilt size, and you\'ll land right in the design studio ready to go.',
   },
   {
-    id: 'gs-2',
-    category: 'getting-started',
-    title: 'How do I start a new quilt?',
-    content:
-      'From the dashboard, click "New Project." Set your quilt dimensions and you\'ll land in the design studio. Use the layout selector to pick a preset (Grid, Sashing, On-Point, Strip, Border + Center) or start free-form.',
-  },
-  {
     id: 'gs-3',
     category: 'getting-started',
     title: 'How do I add blocks to my quilt?',

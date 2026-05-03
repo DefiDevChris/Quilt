@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next';
-
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://quiltcorgi.com';
+import { getBaseUrl } from '@/lib/url';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -9,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/admin/', '/studio/'],
     },
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: `${getBaseUrl()}/sitemap.xml`,
   };
 }

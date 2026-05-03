@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { maybeSnap, cursorForTool } from '@/lib/canvas-utils';
+import { maybeSnap, cursorForTool, getGridGranularityMultiplier } from '@/lib/canvas-utils';
 import { snapToGridCorner } from '@/lib/snap-utils';
 import { showDrawingHud, hideDrawingHud, formatLength } from '@/lib/drawing-hud';
 import type { CanvasGridSettings } from '@/types/grid';
@@ -48,11 +48,10 @@ export function usePolygonTool() {
     if (!fabricCanvas || activeTool !== 'polygon') return;
 
     let isMounted = true;
-    let fabric: typeof import('fabric') | null = null;
     let cleanup: (() => void) | null = null;
 
     (async () => {
-      fabric = await import('fabric');
+      const fabric = await import('fabric');
       if (!isMounted) return;
       const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
 
@@ -94,13 +93,7 @@ export function usePolygonTool() {
 
         if (mode === 'free-form') {
           // Free-form: snap to grid corners at current granularity
-          const gridSizeIn =
-            s.gridSettings.size *
-            (s.gridSettings.granularity === 'half'
-              ? 0.5
-              : s.gridSettings.granularity === 'quarter'
-                ? 0.25
-                : 1);
+          const gridSizeIn = s.gridSettings.size * getGridGranularityMultiplier(s.gridSettings.granularity);
           return snapToGridCorner({ x, y }, gridSizeIn, useCanvasStore.getState().zoom);
         } else {
           // Layout/Template: use existing snap logic
@@ -112,7 +105,7 @@ export function usePolygonTool() {
       }
 
       function addPreviewDot(x: number, y: number, emphasize = false) {
-        if (!fabric || !canvas) return;
+        if (!canvas) return;
         const z = zoom();
         const r = (emphasize ? 8 : 5) / z;
         const dot = new fabric.Circle({
@@ -152,7 +145,7 @@ export function usePolygonTool() {
         y2: number,
         dashArray?: number[]
       ) {
-        if (!fabric || !canvas) return;
+        if (!canvas) return;
         const z = zoom();
         const scaledDash = dashArray ? dashArray.map((d) => d / z) : undefined;
         const line = new fabric.Line([x1, y1, x2, y2], {
@@ -179,7 +172,7 @@ export function usePolygonTool() {
       }
 
       function completePolygon() {
-        if (!fabric || !canvas || points.length < 3) {
+        if (!canvas || points.length < 3) {
           clearPreview();
           points = [];
           isDrawing = false;
@@ -223,7 +216,7 @@ export function usePolygonTool() {
 
       function onMouseDown(e: { e: MouseEvent }) {
         if (stateRef.current.isSpacePressed) return;
-        if (!fabric || !canvas) return;
+        if (!canvas) return;
 
         const pointerRaw = canvas.getScenePoint(e.e);
         const pointer =
@@ -305,7 +298,7 @@ export function usePolygonTool() {
       }
 
       function onMouseMove(e: { e: MouseEvent }) {
-        if (!fabric || !canvas || !isDrawing || points.length === 0) return;
+        if (!canvas || !isDrawing || points.length === 0) return;
 
         const pointerRaw = canvas.getScenePoint(e.e);
         lastPointer = pointerRaw;

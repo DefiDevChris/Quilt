@@ -4,23 +4,14 @@ import { db } from '@/lib/db';
 import { projects } from '@/db/schema';
 import { updateProjectSchema } from '@/lib/validation';
 import { uploadCanvasDataToS3, downloadCanvasDataFromS3 } from '@/lib/s3';
+import { getRequiredSession } from '@/lib/auth-helpers';
 import {
-  getRequiredSession,
   unauthorizedResponse,
   notFoundResponse,
   validationErrorResponse,
   errorResponse,
-} from '@/lib/auth-helpers';
+} from '@/lib/api-responses';
 import { checkRateLimit, API_RATE_LIMITS, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
-
-async function getOwnedProject(projectId: string, userId: string) {
-  const [project] = await db
-    .select()
-    .from(projects)
-    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
-    .limit(1);
-  return project ?? null;
-}
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getRequiredSession();
@@ -30,7 +21,11 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   if (!rl.allowed) return rateLimitResponse(rl.retryAfterMs);
 
   const { id } = await params;
-  const project = await getOwnedProject(id, session.user.id);
+  const [project] = await db
+    .select()
+    .from(projects)
+    .where(and(eq(projects.id, id), eq(projects.userId, session.user.id)))
+    .limit(1);
 
   if (!project) {
     return notFoundResponse('Project not found.');
@@ -62,7 +57,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   if (!session) return unauthorizedResponse();
 
   const { id } = await params;
-  const project = await getOwnedProject(id, session.user.id);
+  const [project] = await db
+    .select()
+    .from(projects)
+    .where(and(eq(projects.id, id), eq(projects.userId, session.user.id)))
+    .limit(1);
 
   if (!project) {
     return notFoundResponse('Project not found.');
@@ -164,7 +163,11 @@ export async function DELETE(
   if (!session) return unauthorizedResponse();
 
   const { id } = await params;
-  const project = await getOwnedProject(id, session.user.id);
+  const [project] = await db
+    .select()
+    .from(projects)
+    .where(and(eq(projects.id, id), eq(projects.userId, session.user.id)))
+    .limit(1);
 
   if (!project) {
     return notFoundResponse('Project not found.');

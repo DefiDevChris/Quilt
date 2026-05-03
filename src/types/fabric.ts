@@ -13,6 +13,8 @@ export interface FabricListItem {
   retailerId: string | null;
   retailerName: string | null;
   deeplinkOverride: string | null;
-  pricePerYard: number | null;
+  pricePerYard: string | null;
   isActive: boolean;
+  isAffiliate: boolean;
+  isInStockAtRetailer: boolean | null;
 }

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useProjectStore } from '@/stores/projectStore';
-import { AUTO_SAVE_INTERVAL_MS } from '@/lib/constants';
+import { AUTO_SAVE_INTERVAL_MS } from '@/lib/constants/canvas';
 import { saveProject, cancelSaveProject } from '@/lib/save-project';
 
 export function useAutoSave() {

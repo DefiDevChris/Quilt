@@ -3,12 +3,13 @@ import { eq, and, ilike, or, count, asc, sql } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blocks } from '@/db/schema';
 import { blockSearchSchema, createBlockSchema } from '@/lib/validation';
+import { escapeLikePattern } from '@/lib/escape-like';
+import { getRequiredSession } from '@/lib/auth-helpers';
 import {
-  getRequiredSession,
   unauthorizedResponse,
   validationErrorResponse,
   errorResponse,
-} from '@/lib/auth-helpers';
+} from '@/lib/api-responses';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
 import { checkRateLimit, API_RATE_LIMITS, rateLimitResponse } from '@/lib/rate-limit';
 
@@ -58,8 +59,7 @@ export async function GET(request: NextRequest) {
 
     // Search filter (name + tags using ILIKE)
     if (search) {
-      const escaped = search.replace(/[%_\\]/g, '\\$&');
-      const searchPattern = `%${escaped}%`;
+      const searchPattern = `%${escapeLikePattern(search)}%`;
       conditions.push(
         or(
           ilike(blocks.name, searchPattern),
@@ -98,7 +98,6 @@ export async function GET(request: NextRequest) {
   const blocksResponse = blockRows.map((block) => {
     const fjd = block.fabricJsData as Record<string, unknown> | null;
     const isPhoto = fjd !== null && typeof fjd === 'object' && fjd.type === 'photo-block';
-    const blockType = block.isDefault ? 'svg' : isPhoto ? 'photo' : 'custom';
     const photoUrl = isPhoto && fjd && typeof fjd.imageUrl === 'string' ? fjd.imageUrl : null;
 
     return {
@@ -111,7 +110,6 @@ export async function GET(request: NextRequest) {
       svgData: isPhoto ? null : (block.svgData ?? null),
       photoUrl,
       isDefault: block.isDefault,
-      blockType,
       widthIn: Number(block.widthIn) || 12,
       heightIn: Number(block.heightIn) || 12,
     };

@@ -12,18 +12,7 @@
  *   - Hover opacity feedback
  */
 
-import { COLORS } from './design-system';
-
-// ── Theme tokens (aligned with QuiltCorgi design system) ──
-
-/** Convert a hex color (#rrggbb) to rgba string with alpha for Canvas 2D. */
-function toRgba(hex: string, alpha: number): string {
-  const sanitized = hex.replace('#', '');
-  const r = parseInt(sanitized.substring(0, 2), 16);
-  const g = parseInt(sanitized.substring(2, 4), 16);
-  const b = parseInt(sanitized.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
+import { COLORS, withAlpha } from './design-system';
 
 const CONTROL_COLOR = '#FFFFFF';
 const CONTROL_BORDER = '#7CB9E8'; // primary sky blue
@@ -62,7 +51,7 @@ function renderCornerHandle(
   ctx.translate(left, top);
 
   // Drop shadow
-  ctx.shadowColor = toRgba(COLORS.text, 0.15);
+  ctx.shadowColor = withAlpha(COLORS.text, 0.15);
   ctx.shadowBlur = 4;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 1;
@@ -95,7 +84,7 @@ function renderMidpointHandle(
   ctx.save();
   ctx.translate(left, top);
 
-  ctx.shadowColor = toRgba(COLORS.text, 0.1);
+  ctx.shadowColor = withAlpha(COLORS.text, 0.1);
   ctx.shadowBlur = 3;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 1;
@@ -127,7 +116,7 @@ function renderMidpointHandleVertical(
   ctx.save();
   ctx.translate(left, top);
 
-  ctx.shadowColor = toRgba(COLORS.text, 0.1);
+  ctx.shadowColor = withAlpha(COLORS.text, 0.1);
   ctx.shadowBlur = 3;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 1;
@@ -168,7 +157,7 @@ function renderRotationHandle(
   ctx.stroke();
 
   // Circle handle
-  ctx.shadowColor = toRgba(COLORS.text, 0.2);
+  ctx.shadowColor = withAlpha(COLORS.text, 0.2);
   ctx.shadowBlur = 4;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 1;

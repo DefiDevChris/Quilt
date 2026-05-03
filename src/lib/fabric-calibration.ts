@@ -1,25 +1,23 @@
 /**
  * Fabric Scanner Calibration — Pure computation for fabric image scale calibration.
  *
- * Calculates pixels-per-inch (PPI) from user input (manual DPI, ruler reference,
- * or scanner preset) and provides scale factors for accurate fabric rendering.
+ * Calculates pixels-per-inch (PPI) from user input (manual DPI or scanner preset)
+ * and provides scale factors for accurate fabric rendering.
  */
 
-import { PIXELS_PER_INCH } from '@/lib/constants';
+import { PIXELS_PER_INCH } from '@/lib/constants/canvas';
 
 export const MIN_PPI = 72;
 export const MAX_PPI = 1200;
 export const SCANNER_PRESETS = ['150', '200', '300', '600'] as const;
 
-export type CalibrationMethod = 'manual-dpi' | 'scanner-preset' | 'ruler-reference';
+export type CalibrationMethod = 'manual-dpi' | 'scanner-preset';
 export type ScannerPreset = (typeof SCANNER_PRESETS)[number];
 
 export interface CalibrationInput {
   readonly method: CalibrationMethod;
   readonly manualDpi?: number;
   readonly scannerPreset?: ScannerPreset;
-  readonly rulerLengthPixels?: number;
-  readonly rulerLengthInches?: number;
 }
 
 export interface CalibrationResult {

@@ -122,7 +122,6 @@ export function useShadeAssignment() {
     if (active && (active as Record<string, unknown>).__isBlockGroup === true) return true;
     const actives = canvas.getActiveObjects();
     return actives.some((obj) => (obj as Record<string, unknown>).__isBlockGroup === true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fabricCanvas, selectedObjectIds]);
 
   /**
@@ -131,8 +130,7 @@ export function useShadeAssignment() {
   const hasShadeData = useMemo(() => {
     const descriptors = canvasToDescriptors();
     return hasShadeMetadata(descriptors);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fabricCanvas, selectedObjectIds]);
+  }, [fabricCanvas, selectedObjectIds, canvasToDescriptors]);
 
   /**
    * Get shade breakdown for the given scope.

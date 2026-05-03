@@ -116,27 +116,30 @@
            hover:border-[var(--color-primary-hover)] hover:bg-[var(--color-surface)];
   }
 
-  /* ── Hover utilities via primary-hover token ────────────────────────────── */
-
-  .hover\:bg-primary-dark:hover {
-    background-color: var(--color-primary-hover);
-  }
-
-  .hover\:text-primary-dark:hover {
-    color: var(--color-primary-hover);
-  }
-
   /* ── Cards ──────────────────────────────────────────────────────────────── */
 
   .card {
     @apply rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] shadow-elevated;
   }
 
-  /* ── Panels ─────────────────────────────────────────────────────────────── */
-
   /* ── Studio-specific layout atoms ──────────────────────────────────────── */
 
   .studio-layout {
     @apply relative h-screen overflow-hidden;
   }
+}
+
+/* ─── Semantic aliases (used across admin + public pages) ─────────────── */
+
+@utility bg-default {
+  background-color: var(--color-bg);
+}
+@utility text-default {
+  color: var(--color-text);
+}
+@utility border-default {
+  border-color: var(--color-border);
+}
+@utility text-dim {
+  color: var(--color-text-dim);
 }

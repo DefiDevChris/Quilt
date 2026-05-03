@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, Eraser } from 'lucide-react';
+import {
+  Save,
+  Eraser,
+  Menu,
+  ChevronLeft,
+} from 'lucide-react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -10,198 +15,13 @@ import { useLayoutStore } from '@/stores/layoutStore';
 
 import { CommandPalette } from '@/components/studio/CommandPalette';
 import { SaveAsTemplateModal } from '@/components/studio/SaveAsTemplateModal';
+import { EditPreviewToggle } from '@/components/studio/EditPreviewToggle';
+import { ReferenceImageToggle } from '@/components/studio/ReferenceImageToggle';
+import { ModeChip } from '@/components/studio/ModeChip';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
 import { clearAllFabricsOnCanvas } from '@/lib/canvas-clear-fabrics';
-
-function formatTimestamp(date: Date | null): string {
-  if (!date) return '';
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const seconds = Math.floor(diff / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-
-  if (seconds < 60) return 'just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  return date.toLocaleDateString();
-}
-
-/**
- * Toggle between edit mode (full fence visible, blocks selectable) and
- * preview mode (fence faded, blocks locked, WYSIWYG view).
- * Only visible when a layout has been applied.
- */
-function EditPreviewToggle() {
-  const hasAppliedLayout = useLayoutStore((s) => s.hasAppliedLayout);
-  const previewMode = useLayoutStore((s) => s.previewMode);
-
-  if (!hasAppliedLayout) return null;
-
-  return (
-    <TooltipHint
-      name={previewMode ? 'Switch to Edit Mode' : 'Switch to Preview Mode'}
-      description={
-        previewMode
-          ? 'Show fence areas and enable editing'
-          : 'Hide fence overlay for a clean preview'
-      }
-    >
-      <button
-        type="button"
-        onClick={() => useLayoutStore.getState().setPreviewMode(!previewMode)}
-        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-          previewMode
-            ? 'bg-primary/12 text-primary ring-1 ring-primary/30'
-            : 'text-[var(--color-text-dim)]/50 hover:text-[var(--color-text)] hover:bg-[var(--color-border)]'
-        }`}
-        aria-label={previewMode ? 'Switch to edit mode' : 'Switch to preview mode'}
-        aria-pressed={previewMode}
-      >
-        {previewMode ? (
-          /* Eye-off icon for preview mode (fence hidden) */
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M3 3L17 17M10 5C13.9 5 16.8 8 17.8 10C17.3 11 16.5 12.3 15.3 13.3M14 14C12.9 14.7 11.5 15 10 15C6.1 15 3.2 12 2.2 10C2.7 9 3.5 7.7 4.7 6.7"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ) : (
-          /* Eye icon for edit mode (fence visible) */
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M2.2 10C3.2 8 6.1 5 10 5C13.9 5 16.8 8 17.8 10C16.8 12 13.9 15 10 15C6.1 15 3.2 12 2.2 10Z"
-              stroke="currentColor"
-              strokeWidth="1.4"
-            />
-            <circle cx="10" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.4" />
-          </svg>
-        )}
-      </button>
-    </TooltipHint>
-  );
-}
-
-function ReferenceImageToggle() {
-  const referenceImageUrl = useCanvasStore((s) => s.referenceImageUrl);
-  const showReferencePanel = useCanvasStore((s) => s.showReferencePanel);
-  const setShowReferencePanel = useCanvasStore((s) => s.setShowReferencePanel);
-
-  if (!referenceImageUrl) return null;
-
-  return (
-    <TooltipHint
-      name={showReferencePanel ? 'Hide Reference Photo' : 'Show Reference Photo'}
-      description="Side-by-side view of the original photo used in Photo to Design"
-    >
-      <button
-        type="button"
-        onClick={() => setShowReferencePanel(!showReferencePanel)}
-        className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-          showReferencePanel
-            ? 'bg-primary/12 text-primary ring-1 ring-primary/30'
-            : 'text-[var(--color-text-dim)]/50 hover:text-[var(--color-text)] hover:bg-[var(--color-border)]'
-        }`}
-        aria-label={showReferencePanel ? 'Hide reference photo' : 'Show reference photo'}
-        aria-pressed={showReferencePanel}
-      >
-        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-          <rect
-            x="1"
-            y="3"
-            width="8"
-            height="14"
-            rx="1.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-          />
-          <rect
-            x="11"
-            y="3"
-            width="8"
-            height="14"
-            rx="1.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-          />
-          <circle cx="15" cy="8" r="1.5" stroke="currentColor" strokeWidth="1" />
-          <path
-            d="M11 14L13 11L15 13L17 10L19 12"
-            stroke="currentColor"
-            strokeWidth="0.8"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-    </TooltipHint>
-  );
-}
-
-/**
- * Read-only chip showing the current mode and grid summary so the user
- * always knows which locked mode they are in.
- */
-function ModeChip() {
-  const layoutType = useLayoutStore((s) => s.layoutType);
-  const rows = useLayoutStore((s) => s.rows);
-  const cols = useLayoutStore((s) => s.cols);
-  const canvasWidth = useProjectStore((s) => s.canvasWidth);
-  const canvasHeight = useProjectStore((s) => s.canvasHeight);
-  const projectMode = useProjectStore((s) => s.mode);
-
-  const sizeLabel = `${canvasWidth}″×${canvasHeight}″`;
-
-  if (projectMode === 'free-form') {
-    return (
-      <span
-        className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75"
-        title={`Mode: Freeform · ${sizeLabel}`}
-      >
-        <span className="font-semibold text-[var(--color-text)]">Freeform</span>
-        <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
-      </span>
-    );
-  }
-
-  if (projectMode === 'template') {
-    return (
-      <span
-        className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75"
-        title={`Mode: Template · ${sizeLabel}`}
-      >
-        <span className="font-semibold text-[var(--color-text)]">Template</span>
-        <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
-      </span>
-    );
-  }
-
-  // Layout mode
-  const MODE_LABELS: Record<string, string> = {
-    'free-form': 'Free-form',
-    medallion: 'Medallion',
-    'on-point': 'On-point',
-    strippy: 'Strippy',
-    sashing: 'Sashing',
-    grid: 'Grid',
-  };
-  const modeLabel = MODE_LABELS[layoutType] ?? 'Grid';
-  const gridLabel = `${rows}×${cols}`;
-
-  return (
-    <span
-      className="rounded-full border border-[var(--color-border)]/40 bg-[var(--color-surface)] px-3 py-1 text-[12px] leading-[18px] text-[var(--color-text)]/75"
-      title={`Mode: Layout · ${modeLabel} · ${gridLabel} · ${sizeLabel}`}
-    >
-      <span className="font-semibold text-[var(--color-text)]">Layout</span>
-      <span className="text-[var(--color-text-dim)]"> · {modeLabel} · {gridLabel}</span>
-      <span className="text-[var(--color-text-dim)]"> · {sizeLabel}</span>
-    </span>
-  );
-}
+import { formatTimestamp } from '@/lib/date-format';
 
 interface StudioTopBarProps {
   readonly onOpenImageExport?: () => void;
@@ -365,14 +185,7 @@ export function StudioTopBar({
               className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-text-dim)]/50 hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors duration-150"
               aria-label="Open command palette"
             >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                <path
-                  d="M3 5H17M3 10H17M3 15H17"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              </svg>
+              <Menu size={18} />
             </button>
           </TooltipHint>
           <TooltipHint
@@ -385,15 +198,7 @@ export function StudioTopBar({
               className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[14px] leading-[20px] text-[var(--color-text)]/70 hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
               aria-label="Back to Dashboard"
             >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path
-                  d="M9 3L5 7L9 11"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <ChevronLeft size={14} />
               Dashboard
             </button>
           </TooltipHint>

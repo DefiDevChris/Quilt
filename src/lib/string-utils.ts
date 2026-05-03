@@ -4,6 +4,8 @@
  * Pure functions — no dependencies.
  */
 
+import { randomBytes } from 'crypto';
+
 /**
  * Options for sanitizing filenames.
  */
@@ -71,4 +73,22 @@ export function sanitizeFilename(name: string, options: SanitizeFilenameOptions 
   }
 
   return result.toLowerCase();
+}
+
+export function generateSlug(title: string): string {
+  const slug = title
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  return slug.slice(0, 200);
+}
+
+export function appendSlugSuffix(slug: string): string {
+  const suffix = randomBytes(2).toString('hex');
+  const base = slug.slice(0, 195);
+  return `${base}-${suffix}`;
 }

@@ -7,44 +7,14 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import { snapToCell, snapToGridCorner } from '@/lib/snap-utils';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
-import { computeBlockDropScale } from '@/lib/block-drop-scale';
-import {
-  findFenceAreaAtPoint,
-  computeFenceAreas,
-  layoutSourceToTemplate,
-} from '@/lib/fence-engine';
-import { getPixelsPerUnit } from '@/lib/canvas-utils';
+import { computeBlockDropScale } from '@/lib/canvas-utils';
+import { findFenceAreaAtPoint } from '@/lib/fence-engine';
+import { getGridGranularityMultiplier } from '@/lib/canvas-utils';
+import { getComputedLayoutAreas } from '@/lib/layout-areas';
 import { CANVAS, DEFAULT_CANVAS } from '@/lib/design-system';
 
 const BLOCK_HIGHLIGHT_COLOR = CANVAS.blockHighlight;
 
-function getComputedLayoutAreas() {
-  const layoutState = useLayoutStore.getState();
-  const projectState = useProjectStore.getState();
-  const { unitSystem } = useCanvasStore.getState();
-  const template = layoutSourceToTemplate({
-    layoutType: layoutState.layoutType,
-    selectedPresetId: layoutState.selectedPresetId,
-    rows: layoutState.rows,
-    cols: layoutState.cols,
-    blockSize: layoutState.blockSize,
-    sashing: layoutState.sashing,
-    borders: layoutState.borders,
-    hasCornerstones: layoutState.hasCornerstones,
-    bindingWidth: layoutState.bindingWidth,
-  });
-
-  if (!template) {
-    return [];
-  }
-
-  return computeFenceAreas(
-    template,
-    projectState.canvasWidth,
-    projectState.canvasHeight,
-    getPixelsPerUnit(unitSystem)
-  );
-}
 
 /**
  * Hook for handling block drops onto the Fabric.js canvas.
@@ -204,13 +174,13 @@ export function useBlockDrop() {
 
         if (mode === 'layout' || mode === 'template') {
           // Layout/Template mode: snap to cell
-          if (targetArea) {
-            const cellX = targetArea.x;
-            const cellY = targetArea.y;
-            const cellW = targetArea.width;
-            const cellH = targetArea.height;
-            const cellRotation = targetArea.rotation ?? 0;
-            const targetCellId = targetArea.id;
+      if (targetArea) {
+        const cellX = targetArea.x;
+        const cellY = targetArea.y;
+        const cellW = targetArea.width;
+        const cellH = targetArea.height;
+        const cellRotation = targetArea.role === 'block-cell' ? (targetArea.rotation ?? 0) : 0;
+        const targetCellId = targetArea.id;
 
             // Remove existing block in this cell (only if undo can protect the action)
             if (targetCellId && undoSaved) {
@@ -271,13 +241,7 @@ export function useBlockDrop() {
           groupMeta.__blockId = blockId;
 
           // Use configurable grid granularity for snapping
-          const gridSizeIn =
-            gridSettings.size *
-            (gridSettings.granularity === 'half'
-              ? 0.5
-              : gridSettings.granularity === 'quarter'
-                ? 0.25
-                : 1);
+          const gridSizeIn = gridSettings.size * getGridGranularityMultiplier(gridSettings.granularity);
           const { canvasWidth, canvasHeight } = useProjectStore.getState();
           const { blockSize } = useLayoutStore.getState();
           const { getPixelsPerUnit } = await import('@/lib/canvas-utils');

@@ -7,7 +7,7 @@
  * for these events and renders the overlay.
  */
 
-import type { UnitSystem } from '@/types/canvas';
+import type { UnitSystem } from '@/types/grid';
 import { getPixelsPerUnit } from '@/lib/canvas-utils';
 
 export interface DrawingHudDetail {

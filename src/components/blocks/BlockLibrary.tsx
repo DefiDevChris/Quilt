@@ -164,7 +164,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                     type="button"
                     onClick={() => useBlockStore.getState().fetchBlocks()}
                     aria-label="Retry loading blocks"
-                    className="mt-1 rounded-full bg-primary px-3 py-1 text-[12px] leading-[18px] font-semibold text-default hover:bg-primary-dark transition-colors"
+                    className="mt-1 rounded-full bg-primary px-3 py-1 text-[12px] leading-[18px] font-semibold text-default hover:bg-primary-hover transition-colors"
                   >
                     Try again
                   </button>
@@ -226,7 +226,7 @@ export function BlockLibrary({ onBlockDragStart, onOpenDrafting }: BlockLibraryP
                 <button
                   type="button"
                   onClick={onOpenDrafting}
-                  className="w-full rounded-full bg-primary px-4 py-2 text-[14px] leading-[20px] text-default shadow-brand transition-colors duration-150 hover:bg-primary-dark"
+                  className="w-full rounded-full bg-primary px-4 py-2 text-[14px] leading-[20px] text-default shadow-brand transition-colors duration-150 hover:bg-primary-hover"
                 >
                   + Draft new block
                 </button>

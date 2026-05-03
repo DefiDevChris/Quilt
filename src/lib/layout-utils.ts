@@ -43,6 +43,31 @@ export interface LayoutConfig {
   borders: BorderConfig[];
 }
 
+export interface LayoutDimensions {
+  width: number;
+  height: number;
+  innerWidth: number;
+  innerHeight: number;
+  cellWidth: number;
+  cellHeight: number;
+  borderTotal: number;
+  perimeter: number;
+  bindingYardage: number;
+  rows: number;
+  cols: number;
+}
+
+export interface LayoutDimensionsOptions {
+  type: LayoutType;
+  rows: number;
+  cols: number;
+  blockSize: number;
+  sashingWidth: number;
+  borders: BorderConfig[];
+  bindingWidth: number;
+  hasCornerstones?: boolean;
+}
+
 export interface LayoutCell {
   row: number;
   col: number;
@@ -469,5 +494,74 @@ export function computeBorderStrips(
   }
 
   return strips;
+}
+
+function computeInnerDimensions(opts: {
+  type: LayoutType;
+  rows: number;
+  cols: number;
+  blockSize: number;
+  sashingWidth: number;
+}): { innerW: number; innerH: number; cellW: number; cellH: number } {
+  const { type, rows, cols, blockSize, sashingWidth } = opts;
+  let innerW: number;
+  let innerH: number;
+  let cellW = blockSize;
+  let cellH = blockSize;
+
+  if (type === 'on-point') {
+    const diagonal = blockSize * Math.SQRT2;
+    innerW = cols * diagonal;
+    innerH = rows * diagonal;
+    cellW = diagonal;
+    cellH = diagonal;
+  } else if (type === 'sashing') {
+    innerW = cols * blockSize + Math.max(0, cols - 1) * sashingWidth;
+    innerH = rows * blockSize + Math.max(0, rows - 1) * sashingWidth;
+  } else if (type === 'strippy') {
+    const blockCols = Math.ceil(cols / 2);
+    const stripCols = Math.floor(cols / 2);
+    innerW = blockCols * blockSize + stripCols * sashingWidth;
+    innerH = rows * blockSize;
+  } else if (type === 'medallion') {
+    innerW = blockSize;
+    innerH = blockSize;
+  } else {
+    innerW = cols * blockSize;
+    innerH = rows * blockSize;
+  }
+
+  return { innerW, innerH, cellW, cellH };
+}
+
+function roundTo2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
+export function computeLayoutDimensions(opts: LayoutDimensionsOptions): LayoutDimensions {
+  const { type, rows, cols, blockSize, sashingWidth, borders, bindingWidth } = opts;
+  const { innerW, innerH, cellW, cellH } = computeInnerDimensions({ type, rows, cols, blockSize, sashingWidth });
+
+  let borderTotal = 0;
+  for (const b of borders) borderTotal += b.width * 2;
+
+  const totalW = innerW + borderTotal + bindingWidth * 2;
+  const totalH = innerH + borderTotal + bindingWidth * 2;
+  const perimeter = 2 * (totalW + totalH);
+  const bindingYardage = Math.ceil((perimeter / 36) * 2) / 2;
+
+  return {
+    width: roundTo2(totalW),
+    height: roundTo2(totalH),
+    innerWidth: roundTo2(innerW),
+    innerHeight: roundTo2(innerH),
+    cellWidth: roundTo2(cellW),
+    cellHeight: roundTo2(cellH),
+    borderTotal: roundTo2(borderTotal),
+    perimeter: roundTo2(perimeter),
+    bindingYardage,
+    rows,
+    cols,
+  };
 }
 

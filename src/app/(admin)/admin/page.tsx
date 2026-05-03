@@ -5,7 +5,7 @@ import { fabrics } from '@/db/schema/fabrics';
 import { users } from '@/db/schema/users';
 import { count, eq, desc } from 'drizzle-orm';
 import Link from 'next/link';
-import { COLORS, COLORS_HOVER, SHADOW, withAlpha } from '@/lib/design-system';
+import { COLORS, SHADOW, withAlpha } from '@/lib/design-system';
 
 async function getStats() {
   const [blockCount, blogCount, fabricCount, userCount] = await Promise.all([
@@ -134,10 +134,7 @@ export default async function AdminDashboardPage() {
           <h3 className="text-sm font-semibold text-[var(--color-text-dim)]">Recent Blog Posts</h3>
           <Link
             href="/admin/blog"
-            className="text-xs font-medium"
-            style={{ color: COLORS.primary }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = COLORS_HOVER.primary)}
-            onMouseLeave={(e) => (e.currentTarget.style.color = COLORS.primary)}
+            className="text-xs font-medium text-primary hover:text-primary-hover transition-colors duration-150"
           >
             View all
           </Link>
@@ -151,10 +148,7 @@ export default async function AdminDashboardPage() {
                 <div className="flex-1 min-w-0">
                   <Link
                     href={`/admin/blog/${post.id}`}
-                    className="text-sm font-medium truncate"
-                    style={{ color: 'var(--color-text)' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text)')}
+                    className="text-sm font-medium truncate text-default hover:text-primary transition-colors duration-150"
                   >
                     {post.title}
                   </Link>
@@ -221,12 +215,7 @@ function QuickActionCard({
       className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-5 hover:bg-[var(--color-bg)] transition-colors duration-150 block group"
     >
       <div className="flex items-start gap-3">
-        <div
-          className="transition-colors duration-150"
-          style={{ color: 'var(--color-text-dim)' }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.primary)}
-          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-dim)')}
-        >
+        <div className="text-dim group-hover:text-primary transition-colors duration-150">
           {icon}
         </div>
         <div>

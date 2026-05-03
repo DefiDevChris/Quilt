@@ -1,4 +1,4 @@
-import type { UnitSystem } from './canvas';
+import type { UnitSystem, GridSettings } from './grid';
 
 /**
  * One-shot setup payload written by the New Project wizard into
@@ -19,24 +19,34 @@ export interface Worktable {
   order: number;
 }
 
+export type ProjectMode = 'free-form' | 'layout' | 'template' | 'photo-to-quilt';
+
+export interface FabricPreset {
+  readonly id: string;
+  readonly name: string;
+  readonly imageUrl: string;
+}
+
 export interface Project {
   id: string;
   userId: string;
   name: string;
   description: string | null;
-  mode: 'free-form' | 'layout' | 'template' | 'photo-to-quilt';
+  mode: ProjectMode;
   canvasData: Record<string, unknown> & {
     initialSetup?: InitialSetupConfig;
   };
   worktables: Worktable[];
   unitSystem: UnitSystem;
-  gridSettings: import('./grid').GridSettings;
-  fabricPresets?: Array<{ id: string; name: string; imageUrl: string }>;
+  gridSettings: GridSettings;
+  gridGranularity?: 'inch' | 'half' | 'quarter' | null;
+  fabricPresets?: FabricPreset[];
   canvasWidth: number;
   canvasHeight: number;
   thumbnailUrl: string | null;
-  /** Which worktable mode is active: 'quilt' (main canvas) or 'block-builder'. */
-  activeWorktable?: 'quilt' | 'block-builder';
+  version: number;
+  canvasDataS3Key?: string | null;
+  worktablesS3Key?: string | null;
   lastSavedAt: Date;
   createdAt: Date;
   updatedAt: Date;

@@ -1,4 +1,4 @@
-import type { RGB } from '@/lib/color-math';
+import { hexToRgb, type RGB } from '@/lib/color-math';
 
 export type { RGB };
 
@@ -9,23 +9,6 @@ export function rgbToHex(color: RGB) {
       .padStart(2, '0');
 
   return `#${toHex(color.r)}${toHex(color.g)}${toHex(color.b)}`.toUpperCase();
-}
-
-export function hexToRgb(hex: string): RGB {
-  const clean = hex.replace('#', '');
-  const full =
-    clean.length === 3
-      ? clean
-          .split('')
-          .map((char) => char + char)
-          .join('')
-      : clean;
-
-  return {
-    r: parseInt(full.slice(0, 2), 16),
-    g: parseInt(full.slice(2, 4), 16),
-    b: parseInt(full.slice(4, 6), 16),
-  };
 }
 
 export function colorDistance(a: RGB, b: RGB) {

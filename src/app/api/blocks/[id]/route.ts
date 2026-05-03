@@ -2,13 +2,13 @@ import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blocks } from '@/db/schema';
+import { getRequiredSession } from '@/lib/auth-helpers';
 import {
-  getRequiredSession,
   unauthorizedResponse,
   forbiddenResponse,
   notFoundResponse,
   errorResponse,
-} from '@/lib/auth-helpers';
+} from '@/lib/api-responses';
 
 export const dynamic = 'force-dynamic';
 

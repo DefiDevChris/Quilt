@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateSlug, appendSlugSuffix } from '@/lib/blog-slug';
+import { generateSlug, appendSlugSuffix } from '@/lib/string-utils';
 
 describe('generateSlug', () => {
   it('converts to lowercase', () => {

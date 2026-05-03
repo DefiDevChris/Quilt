@@ -3,17 +3,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useLayoutStore } from '@/stores/layoutStore';
-import { useProjectStore, type ProjectMode } from '@/stores/projectStore';
+import { useProjectStore } from '@/stores/projectStore';
+import type { ProjectMode } from '@/types/project';
 import { useCanvasStore } from '@/stores/canvasStore';
 import { useLeftPanelStore } from '@/stores/leftPanelStore';
 import { LAYOUT_TYPE_CARDS } from '@/lib/layout-type-cards';
 import { LAYOUT_PRESETS, getLayoutPreset } from '@/lib/layout-library';
-import { LayoutThumbnail } from '@/lib/layout-thumbnail';
-import { computeLayoutSize } from '@/lib/layout-size-utils';
+import { LayoutThumbnail } from '@/components/layout/LayoutThumbnail';
+import { computeLayoutDimensions, type LayoutType } from '@/lib/layout-utils';
 import { QUILT_TEMPLATES, type QuiltTemplate, type TemplateCategory } from '@/lib/templates';
-import { TemplateThumbnail } from '@/lib/template-thumbnail';
-import type { LayoutType } from '@/lib/layout-utils';
+import { TemplateThumbnail } from '@/components/layout/TemplateThumbnail';
 import type { UserLayoutTemplate } from '@/types/layoutTemplate';
+import { SliderRow } from '@/components/ui/SliderRow';
 
 interface SelectionShellProps {
   /**
@@ -226,15 +227,15 @@ export function SelectionShell({ mode }: SelectionShellProps) {
   useEffect(() => {
     if (mode !== 'layout') return;
     const unsub = useLayoutStore.subscribe((state) => {
-      const size = computeLayoutSize({
-        type: state.layoutType as LayoutType,
-        rows: state.rows,
-        cols: state.cols,
-        blockSize: state.blockSize,
-        sashingWidth: state.sashing.width,
-        borders: state.borders,
-        bindingWidth: state.bindingWidth,
-      });
+    const size = computeLayoutDimensions({
+      type: state.layoutType as LayoutType,
+      rows: state.rows,
+      cols: state.cols,
+      blockSize: state.blockSize,
+      sashingWidth: state.sashing.width,
+      borders: state.borders,
+      bindingWidth: state.bindingWidth,
+    });
       const ps = useProjectStore.getState();
       if (ps.canvasWidth === size.width && ps.canvasHeight === size.height) return;
       ps.setCanvasDimensions(size.width, size.height);
@@ -294,15 +295,15 @@ export function SelectionShell({ mode }: SelectionShellProps) {
     }
 
     // template / layout — derive size from layout store and lock
-    const size = computeLayoutSize({
-      type: store.layoutType as LayoutType,
-      rows: store.rows,
-      cols: store.cols,
-      blockSize: store.blockSize,
-      sashingWidth: store.sashing.width,
-      borders: store.borders,
-      bindingWidth: store.bindingWidth,
-    });
+  const size = computeLayoutDimensions({
+    type: store.layoutType as LayoutType,
+    rows: store.rows,
+    cols: store.cols,
+    blockSize: store.blockSize,
+    sashingWidth: store.sashing.width,
+    borders: store.borders,
+    bindingWidth: store.bindingWidth,
+  });
 
     store.applyLayoutAndLock();
     ps.setCanvasDimensions(size.width, size.height);
@@ -526,7 +527,7 @@ function LayoutConfigPanel({ presetId, onCommit }: { presetId: string; onCommit:
 
   const card = LAYOUT_TYPE_CARDS.find((c) => c.id === preset.category);
 
-  const size = computeLayoutSize({
+  const size = computeLayoutDimensions({
     type: preset.category,
     rows,
     cols,
@@ -1204,43 +1205,3 @@ function FreeformConfigPanel({
 }
 
 /* ────────────────────────────────────────────────────────────────── */
-/* Shared Slider Row                                                   */
-/* ────────────────────────────────────────────────────────────────── */
-
-function SliderRow({
-  label,
-  value,
-  min,
-  max,
-  step,
-  onChange,
-  format,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  onChange: (v: number) => void;
-  format: (v: number) => string;
-}) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] text-[var(--color-text)]">{label}</span>
-        <span className="text-[10px] font-mono text-[var(--color-text-dim)] bg-[var(--color-bg)] border border-[var(--color-border)]/30 rounded px-1.5 py-0.5">
-          {format(value)}
-        </span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full accent-[var(--color-primary)] h-1"
-      />
-    </div>
-  );
-}

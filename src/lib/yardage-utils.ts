@@ -183,13 +183,17 @@ export function calculateBindingYardage(
   stripWidthInches: number = 2.5
 ): BindingYardageResult {
   const perimeter = 2 * (quiltWidthInches + quiltHeightInches);
-  const totalStripLengthInches = perimeter + 10; // Extra for joins and corners
+  return calculateBindingYardageFromPerimeter(perimeter, wofInches, stripWidthInches);
+}
 
-  // How many strips from one WOF width
+export function calculateBindingYardageFromPerimeter(
+  perimeter: number,
+  wofInches: number,
+  stripWidthInches: number = 2.5
+): BindingYardageResult {
+  const totalStripLengthInches = perimeter + 10;
   const stripsPerWidth = Math.floor(wofInches / stripWidthInches);
   const stripCount = Math.ceil(totalStripLengthInches / wofInches);
-
-  // Fabric needed: stripCount strips at stripWidth each
   const fabricLengthInches = Math.ceil(stripCount / stripsPerWidth) * stripWidthInches;
   const yardsRequired = Math.ceil((fabricLengthInches / INCHES_PER_YARD) * 8) / 8;
 

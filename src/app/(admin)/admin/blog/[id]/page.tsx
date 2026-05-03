@@ -263,7 +263,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
                   type="button"
                   aria-label="Remove cover image"
                   onClick={() => setFormData((prev) => ({ ...prev, featuredImageUrl: '' }))}
-                  className="absolute top-2 right-2 p-1.5 text-white rounded-full hover:opacity-90 transition-colors duration-150"
+                  className="absolute top-2 right-2 p-1.5 text-[var(--color-text-on-primary)] rounded-full hover:opacity-90 transition-colors duration-150"
                   style={{ backgroundColor: COLORS.error }}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -415,7 +415,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
               type="button"
               onClick={handleAddTag}
               disabled={formData.tags.length >= 5 || !tagInput.trim()}
-              className="px-4 py-2.5 bg-default border border-default rounded-full text-sm font-medium text-dim hover:bg-border disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+              className="px-4 py-2.5 bg-default border border-default rounded-full text-sm font-medium text-dim hover:bg-[var(--color-border)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
             >
               Add
             </button>
@@ -476,7 +476,7 @@ export default function AdminBlogEditPage({ params }: { params: Promise<{ id: st
           <button
             type="submit"
             disabled={saving}
-            className="px-5 py-2.5 rounded-full bg-primary text-surface text-sm font-medium hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+            className="px-5 py-2.5 rounded-full bg-primary text-surface text-sm font-medium hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
           >
             {saving ? 'Saving...' : postId ? 'Update Post' : 'Create Post'}
           </button>

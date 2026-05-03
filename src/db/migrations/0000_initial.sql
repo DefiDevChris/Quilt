@@ -1,15 +1,15 @@
 -- Enum types
-CREATE TYPE "blog_post_category" AS ENUM ('tips', 'inspiration', 'updates', 'tutorials');
-CREATE TYPE "blog_post_layout" AS ENUM ('standard', 'featured', 'minimal');
+CREATE TYPE "blog_post_category" AS ENUM ('Product Updates', 'Behind the Scenes', 'Tutorials', 'Community', 'Tips', 'Inspiration', 'History', 'Organization');
+CREATE TYPE "blog_post_layout" AS ENUM ('standard', 'hero-cover', 'staggered-media');
 CREATE TYPE "blog_post_status" AS ENUM ('draft', 'published', 'archived');
-CREATE TYPE "grid_granularity" AS ENUM ('inch', 'half-inch', 'quarter-inch', 'cm');
+CREATE TYPE "grid_granularity" AS ENUM ('inch', 'half', 'quarter');
 CREATE TYPE "ingest_job_status" AS ENUM ('running', 'success', 'failed');
 CREATE TYPE "ingest_source_type" AS ENUM ('awin-feed', 'scrapingbee', 'csv');
-CREATE TYPE "paper_size" AS ENUM ('letter', 'a4', 'legal', 'tabloid');
-CREATE TYPE "project_mode" AS ENUM ('layout', 'easydraw');
+CREATE TYPE "paper_size" AS ENUM ('letter', 'a4');
+CREATE TYPE "project_mode" AS ENUM ('free-form', 'layout', 'template', 'photo-to-quilt');
 CREATE TYPE "unit_system" AS ENUM ('imperial', 'metric');
 CREATE TYPE "user_role" AS ENUM ('free', 'admin');
-CREATE TYPE "user_status" AS ENUM ('active', 'suspended', 'deleted');
+CREATE TYPE "user_status" AS ENUM ('active', 'suspended', 'banned');
 
 -- Tables
 CREATE TABLE "users" (
@@ -108,7 +108,7 @@ CREATE TABLE "fabrics" (
 CREATE TABLE "ingest_jobs" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
   "retailerSlug" varchar(100) NOT NULL,
-  "sourceType" varchar(50) NOT NULL,
+  "sourceType" "ingest_source_type" NOT NULL,
   "status" varchar(20) DEFAULT 'running' NOT NULL,
   "startedAt" timestamp with time zone NOT NULL,
   "finishedAt" timestamp with time zone,
@@ -237,7 +237,6 @@ CREATE INDEX "idx_layout_templates_isDefault" ON "layout_templates" USING btree 
 CREATE INDEX "idx_layout_templates_isPublished" ON "layout_templates" USING btree ("isPublished");
 CREATE INDEX "idx_printlists_userId" ON "printlists" USING btree ("userId");
 CREATE INDEX "idx_projects_userId" ON "projects" USING btree ("userId");
-CREATE INDEX "idx_retailers_slug" ON "retailers" USING btree ("slug");
 CREATE INDEX "idx_user_fabrics_userId" ON "user_fabrics" USING btree ("userId");
 CREATE INDEX "idx_user_fabrics_colorFamily" ON "user_fabrics" USING btree ("colorFamily");
 CREATE INDEX "idx_user_fabrics_manufacturer" ON "user_fabrics" USING btree ("manufacturer");

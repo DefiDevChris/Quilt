@@ -43,10 +43,9 @@ export function useSegments(gridCols: number, gridRows: number) {
       });
     }
 
+    const setB = new Set(pointsB.map((p) => `${p.row},${p.col}`));
     for (const pa of pointsA) {
-      for (const pb of pointsB) {
-        if (pa.row === pb.row && pa.col === pb.col) return pa;
-      }
+      if (setB.has(`${pa.row},${pa.col}`)) return pa;
     }
     return null;
   }, []);
