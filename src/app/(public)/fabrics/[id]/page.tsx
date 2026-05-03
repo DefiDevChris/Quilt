@@ -61,7 +61,7 @@ export default function FabricDetailPage() {
     );
   }
 
-  const hasAffiliate = fabric.isActive && fabric.affiliateDeeplink;
+  const hasAffiliate = fabric.isActive && fabric.deeplinkOverride;
   const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : null;
 
   return (
@@ -146,7 +146,7 @@ export default function FabricDetailPage() {
             {hasAffiliate ? (
               <div className="mt-auto space-y-2">
                 <a
-                  href={fabric.affiliateDeeplink!}
+                  href={`/api/affiliate/click/${fabric.id}`}
                   target="_blank"
                   rel="sponsored noopener noreferrer"
                   className="flex items-center justify-center gap-2 py-3 rounded-full bg-[var(--color-primary)] text-[var(--color-text-on-primary)] font-medium hover:bg-[var(--color-primary-hover)] transition-colors duration-150"

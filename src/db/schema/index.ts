@@ -7,3 +7,6 @@ export { subscriptions } from './subscriptions';
 export { blogPosts } from './blogPosts';
 export { userFabrics } from './userFabrics';
 export { layoutTemplates } from './layoutTemplates';
+export { retailers } from './retailers';
+export { affiliateClicks } from './affiliateClicks';
+export { ingestJobs } from './ingestJobs';

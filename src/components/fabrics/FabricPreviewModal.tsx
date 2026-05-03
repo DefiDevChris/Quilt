@@ -21,7 +21,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  const hasAffiliate = fabric.isActive && fabric.affiliateDeeplink;
+  const hasAffiliate = fabric.isActive && fabric.deeplinkOverride;
   const price = fabric.pricePerYard ? `$${Number(fabric.pricePerYard).toFixed(2)}/yd` : null;
 
   return (
@@ -88,7 +88,7 @@ export function FabricPreviewModal({ fabric, onClose }: FabricPreviewModalProps)
           <div className="flex gap-2 pt-1">
             {hasAffiliate ? (
               <a
-                href={fabric.affiliateDeeplink!}
+                href={`/api/affiliate/click/${fabric.id}`}
                 target="_blank"
                 rel="sponsored noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full bg-[var(--color-primary)] text-[var(--color-text-on-primary)] text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-colors duration-150 shadow-[0_1px_2px_rgba(54,49,45,0.08)]"

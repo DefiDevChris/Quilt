@@ -76,9 +76,10 @@ export async function GET(request: NextRequest) {
           value: fabrics.value,
           hex: fabrics.hex,
           isDefault: fabrics.isDefault,
-          retailerId: fabrics.retailerId,
-          affiliateUrl: fabrics.affiliateUrl,
-          affiliateDeeplink: fabrics.affiliateDeeplink,
+        retailerId: fabrics.retailerId,
+        deeplinkOverride: fabrics.deeplinkOverride,
+        isAffiliate: fabrics.isAffiliate,
+        isInStockAtRetailer: fabrics.isInStockAtRetailer,
           pricePerYard: fabrics.pricePerYard,
           isActive: fabrics.isActive,
         })
