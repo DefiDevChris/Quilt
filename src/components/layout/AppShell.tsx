@@ -96,12 +96,6 @@ export function AppShell({
         <div className="flex items-center gap-10" ref={dropdownRef}>
           <div className="hidden lg:flex items-center gap-10 font-sans text-[9px] uppercase tracking-[0.4em] font-bold text-[var(--color-text)]/30">
         <Link
-          href="/blog"
-          className="hover:text-[var(--color-primary)] transition duration-200 cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
-        >
-          Blog
-        </Link>
-        <Link
           href="/settings"
           className="hover:text-[var(--color-primary)] transition duration-200 cursor-pointer border-b border-transparent hover:border-[var(--color-primary)] pb-0.5"
         >

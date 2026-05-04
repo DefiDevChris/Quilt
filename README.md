@@ -19,7 +19,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 | Canvas    | Fabric.js 7.2                                        |
 | State | Zustand (10 stores) |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
-| Database | PostgreSQL + Drizzle ORM 0.45 (11 table files + enums + index) |
+| Database | PostgreSQL + Drizzle ORM 0.45 (10 table files + enums + index) |
 | Storage   | AWS S3 + CloudFront CDN                              |
 | Secrets   | AWS Secrets Manager                                  |
 | PDF | pdf-lib (client-side 1:1 scale) |
@@ -87,7 +87,6 @@ npm run db:generate      # Generate Drizzle migration from schema changes
 npm run db:migrate       # Run pending migrations
 npm run db:push          # Push schema directly (no migration file)
 npm run db:studio        # Open Drizzle Studio web UI
-npm run db:seed:blog # Seed blog posts
 npm run db:seed:templates # Seed layout templates
 ```
 
@@ -101,14 +100,12 @@ src/
     admin/                       # Admin moderation tools
     api/                         # API route handlers
     auth/                        # Sign in/up/verify/forgot-password pages
-    blog/                        # Blog list and individual post pages
     dashboard/                   # Bento grid dashboard
     studio/[projectId]/          # Design canvas (desktop only)
     templates/                   # Template browser
   components/                    # React components, organized by domain
     auth/                        # Sign-in/sign-up forms
     blocks/                      # BlockBuilder, BlockLibrary, BlockSearch, BlockPreview, etc.
-    blog/                        # Blog page components
     canvas/                      # Canvas toolbar and controls
     editor/                      # Editor components
     fabrics/                     # Fabric browsing and management
@@ -126,7 +123,7 @@ src/
   lib/                           # Pure utility modules and engines
     *-engine.ts                  # Pure computation — zero DOM deps, fully testable
     *-utils.ts                   # Domain-specific utilities
-  db/schema/                     # Drizzle table definitions (11 tables + enums + index)
+  db/schema/                     # Drizzle table definitions (10 tables + enums + index)
   types/                         # Shared TypeScript type definitions
 ```
 

@@ -11,7 +11,6 @@ const NAV_LINKS = [
   { href: '/fabrics', label: 'Fabrics' },
   { href: '/picture-my-blocks', label: 'Picture my Blocks' },
   { href: '/photo-to-quilt', label: 'Photo to Quilt' },
-  { href: '/blog', label: 'Blog' },
 ] as const;
 
 export default function PublicNav() {

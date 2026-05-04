@@ -10,7 +10,6 @@ import {
   LayoutTemplate,
   Library,
   Menu,
-  Newspaper,
   Settings,
 } from 'lucide-react';
 import { SectionTitle } from '@/components/ui/SectionTitle';
@@ -20,7 +19,6 @@ const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', Icon: LayoutDashboard },
   { href: '/admin/blocks', label: 'Blocks', Icon: LayoutGrid },
   { href: '/admin/layouts', label: 'Layouts', Icon: LayoutTemplate },
-  { href: '/admin/blog', label: 'Blog', Icon: Newspaper },
   { href: '/admin/libraries', label: 'Libraries', Icon: Library },
   { href: '/admin/settings', label: 'Settings', Icon: Settings },
 ] as const;

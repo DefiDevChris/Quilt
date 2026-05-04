@@ -119,8 +119,6 @@ test.describe('Mobile Responsive Flow', () => {
       await page.goto('/');
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
-      await page.goto('/blog');
-      await expect(page.getByRole('heading', { name: 'Blog', exact: true }).first()).toBeVisible();
     }
   });
 
@@ -187,7 +185,5 @@ test.describe('Cross-Browser Compatibility', () => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
-    await page.goto('/blog');
-    await expect(page.getByRole('heading', { name: 'Blog', exact: true }).first()).toBeVisible();
   });
 });

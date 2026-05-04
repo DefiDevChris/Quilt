@@ -25,14 +25,6 @@ test.describe('Landing Page', () => {
     await expect(page.getByText(/free/i)).toBeVisible();
     await expect(page.getByText(/pro/i)).toBeVisible();
   });
-
-  test('navigation menu works', async ({ page }) => {
-    await page.goto('/');
-    const blogLink = page.getByRole('link', { name: /blog/i });
-    if (await blogLink.isVisible()) {
-      await expect(blogLink).toHaveAttribute('href', '/blog');
-    }
-  });
 });
 
 test.describe('Auth Pages', () => {

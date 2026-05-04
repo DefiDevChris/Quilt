@@ -3,7 +3,6 @@ export { projects } from './projects';
 export { blocks } from './blocks';
 export { fabrics } from './fabrics';
 export { printlists } from './printlists';
-export { blogPosts } from './blogPosts';
 export { userFabrics } from './userFabrics';
 export { layoutTemplates } from './layoutTemplates';
 export { retailers } from './retailers';

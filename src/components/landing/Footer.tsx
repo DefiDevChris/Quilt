@@ -65,11 +65,6 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-[var(--color-text-dim)] text-sm">
               <li>
-                <Link href="/blog" className="hover:text-primary transition-colors duration-150">
-                  Blog
-                </Link>
-              </li>
-              <li>
                 <Link href="/help" className="hover:text-primary transition-colors duration-150">
                   Help Center
                 </Link>

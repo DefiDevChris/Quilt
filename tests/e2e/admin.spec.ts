@@ -28,17 +28,6 @@ test.describe('Admin Access', () => {
     }
   });
 
-  test('admin blog page redirects non-admin users', async ({ page }) => {
-    await mockAuth(page, 'free');
-    await page.goto('/admin/blog');
-    try {
-      await page.waitForURL(/signin|unauthorized|forbidden|403/, { timeout: 10000 });
-      expect(page.url()).toMatch(/signin|unauthorized|forbidden|403/);
-    } catch {
-      // Same defensive pattern
-    }
-  });
-
   test('admin blocks page redirects non-admin users', async ({ page }) => {
     await mockAuth(page, 'free');
     await page.goto('/admin/blocks');
@@ -94,13 +83,6 @@ test.describe('Admin Features (Admin Role)', () => {
         body: JSON.stringify({ success: true, data: [] }),
       });
     });
-    await page.route('**/api/admin/blog/**', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ success: true, data: [] }),
-      });
-    });
   });
 
   test('admin dashboard loads', async ({ page }) => {
@@ -143,29 +125,6 @@ test.describe('Admin Features (Admin Role)', () => {
     }
   });
 
-  test('admin can create blog posts', async ({ page }) => {
-    await page.goto('/admin/blog');
-    const createButton = page.getByRole('button', { name: /create post|new post|create/i });
-    if (await createButton.isVisible()) {
-      await expect(createButton).toBeVisible();
-    }
-  });
-
-  test('admin can edit blog posts', async ({ page }) => {
-    await page.goto('/admin/blog');
-    const editButton = page.getByRole('button', { name: /edit/i }).first();
-    if (await editButton.isVisible()) {
-      await expect(editButton).toBeVisible();
-    }
-  });
-
-  test('admin can delete blog posts', async ({ page }) => {
-    await page.goto('/admin/blog');
-    const deleteButton = page.getByRole('button', { name: /delete/i }).first();
-    if (await deleteButton.isVisible()) {
-      await expect(deleteButton).toBeVisible();
-    }
-  });
 });
 
 test.describe('Admin API Endpoints', () => {

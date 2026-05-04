@@ -72,22 +72,6 @@ test.describe('Mobile Studio Gate', () => {
   });
 });
 
-test.describe('Mobile Blog', () => {
-  test('blog works on mobile', async ({ page, isMobile }) => {
-    if (isMobile) {
-      await page.goto('/blog');
-      await expect(page.getByRole('heading', { name: 'Blog', exact: true }).first()).toBeVisible();
-    }
-  });
-
-  test('blog posts are readable on mobile', async ({ page, isMobile }) => {
-    if (isMobile) {
-      await page.goto('/blog/introducing-quiltcorgi');
-      await expect(page.getByRole('heading', { name: /Introducing QuiltCorgi/i })).toBeVisible();
-    }
-  });
-});
-
 test.describe('Mobile Dashboard', () => {
   test('dashboard works on mobile', async ({ page, isMobile }) => {
     if (isMobile) {

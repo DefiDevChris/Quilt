@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('API Rate Limiting', () => {
   test('rate limit headers are present', async ({ request }) => {
-    const response = await request.get('/api/blog');
+    const response = await request.get('/api/blocks');
     expect(response.headers()['x-ratelimit-limit']).toBeTruthy();
   });
 
@@ -37,7 +37,6 @@ test.describe('API Authentication', () => {
   test('admin endpoints require admin role', async ({ request }) => {
     const endpoints = [
       '/api/admin/posts',
-      '/api/blog'
     ];
 
     for (const endpoint of endpoints) {
@@ -71,7 +70,7 @@ test.describe('API Error Handling', () => {
 
 test.describe('API CORS', () => {
   test('CORS headers are present', async ({ request }) => {
-    const response = await request.get('/api/blog');
+    const response = await request.get('/api/blocks');
     expect(response.headers()['access-control-allow-origin']).toBeTruthy();
   });
 });
@@ -88,11 +87,6 @@ test.describe('API Content Security', () => {
 });
 
 test.describe('API Response Format', () => {
-  test('blog API returns JSON', async ({ request }) => {
-    const response = await request.get('/api/blog');
-    expect(response.headers()['content-type']).toContain('application/json');
-  });
-
   test('error responses have consistent format', async ({ request }) => {
     const response = await request.get('/api/projects/invalid');
     const body = await response.json();
@@ -101,12 +95,6 @@ test.describe('API Response Format', () => {
 });
 
 test.describe('API Pagination', () => {
-  test('blog API supports pagination', async ({ request }) => {
-    const response = await request.get('/api/blog?limit=5&offset=0');
-    expect(response.status()).toBe(200);
-    const body = await response.json();
-    expect(Array.isArray(body)).toBe(true);
-  });
 });
 
 test.describe('API Search', () => {

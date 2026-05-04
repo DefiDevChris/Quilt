@@ -1,22 +1,16 @@
 import { db } from '@/lib/db';
 import { blocks } from '@/db/schema/blocks';
-import { blogPosts } from '@/db/schema/blogPosts';
 import { fabrics } from '@/db/schema/fabrics';
 import { users } from '@/db/schema/users';
-import { count, eq, desc } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 import Link from 'next/link';
-import { COLORS, SHADOW, withAlpha } from '@/lib/design-system';
+import { COLORS, SHADOW } from '@/lib/design-system';
 
 async function getStats() {
-  const [blockCount, blogCount, fabricCount, userCount] = await Promise.all([
+  const [blockCount, fabricCount, userCount] = await Promise.all([
     db
       .select({ count: count() })
       .from(blocks)
-      .then((r) => r[0]?.count ?? 0),
-    db
-      .select({ count: count() })
-      .from(blogPosts)
-      .where(eq(blogPosts.status, 'published'))
       .then((r) => r[0]?.count ?? 0),
     db
       .select({ count: count() })
@@ -31,29 +25,13 @@ async function getStats() {
 
   return {
     blockCount,
-    blogCount,
     fabricCount,
     userCount,
   };
 }
 
-async function getRecentBlogPosts() {
-  const posts = await db
-    .select({
-      id: blogPosts.id,
-      title: blogPosts.title,
-      status: blogPosts.status,
-      createdAt: blogPosts.createdAt,
-    })
-    .from(blogPosts)
-    .orderBy(desc(blogPosts.createdAt))
-    .limit(5);
-  return posts;
-}
-
 export default async function AdminDashboardPage() {
   const stats = await getStats();
-  const recentPosts = await getRecentBlogPosts();
 
   return (
     <div className="space-y-8">
@@ -65,18 +43,16 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <StatCard label="System Blocks" value={stats.blockCount} href="/admin/blocks" />
-        <StatCard label="Published Posts" value={stats.blogCount} href="/admin/blog" />
         <StatCard label="System Fabrics" value={stats.fabricCount} href="/admin/libraries" />
         <StatCard label="Total Users" value={stats.userCount} href="/admin/libraries" />
       </div>
 
-      {/* Secondary stat row */}
       {/* Quick actions */}
       <div>
         <h3 className="text-sm font-semibold text-[var(--color-text-dim)] mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
           <QuickActionCard
             title="New Block"
             description="Add a system block to the library"
@@ -88,21 +64,6 @@ export default async function AdminDashboardPage() {
                   strokeLinejoin="round"
                   strokeWidth={1.5}
                   d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
-                />
-              </svg>
-            }
-          />
-          <QuickActionCard
-            title="New Blog Post"
-            description="Write and publish a blog post"
-            href="/admin/blog/new"
-            icon={
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                 />
               </svg>
             }
@@ -123,57 +84,6 @@ export default async function AdminDashboardPage() {
             }
           />
         </div>
-      </div>
-
-      {/* Recent blog posts */}
-      <div
-        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-6"
-        style={{ boxShadow: SHADOW.brand }}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-[var(--color-text-dim)]">Recent Blog Posts</h3>
-          <Link
-            href="/admin/blog"
-            className="text-xs font-medium text-primary hover:text-primary-hover transition-colors duration-150"
-          >
-            View all
-          </Link>
-        </div>
-        {recentPosts.length === 0 ? (
-          <p className="text-sm text-[var(--color-text-dim)] py-8 text-center">No blog posts yet</p>
-        ) : (
-          <ul className="space-y-3">
-            {recentPosts.map((post) => (
-              <li key={post.id} className="flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <Link
-                    href={`/admin/blog/${post.id}`}
-                    className="text-sm font-medium truncate text-default hover:text-primary transition-colors duration-150"
-                  >
-                    {post.title}
-                  </Link>
-                  <p className="text-xs text-[var(--color-text-dim)] mt-0.5">
-                    {new Date(post.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <span
-                  className={`ml-3 text-xs font-medium px-2 py-0.5 rounded-lg ${
-                    post.status === 'published'
-                      ? ''
-                      : 'bg-[var(--color-bg)] text-[var(--color-text-dim)]'
-                  }`}
-                  style={
-                    post.status === 'published'
-                      ? { backgroundColor: withAlpha(COLORS.success, 0.1), color: COLORS.success }
-                      : undefined
-                  }
-                >
-                  {post.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
     </div>
   );

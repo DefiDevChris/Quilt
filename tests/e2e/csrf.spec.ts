@@ -57,7 +57,7 @@ test.describe('CSRF protection', () => {
   });
 
   test('safe methods are not blocked by CSRF', async ({ request }) => {
-    const response = await request.get('/api/blog', {
+    const response = await request.get('/api/blocks', {
       headers: { Origin: 'https://evil.example.com' },
     });
     // 200 or 401/403 from downstream auth — but never a CSRF 403 payload.

@@ -63,7 +63,7 @@ test.describe('Accessibility - WCAG Compliance', () => {
 
 test.describe('SEO Optimization', () => {
   test('all pages have unique titles', async ({ page }) => {
-    const pages = ['/', '/blog', '/auth/signin'];
+    const pages = ['/', '/auth/signin'];
     const titles = new Set();
 
     for (const route of pages) {
@@ -115,13 +115,6 @@ test.describe('SEO Optimization', () => {
     }
   });
 
-  test('structured data is present', async ({ page }) => {
-    await page.goto('/blog/introducing-quiltcorgi');
-    const structuredData = page.locator('script[type="application/ld+json"]');
-    const count = await structuredData.count();
-    expect(count).toBeGreaterThan(0);
-  });
-
   test('images have alt attributes', async ({ page }) => {
     await page.goto('/');
     const images = page.locator('img');
@@ -157,21 +150,6 @@ test.describe('Performance Metrics', () => {
     });
 
     await page.goto('/');
-    await page.waitForTimeout(2000);
-
-    const criticalErrors = errors.filter((e) => !e.includes('favicon') && !e.includes('404'));
-    expect(criticalErrors.length).toBe(0);
-  });
-
-  test('no console errors on blog page', async ({ page }) => {
-    const errors: string[] = [];
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        errors.push(msg.text());
-      }
-    });
-
-    await page.goto('/blog');
     await page.waitForTimeout(2000);
 
     const criticalErrors = errors.filter((e) => !e.includes('favicon') && !e.includes('404'));
@@ -249,7 +227,7 @@ test.describe('Security Headers', () => {
 
 test.describe('Internationalization', () => {
   test('dates are formatted correctly', async ({ page }) => {
-    await page.goto('/blog/introducing-quiltcorgi');
+    await page.goto('/');
     const datePattern = /\d{4}/;
     const dateElement = page.locator(`text=${datePattern.source}`).first();
     if (await dateElement.isVisible()) {

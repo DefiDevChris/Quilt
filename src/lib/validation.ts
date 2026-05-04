@@ -182,51 +182,6 @@ export const presignedUrlSchema = z.object({
   purpose: z.enum(['fabric', 'thumbnail', 'export', 'block']),
 });
 
-// Blog post category enum values matching the database
-export const BLOG_POST_CATEGORIES = [
-  'Product Updates',
-  'Behind the Scenes',
-  'Tutorials',
-  'Community',
-  'Tips',
-  'Inspiration',
-  'History',
-  'Organization',
-] as const;
-
-export const createBlogPostSchema = z.object({
-  title: z.string().min(1).max(200),
-  content: z.record(z.string(), z.unknown()).optional(),
-  excerpt: z.string().max(300).optional(),
-  featuredImageUrl: assetUrlSchema.optional(),
-  category: z.enum(BLOG_POST_CATEGORIES),
-  tags: z.array(z.string().max(50)).max(5).default([]),
-});
-
-export const updateBlogPostSchema = z.object({
-  title: z.string().min(1).max(200).optional(),
-  content: z.record(z.string(), z.unknown()).optional(),
-  excerpt: z.string().max(300).optional(),
-  featuredImageUrl: assetUrlSchema.optional(),
-  category: z.enum(BLOG_POST_CATEGORIES).optional(),
-  tags: z.array(z.string().max(50)).max(5).optional(),
-  status: z.enum(['draft', 'published', 'archived']).optional(),
-  layout: z.enum(['standard', 'hero-cover', 'staggered-media']).optional(),
-});
-
-export const blogSearchSchema = z.object({
-  search: z.string().optional(),
-  category: z.enum(BLOG_POST_CATEGORIES).optional(),
-  tag: z.string().optional(),
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(20).default(10),
-});
-
-export const blogAdminListSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
-});
-
 export const templateQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(24),

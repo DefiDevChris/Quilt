@@ -6,24 +6,6 @@ export const unitSystemEnum = pgEnum('unit_system', ['imperial', 'metric']);
 export const paperSizeEnum = pgEnum('paper_size', ['letter', 'a4']);
 
 
-export const blogPostStatusEnum = pgEnum('blog_post_status', ['draft', 'published', 'archived']);
-export const blogPostCategoryEnum = pgEnum('blog_post_category', [
-  'Product Updates',
-  'Behind the Scenes',
-  'Tutorials',
-  'Community',
-  'Tips',
-  'Inspiration',
-  'History',
-  'Organization',
-]);
-
-export const blogPostLayoutEnum = pgEnum('blog_post_layout', [
-  'standard',
-  'hero-cover',
-  'staggered-media',
-]);
-
 export const projectModeEnum = pgEnum('project_mode', ['free-form', 'layout', 'template', 'photo-to-quilt']);
 export const gridGranularityEnum = pgEnum('grid_granularity', ['inch', 'half', 'quarter']);
 export const ingestSourceTypeEnum = pgEnum('ingest_source_type', ['awin-feed', 'scrapingbee', 'csv']);

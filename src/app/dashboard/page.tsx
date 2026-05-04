@@ -12,16 +12,6 @@ const cards = [
     variant: 'primary' as const,
   },
   {
-    href: '/blog',
-    imageSrc: '/icons/quilt-book.png',
-    imageAlt: 'Blog',
-    label: 'Editorial',
-    title: 'Blog',
-    description: 'Read tutorials, expert tips, and daily inspiration from our community.',
-    cta: 'Get Inspired',
-    variant: 'surface' as const,
-  },
-  {
     href: '/fabrics',
     imageSrc: '/icons/quilt-01-spool-Photoroom.png',
     imageAlt: 'Fabrics',
