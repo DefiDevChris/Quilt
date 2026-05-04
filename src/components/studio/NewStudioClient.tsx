@@ -36,6 +36,7 @@ const SYNTHETIC_PROJECT: Project = {
   lastSavedAt: new Date(),
   createdAt: new Date(),
   updatedAt: new Date(),
+  version: 1,
 };
 
 export function NewStudioClient() {

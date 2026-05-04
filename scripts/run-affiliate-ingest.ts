@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { retailers } from '@/db/schema';
 import { makeAwinAdapter } from '@/lib/affiliate/ingest/awinFeedAdapter';
-import { runJob, getRetailerBySlug } from '@/lib/affiliate/ingest/runJob';
+import { runJob } from '@/lib/affiliate/ingest/runJob';
 import type { SourceAdapter } from '@/lib/affiliate/ingest/types';
 
 const ADAPTER_FACTORIES: Record<

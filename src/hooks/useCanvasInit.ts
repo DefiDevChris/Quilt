@@ -81,10 +81,7 @@ export function useCanvasInit(
       // project dimensions from the first paint, not the store's 48×48 defaults.
       useCanvasStore.getState().setUnitSystem(project.unitSystem);
       useCanvasStore.getState().setGridSettings(project.gridSettings);
-      // Restore worktable mode (quilt vs block-builder) if saved
-      if (project.activeWorktable) {
-        useCanvasStore.getState().setActiveWorktable(project.activeWorktable);
-      }
+      // Worktable mode restored later
       useProjectStore.getState().setProject({
         id: project.id,
         name: project.name,
@@ -447,7 +444,7 @@ export function useCanvasInit(
         return;
       }
 
-      useCanvasStore.getState().setZoom(initZoom);
+      useCanvasStore.getState().setZoom(initZoom, project.canvasWidth, project.canvasHeight);
       setFabricCanvas(canvas);
 
     })();

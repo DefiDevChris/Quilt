@@ -14,12 +14,13 @@ const pool = new Pool({
     (process.env.NODE_ENV === 'production' ? 10 : 5),
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 2_000,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
-});
-
-// Set statement timeout per connection (Pool config key is silently ignored by pg)
-pool.on('connect', (client) => {
-  client.query('SET statement_timeout = 30000');
+  ssl:
+    process.env.NODE_ENV === 'production' &&
+    connectionString &&
+    !/localhost|127\.0\.0\.1/.test(connectionString)
+      ? { rejectUnauthorized: true }
+      : false,
+  options: '-c statement_timeout=30000',
 });
 
 pool.on('error', () => {

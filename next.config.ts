@@ -23,13 +23,13 @@ const cloudfrontCspSource = cloudfrontHostname ? ` https://${cloudfrontHostname}
  */
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${process.env.NEXT_PUBLIC_DEV_CSP === 'true' ? " 'unsafe-eval'" : ''} https://js.stripe.com`,
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${process.env.NEXT_PUBLIC_DEV_CSP === 'true' ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   `img-src 'self' data: blob: https://*.googleusercontent.com https://i.pravatar.cc${cloudfrontCspSource}`,
   "worker-src 'self' blob:",
-  'frame-src https://js.stripe.com https://hooks.stripe.com',
-  "connect-src 'self' https://api.stripe.com https://accounts.google.com https://*.s3.amazonaws.com https://*.s3.us-east-1.amazonaws.com https://*.s3.us-east-2.amazonaws.com https://*.s3.us-west-1.amazonaws.com https://*.s3.us-west-2.amazonaws.com",
+  "frame-src 'none'",
+  "connect-src 'self' https://accounts.google.com https://*.s3.amazonaws.com https://*.s3.us-east-1.amazonaws.com https://*.s3.us-east-2.amazonaws.com https://*.s3.us-west-1.amazonaws.com https://*.s3.us-west-2.amazonaws.com",
   "object-src 'none'",
   "frame-ancestors 'none'",
   "form-action 'self'",

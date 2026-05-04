@@ -151,12 +151,14 @@ export function CommandPalette({
 
     const handleZoomIn = () => {
       const { zoom, zoomAtPoint } = useCanvasStore.getState();
-      zoomAtPoint(zoom * ZOOM_FACTOR, fabricCanvas);
+      const { canvasWidth, canvasHeight } = useProjectStore.getState();
+      zoomAtPoint(zoom * ZOOM_FACTOR, fabricCanvas, canvasWidth, canvasHeight);
     };
 
     const handleZoomOut = () => {
       const { zoom, zoomAtPoint } = useCanvasStore.getState();
-      zoomAtPoint(zoom / ZOOM_FACTOR, fabricCanvas);
+      const { canvasWidth, canvasHeight } = useProjectStore.getState();
+      zoomAtPoint(zoom / ZOOM_FACTOR, fabricCanvas, canvasWidth, canvasHeight);
     };
 
     const handleFitToScreen = () => {

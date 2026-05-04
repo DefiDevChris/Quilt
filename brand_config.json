@@ -24,8 +24,6 @@
   "computed_colors": {
     "primary": "#7CB9E8",
     "primary_hover": "#5AA0D5",
-    "primary_light": "#C5DFF3",
-    "primary_dark": "#5AA0D5",
     "secondary": "#C5DFF3",
     "accent": "#FFE08A",
     "accent_blush": "#F6C6C8",
@@ -34,7 +32,6 @@
     "surface_alt": "#FEFDFB",
     "text": "#36312D",
     "text_dim": "#7A726C",
-    "text_muted": "#7A726C",
     "text_on_primary": "#ffffff",
     "border": "#E6E1DC",
     "border_strong": "#7A726C",

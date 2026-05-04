@@ -54,7 +54,7 @@ async function verifyToken(token: string): Promise<JWTPayload | null> {
 
 /**
  * Set auth cookies after successful sign-in.
- * Must be called from a Server Action or Route Handler (not middleware).
+ * Must be called from a Server Action or Route Handler (not proxy).
  */
 export async function setAuthCookies(tokens: {
   idToken: string;
@@ -260,7 +260,7 @@ async function tryRefreshSession(refreshToken: string): Promise<CognitoSession |
 }
 
 /**
- * Lightweight token check for middleware (no DB lookup, no cookie writes).
+ * Lightweight token check for proxy (no DB lookup, no cookie writes).
  * Only verifies the JWT signature and expiry.
  */
 export async function verifySessionToken(

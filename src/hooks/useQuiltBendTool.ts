@@ -172,7 +172,7 @@ export function useQuiltBendTool() {
             if (distance <= threshold) {
               return { path: obj, segment };
             }
-          } else {
+          } else if (segment.type === 'bent') {
             // Bent segment - check against curve
             const { a, b, controlPoint } = segment;
             // Sample points along the curve
@@ -245,9 +245,11 @@ export function useQuiltBendTool() {
             clickPoint,
             dragPoint
           );
-        } else {
+        } else if (originalSegment.type === 'bent') {
           // Re-bending: use original A, B but new click/drag points
           bentSegment = reBendSegment(originalSegment, clickPoint, dragPoint);
+        } else {
+          return; // Ignore cubic for bend tool
         }
 
         // Create path from bent segment

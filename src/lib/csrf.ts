@@ -32,7 +32,7 @@ export function verifyCsrf(request: NextRequest): boolean {
 }
 
 /**
- * Middleware guard: returns a 403 Response if CSRF validation fails,
+ * Proxy guard: returns a 403 Response if CSRF validation fails,
  * or null if the request is safe to proceed.
  */
 export function csrfGuard(request: NextRequest): NextResponse | null {

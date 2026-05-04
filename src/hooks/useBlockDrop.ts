@@ -245,7 +245,7 @@ export function useBlockDrop() {
           const { canvasWidth, canvasHeight } = useProjectStore.getState();
           const { blockSize } = useLayoutStore.getState();
           const { getPixelsPerUnit } = await import('@/lib/canvas-utils');
-          const { computeBlockDropScale: calcScale } = await import('@/lib/block-drop-scale');
+          const { computeBlockDropScale: calcScale } = await import('@/lib/canvas-utils');
           const ppu = getPixelsPerUnit('imperial'); // Use imperial for consistency
 
           // Scale block to the configured block cell size so it appears correctly

@@ -147,8 +147,8 @@ export function reBendSegment(
 export function makeStraight(segment: BentSegment | CubicSegment): EasyDrawSegment {
   return {
     type: 'straight',
-    start: 'a' in segment ? segment.a : segment.start,
-    end: 'b' in segment ? segment.b : segment.end,
+    start: segment.a,
+    end: segment.b,
   };
 }
 

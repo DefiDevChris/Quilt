@@ -1,55 +1,80 @@
 wing: quilt
 rooms:
-  - name: public
-    description: Static assets and public files
-    keywords:
-      - public
-
-  - name: app
-    description: Next.js App Router — pages, layouts, API routes, plus top-level files instrumentation.ts and middleware.ts
+  - name: app_router
+    description: Next.js 16 App Router with route groups (public) — about, blog, contact, design-studio, fabrics, help, photo-to-quilt, picture-my-blocks, privacy, terms; (protected) — gallery, my-fabrics, projects, settings; (admin); plus api/ (9 domains), auth/ (forgot-password, signin, signup, verify-email), dashboard/, studio/ ([projectId], new)
     keywords:
       - app
       - pages
       - routes
       - api
-      - instrumentation
       - middleware
+      - studio
+      - dashboard
+      - auth
 
   - name: components
-    description: React components organized by domain
+    description: React components by domain — studio (29 .tsx), landing (14), blocks (8), fabrics (6), auth (6), ui (10), photo-to-quilt (7), layout (6), editor (2), blog (3), admin (2), canvas (1), dashboard (1), help (1), mobile (1), picture-my-blocks (1), settings (1)
     keywords:
       - components
       - ui
+      - studio
+      - landing
+      - blocks
+      - fabrics
+      - canvas
 
   - name: hooks
-    description: Custom React hooks (canvas, drawing, auth)
+    description: 23 hooks total — 15 root + useBlockBuilder/ subdir (8 sub-hooks). Root: useAutoSave, useBeforeUnload, useBlockDrop, useCanvasInit, useCanvasKeyboard, useCanvasZoomPan, useDrawingTool, useEasyDrawTool, useFabricLayout, useFenceRenderer, useFocusTrap, usePolygonTool, useQuiltBendTool, useShadeAssignment, useTemplateHydration. Subdir: useBendTool, useBlockBuilderCanvas, useCircleTool, usePencilTool, useRectangleTool, useSegments, useSelectTool, useTriangleTool
     keywords:
       - hooks
+      - useAutoSave
+      - useBeforeUnload
+      - useBlockDrop
+      - useCanvasInit
+      - useCanvasKeyboard
+      - useCanvasZoomPan
+      - useDrawingTool
+      - useEasyDrawTool
+      - useFabricLayout
+      - useFenceRenderer
+      - useFocusTrap
+      - usePolygonTool
+      - useQuiltBendTool
+      - useShadeAssignment
+      - useTemplateHydration
+      - useBlockBuilder
 
   - name: stores
-    description: Zustand state management stores
+    description: 10 Zustand stores — canvas, project, layout, fabric, block, blockBuilder, auth, photoToQuilt, yardage, leftPanel
     keywords:
       - stores
-      - state
       - zustand
+      - canvasStore
+      - projectStore
+      - layoutStore
+      - fabricStore
+      - blockStore
+      - authStore
 
-  - name: lib
-    description: Pure utility modules and computation engines
+  - name: engines
+    description: Pure computation engines in lib/ — block-builder-engine, fence-engine, easydraw-engine, shade-assignment-engine. No DOM imports. Fully testable.
     keywords:
       - lib
       - engines
+      - block-builder-engine
+      - fence-engine
+      - easydraw-engine
+      - shade-assignment-engine
       - utilities
-      - utils
 
   - name: types
-    description: Shared TypeScript type definitions
+    description: Shared TypeScript types — block, fabric, fence, grid, layout, project, shade, layoutTemplate, community, api
     keywords:
       - types
       - interfaces
-      - schemas
 
   - name: db
-    description: Database schema, migrations, and queries
+    description: Drizzle ORM + PostgreSQL. 11 tables (users, projects, blocks, fabrics, userFabrics, blogPosts, layoutTemplates, printlists, retailers, ingestJobs, affiliateClicks) + enums.ts + index definitions. 13 schema files total.
     keywords:
       - db
       - database
@@ -57,30 +82,32 @@ rooms:
       - drizzle
       - postgres
 
-  - name: docs
-    description: Documentation and specifications
+  - name: tests
+    description: Vitest (unit, jsdom) — 58 files in tests/unit/ (stores, hooks, components, lib), 1 colocated in src/lib/layout-utils.test.ts. Playwright e2e — 30 spec files + 3 helpers in tests/e2e/, 5 browser projects (chromium, firefox, webkit, mobile-chrome, mobile-safari). Coverage: 70% lines/functions/statements, 60% branch.
     keywords:
-      - docs
-      - documentation
-      - specs
-      - designs
-
-  - name: quilt_blocks
-    description: Quilt block definitions spread across src/components/blocks/ and src/lib/block-builder-engine.ts
-    keywords:
-      - blocks
-      - quilt_blocks
-      - block-builder
-
-  - name: scripts
-    description: Build, seed, and utility scripts
-    keywords:
-      - scripts
-
-  - name: testing
-    description: Test files and test utilities
-    keywords:
-      - testing
       - tests
       - vitest
       - playwright
+      - coverage
+
+  - name: docs
+    description: Documentation and design specs in docs/designs/
+    keywords:
+      - docs
+      - documentation
+      - designs
+
+  - name: affiliate
+    description: Affiliate commission system — ingest jobs, retailer catalog, click tracking. Lib: src/lib/affiliate/deeplink.ts + ingest/ subdir (9 files: adapters, filters, normalize, rehost, runJob, types, upsert). API: api/affiliate/click/[fabricId]/route.ts
+    keywords:
+      - affiliate
+      - retailers
+      - ingestJobs
+      - affiliateClicks
+
+  - name: photo_to_quilt
+    description: Photo-to-quilt feature — components in photo-to-quilt/, store photoToQuiltStore.ts, lib helpers in photo-to-quilt/
+    keywords:
+      - photo-to-quilt
+      - picture-my-blocks
+      - photoToQuiltStore

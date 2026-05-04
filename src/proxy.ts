@@ -18,7 +18,7 @@ function logAudit(event: string, details: Record<string, string>) {
   const logEntry = {
     timestamp: new Date().toISOString(),
     level: 'WARN',
-    service: 'middleware',
+    service: 'proxy',
     event,
     ...details,
   };
@@ -68,7 +68,7 @@ async function verifyIdToken(
   }
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   // Dev auth bypass — allows testing all pages without Cognito credentials.
   // Require the host to be localhost/127.0.0.1 in addition to the env flag so
   // a misconfigured staging server (missing NODE_ENV=production) cannot

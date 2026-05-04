@@ -129,6 +129,50 @@
   }
 }
 
+/* ─── Landing-page micro-animations ──────────────────────────────────────── */
+
+@keyframes float-1 {
+  0%, 100% { transform: translateY(0) rotate(8deg); }
+  50% { transform: translateY(-12px) rotate(6deg); }
+}
+
+@keyframes float-2 {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-10px) rotate(-4deg); }
+}
+
+@keyframes float-3 {
+  0%, 100% { transform: translateY(0) rotate(4deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+
+.animate-float-1 { animation: float-1 6s ease-in-out infinite; }
+.animate-float-2 { animation: float-2 7s ease-in-out infinite; }
+.animate-float-3 { animation: float-3 5s ease-in-out infinite; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe\:animate-fade-in { animation: none !important; opacity: 1; transform: none; }
+}
+
+.animate-fade-in { animation: fadeInUp 0.9s cubic-bezier(0.15,0.85,0.3,1) forwards; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-500 { animation-delay: 0.5s; }
+
+.bg-texture-linen {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 L40 20 M20 0 L20 40' stroke='%23000' stroke-width='0.3'/%3E%3C/svg%3E");
+}
+
+.transition-reveal {
+  transition-property: opacity, transform;
+  transition-duration: 700ms;
+  transition-timing-function: ease-out;
+}
+
 /* ─── Semantic aliases (used across admin + public pages) ─────────────── */
 
 @utility bg-default {

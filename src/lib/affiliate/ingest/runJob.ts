@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
-import { ingestJobs, retailers } from '@/db/schema';
-import type { SourceAdapter, RawProduct, Retailer } from './types';
+import { ingestJobs } from '@/db/schema';
+import type { SourceAdapter, Retailer } from './types';
 import { isQuiltingCotton } from './filter';
 import { normalize } from './normalize';
 import { upsertFabric, sweepStale } from './upsert';
@@ -94,23 +94,3 @@ export async function runJob(config: IngestConfig): Promise<{
   return { seen, upserted, skipped, errored };
 }
 
-export async function getRetailerBySlug(slug: string): Promise<Retailer | null> {
-  const [row] = await db
-    .select()
-    .from(retailers)
-    .where(eq(retailers.slug, slug))
-    .limit(1);
-
-  if (!row) return null;
-
-  return {
-    id: row.id,
-    slug: row.slug,
-    name: row.name,
-    websiteUrl: row.websiteUrl,
-    network: row.network,
-    networkMerchantId: row.networkMerchantId,
-    logoUrl: row.logoUrl,
-    isActive: row.isActive,
-  };
-}
