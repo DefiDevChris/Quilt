@@ -1,7 +1,12 @@
+import { AuthHeroPanel } from '@/components/auth/AuthHeroPanel';
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-12">
-      {children}
+    <main className="auth-page">
+      <div className="auth-page-inner">
+        {children}
+        <AuthHeroPanel />
+      </div>
     </main>
   );
 }

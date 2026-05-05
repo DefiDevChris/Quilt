@@ -89,7 +89,7 @@
   }
 
   .btn-primary-sm {
-    @apply inline-flex items-center justify-center px-3 py-1.5
+    @apply inline-flex items-center justify-center px-3 py-2.5
            rounded-full font-medium text-xs
            bg-[var(--color-primary)] text-[var(--color-text-on-primary)]
            transition-colors duration-150;
@@ -108,7 +108,7 @@
   }
 
   .btn-secondary-sm {
-    @apply inline-flex items-center justify-center px-3 py-1.5
+    @apply inline-flex items-center justify-center px-3 py-2.5
            rounded-full font-medium text-xs
            bg-[var(--color-secondary)] text-[var(--color-text)]
            border border-[var(--color-border)]
@@ -186,4 +186,207 @@
 }
 @utility text-dim {
   color: var(--color-text-dim);
+}
+
+/* ─── Auth page — half-and-half split layout ─────────────────────────── */
+
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 8vh 4vw;
+  background-color: var(--color-secondary);
+  overflow: hidden;
+}
+
+.auth-page-inner {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 88vh;
+  max-height: 88vh;
+  background-color: var(--color-bg);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-elevated);
+}
+
+/* ── Hero panel (right side) ────────────────────────────────────────── */
+
+.auth-hero-panel {
+  position: relative;
+  display: none;
+  width: 65%;
+  height: 100%;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .auth-hero-panel {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 80%;
+    z-index: 0;
+  }
+}
+
+/* ── Form panel (left side) ─────────────────────────────────────────── */
+
+.auth-form-panel {
+  width: 100%;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background-color: transparent;
+  overflow-y: auto;
+}
+
+@media (min-width: 1024px) {
+  .auth-form-panel {
+    width: 50%;
+    padding: 2.5rem 3rem 2.5rem 6rem;
+  }
+}
+
+.auth-form-inner {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* ── Auth creative inputs ─────────────────────────────────────────────── */
+
+.auth-input {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  background-color: color-mix(in srgb, var(--color-secondary) 20%, transparent);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: var(--color-text);
+  transition: all 200ms ease;
+}
+
+.auth-input::placeholder {
+  color: var(--color-text-dim);
+}
+
+.auth-input:focus-visible {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+/* ── Auth submit button — stitched, warm ─────────────────────────────── */
+
+.auth-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border: none;
+  box-shadow: 0 2px 12px rgba(92,160,213,0.2);
+  transition: all 150ms ease;
+  cursor: pointer;
+}
+
+.auth-submit-btn:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  box-shadow: 0 6px 20px rgba(92,160,213,0.3);
+  transform: translateY(-1px);
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Auth alt button — ghost with dashed stitch border ────────────────── */
+
+.auth-alt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  transition: all 150ms ease;
+}
+
+.auth-alt-btn:hover {
+  background-color: var(--color-secondary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+/* ── Social login buttons ─────────────────────────────────────────────── */
+
+.auth-social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  transition: all 150ms ease;
+  cursor: pointer;
+}
+
+.auth-social-btn:hover:not(:disabled) {
+  background-color: var(--color-secondary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+.auth-social-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Divider between form sections */
+.auth-form-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.25rem 0;
+}
+
+.auth-form-divider::before,
+.auth-form-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-border), transparent);
+}
+
+.auth-form-divider-text {
+  padding: 0 1rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-dim);
+  white-space: nowrap;
 }

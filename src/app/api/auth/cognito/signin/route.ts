@@ -33,11 +33,28 @@ export async function POST(request: NextRequest) {
 
     // Dev bypass: skip Cognito, look up by email with no password check
     if (process.env.DEV_AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production') {
-      const [existing] = await db
+      // Hardcoded test credentials — auto-create user if missing
+      const isTestCredential = email === 'admin@quiltcorgi.com' && password === 'password123';
+
+      let [existing] = await db
         .select({ id: users.id, role: users.role })
         .from(users)
         .where(eq(users.email, email))
         .limit(1);
+
+      if (!existing && isTestCredential) {
+        const [inserted] = await db
+          .insert(users)
+          .values({
+            name: 'Admin',
+            email,
+            role: 'admin',
+            emailVerified: new Date(),
+          })
+          .returning({ id: users.id, role: users.role });
+
+        existing = inserted;
+      }
 
       if (!existing) {
         return errorResponse('No dev account with this email. Sign up first.', 'NOT_FOUND', 404);

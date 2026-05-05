@@ -5,21 +5,25 @@ interface FabricLike {
   deeplinkOverride: string | null;
   retailerProductUrl: string | null;
   retailerId: string | null;
+  isInStockAtRetailer?: boolean | null;
 }
 
 export function buildDeeplink(fabric: FabricLike, retailer: Retailer): string {
   if (fabric.deeplinkOverride) return fabric.deeplinkOverride;
 
-  if (!fabric.retailerProductUrl) {
-    throw new Error(`no retailer product URL for fabric ${fabric.id}`);
-  }
+  // Out-of-stock: send to the retailer homepage instead of a dead product page.
+  // The Awin cookie still gets set, so any purchase earns commission.
+  const isOos = fabric.isInStockAtRetailer === false;
+  const destination = isOos
+    ? retailer.websiteUrl
+    : (fabric.retailerProductUrl ?? retailer.websiteUrl);
 
-  const target = encodeURIComponent(fabric.retailerProductUrl);
+  const target = encodeURIComponent(destination);
 
   switch (retailer.network) {
     case 'awin': {
       if (!retailer.networkMerchantId || !process.env.AWIN_PUBLISHER_ID) {
-        return fabric.retailerProductUrl;
+        return destination;
       }
       return (
         `https://www.awin1.com/cread.php` +
@@ -29,6 +33,7 @@ export function buildDeeplink(fabric: FabricLike, retailer: Retailer): string {
       );
     }
     default:
-      return fabric.retailerProductUrl;
+      return destination;
   }
 }
+

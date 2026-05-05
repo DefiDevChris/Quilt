@@ -87,8 +87,8 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
   }
 
   const inputClassName = compact
-    ? 'w-full rounded-lg border border-default bg-surface px-3 py-2 text-sm text-default placeholder:text-dim transition-[border-color,box-shadow,background-color] duration-150 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/15'
-    : 'w-full rounded-lg border border-default bg-surface px-4 py-2.5 text-base text-default placeholder:text-dim transition-[border-color,box-shadow,background-color] duration-150 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/15';
+    ? 'w-full rounded-lg border border-default bg-[var(--color-secondary)]/25 px-3 py-2 text-sm text-default placeholder:text-dim transition-[border-color,box-shadow,background-color] duration-150 focus-visible:border-primary focus-visible:bg-[var(--color-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/15'
+    : 'auth-input';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -111,7 +111,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
         <div>
           <label
             htmlFor={compact ? 'modal-name' : 'name'}
-            className="block text-base font-semibold text-default mb-1.5"
+            className="block text-sm font-medium text-default mb-2"
           >
             Name
           </label>
@@ -132,7 +132,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
       <div>
         <label
           htmlFor={compact ? 'modal-email' : 'email'}
-          className="block text-base font-semibold text-default mb-1.5"
+          className="block text-sm font-medium text-default mb-2"
         >
           Email
         </label>
@@ -154,7 +154,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
         <div className="flex items-center justify-between mb-1.5">
           <label
             htmlFor={compact ? 'modal-password' : 'password'}
-            className="block text-base font-semibold text-default"
+            className="block text-sm font-medium text-default"
           >
             Password
           </label>
@@ -219,7 +219,7 @@ export function AuthFormInner({ mode, onSuccess, compact = false }: AuthFormInne
       <button
         type="submit"
         disabled={isLoading}
-        className="btn-primary-sm w-full"
+        className="auth-submit-btn mt-2"
       >
         {isLoading
           ? isSignUp

@@ -1,49 +1,32 @@
 import { NextRequest } from 'next/server';
-import { desc, count } from 'drizzle-orm';
+import { desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { layoutTemplates } from '@/db/schema';
-import { requireAdminSession } from '@/lib/auth-helpers';
+import { getRequiredSession, requireAdmin } from '@/lib/auth-helpers';
 import { errorResponse, validationErrorResponse } from '@/lib/api-responses';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
-  const result = await requireAdminSession();
-  if (result instanceof Response) return result;
-
-  const url = request.nextUrl;
-  const page = parseInt(url.searchParams.get('page') ?? '1', 10);
-  const limit = parseInt(url.searchParams.get('limit') ?? '20', 10);
-  const offset = (page - 1) * limit;
+export async function GET() {
+  const session = await getRequiredSession();
+  if (!session) return new Response('Unauthorized', { status: 401 });
+  const check = requireAdmin(session.user.role);
+  if (check instanceof Response) return check;
 
   try {
-    const [rows, [totalRow]] = await Promise.all([
-      db
-        .select()
-        .from(layoutTemplates)
-        .orderBy(desc(layoutTemplates.createdAt))
-        .limit(limit)
-        .offset(offset),
-      db.select({ count: count() }).from(layoutTemplates),
-    ]);
-
-    const total = totalRow?.count ?? 0;
-
-    return Response.json({
-      success: true,
-      data: {
-        layouts: rows,
-        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
-      },
-    });
-  } catch (err) { console.error('[admin/layouts]', err);
+    const rows = await db.select().from(layoutTemplates).orderBy(desc(layoutTemplates.createdAt));
+    return Response.json({ success: true, data: { layouts: rows } });
+  } catch (err) {
+    console.error('[admin/layouts]', err);
     return errorResponse('Failed to fetch layouts', 'INTERNAL_ERROR', 500);
   }
 }
 
 export async function POST(request: NextRequest) {
-  const result = await requireAdminSession();
-  if (result instanceof Response) return result;
+  const session = await getRequiredSession();
+  if (!session) return new Response('Unauthorized', { status: 401 });
+  const check = requireAdmin(session.user.role);
+  if (check instanceof Response) return check;
 
   try {
     const body = await request.json();
@@ -66,7 +49,8 @@ export async function POST(request: NextRequest) {
       .returning();
 
     return Response.json({ success: true, data: created }, { status: 201 });
-  } catch (err) { console.error('[admin/layouts]', err);
+  } catch (err) {
+    console.error('[admin/layouts]', err);
     return errorResponse('Failed to create layout', 'INTERNAL_ERROR', 500);
   }
 }

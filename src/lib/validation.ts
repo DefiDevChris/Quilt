@@ -237,11 +237,6 @@ export const adminUpdateTemplateSchema = createTemplateSchema.partial().extend({
   isDefault: z.boolean().optional(),
 });
 
-export const adminPaginationSchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
-});
-
 export const adminCreateBlockSchema = z.object({
   name: z.string().min(1).max(255),
   category: z.string().min(1).max(100),
@@ -269,8 +264,5 @@ export const adminCreateFabricSchema = z.object({
   isDefault: z.boolean().default(false),
 });
 
-export const adminUpdateSettingSchema = z.object({
-  key: z.string().min(1).max(100),
-  value: z.boolean(),
-});
+
 

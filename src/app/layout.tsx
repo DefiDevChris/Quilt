@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Providers } from '@/components/auth/Providers';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import { SkipLink } from '@/components/ui/SkipLink';
+import { AwinMasterTag } from '@/components/tracking/AwinMasterTag';
 import { getBaseUrl } from '@/lib/url';
 import './globals.css';
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700;800&display=swap"
         />
+        <AwinMasterTag />
       </head>
       <body>
         <SkipLink />

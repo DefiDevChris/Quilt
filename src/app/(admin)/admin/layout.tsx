@@ -1,40 +1,38 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   ArrowLeft,
-  LayoutDashboard,
   LayoutGrid,
   LayoutTemplate,
   Library,
   Menu,
-  Settings,
 } from 'lucide-react';
 import { SectionTitle } from '@/components/ui/SectionTitle';
 import { COLORS, withAlpha } from '@/lib/design-system';
 
 const NAV_ITEMS = [
-  { href: '/admin', label: 'Dashboard', Icon: LayoutDashboard },
   { href: '/admin/blocks', label: 'Blocks', Icon: LayoutGrid },
   { href: '/admin/layouts', label: 'Layouts', Icon: LayoutTemplate },
-  { href: '/admin/libraries', label: 'Libraries', Icon: Library },
-  { href: '/admin/settings', label: 'Settings', Icon: Settings },
+  { href: '/admin/libraries', label: 'Fabrics', Icon: Library },
 ] as const;
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const isActive = (href: string) => {
-    if (href === '/admin') return pathname === '/admin';
-    return pathname.startsWith(href);
-  };
+  const isActive = (href: string) => pathname.startsWith(href);
+
+  if (pathname === '/admin') {
+    router.replace('/admin/blocks');
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)] flex">
-      {/* Mobile overlay */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 lg:hidden"
@@ -43,15 +41,13 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`fixed lg:sticky top-0 left-0 h-screen z-50 lg:z-auto w-64 flex-shrink-0 flex flex-col bg-surface border-r border-default transition-transform duration-150 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        {/* Logo */}
         <div className="px-6 py-5 border-b border-default">
-          <Link href="/admin" className="flex items-center gap-3">
+          <Link href="/admin/blocks" className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <LayoutGrid className="w-5 h-5 text-[var(--color-text-on-primary)]" />
             </div>
@@ -59,7 +55,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </Link>
         </div>
 
-        {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map((item) => (
             <Link
@@ -71,11 +66,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   ? 'text-primary'
                   : 'text-dim hover:text-default hover:bg-default'
               }`}
-              style={
-                isActive(item.href)
-                  ? { backgroundColor: withAlpha(COLORS.primary, 0.1) }
-                  : undefined
-              }
+              style={isActive(item.href) ? { backgroundColor: withAlpha(COLORS.primary, 0.1) } : undefined}
             >
               <item.Icon className="w-5 h-5" />
               {item.label}
@@ -83,7 +74,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           ))}
         </nav>
 
-        {/* Footer */}
         <div className="px-4 py-4 border-t border-default">
           <Link
             href="/dashboard"
@@ -95,9 +85,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </div>
       </aside>
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top bar */}
         <header className="sticky top-0 z-30 bg-surface border-b border-default px-6 py-4 flex items-center gap-4">
           <button
             type="button"
@@ -119,7 +107,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </Link>
         </header>
 
-        {/* Page content */}
         <main className="flex-1 px-6 py-8 max-w-6xl w-full mx-auto">{children}</main>
       </div>
     </div>
@@ -127,9 +114,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 }
 
 function getPageTitle(pathname: string): string {
-  const item = NAV_ITEMS.find((n) => {
-    if (n.href === '/admin') return pathname === '/admin';
-    return pathname.startsWith(n.href);
-  });
+  const item = NAV_ITEMS.find((n) => pathname.startsWith(n.href));
   return item?.label ?? 'Admin';
 }

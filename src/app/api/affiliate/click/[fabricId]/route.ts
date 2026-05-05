@@ -22,6 +22,7 @@ export async function GET(
       retailerId: fabrics.retailerId,
       retailerProductUrl: fabrics.retailerProductUrl,
       deeplinkOverride: fabrics.deeplinkOverride,
+      isInStockAtRetailer: fabrics.isInStockAtRetailer,
       isActive: fabrics.isActive,
       retailerSlug: retailers.slug,
       retailerName: retailers.name,
@@ -56,6 +57,7 @@ export async function GET(
     deeplinkOverride: row.deeplinkOverride,
     retailerProductUrl: row.retailerProductUrl,
     retailerId: row.retailerId,
+    isInStockAtRetailer: row.isInStockAtRetailer,
   };
 
   const target =

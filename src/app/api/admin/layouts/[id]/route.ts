@@ -2,15 +2,17 @@ import { NextRequest } from 'next/server';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { layoutTemplates } from '@/db/schema';
-import { requireAdminSession } from '@/lib/auth-helpers';
+import { getRequiredSession, requireAdmin } from '@/lib/auth-helpers';
 import { errorResponse, notFoundResponse, validationErrorResponse } from '@/lib/api-responses';
 import { adminUpdateTemplateSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const result = await requireAdminSession();
-  if (result instanceof Response) return result;
+  const session = await getRequiredSession();
+  if (!session) return new Response('Unauthorized', { status: 401 });
+  const check = requireAdmin(session.user.role);
+  if (check instanceof Response) return check;
 
   try {
     const { id } = await params;
@@ -33,7 +35,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     }
 
     return Response.json({ success: true, data: updated });
-  } catch (err) { console.error('[admin/layouts/[id]]', err);
+  } catch (err) {
+    console.error('[admin/layouts/[id]]', err);
     return errorResponse('Failed to update layout', 'INTERNAL_ERROR', 500);
   }
 }
@@ -42,8 +45,10 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const result = await requireAdminSession();
-  if (result instanceof Response) return result;
+  const session = await getRequiredSession();
+  if (!session) return new Response('Unauthorized', { status: 401 });
+  const check = requireAdmin(session.user.role);
+  if (check instanceof Response) return check;
 
   try {
     const { id } = await params;
@@ -58,7 +63,8 @@ export async function DELETE(
     }
 
     return Response.json({ success: true, data: { deleted: true } });
-  } catch (err) { console.error('[admin/layouts/[id]]', err);
+  } catch (err) {
+    console.error('[admin/layouts/[id]]', err);
     return errorResponse('Failed to delete layout', 'INTERNAL_ERROR', 500);
   }
 }

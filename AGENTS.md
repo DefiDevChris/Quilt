@@ -29,6 +29,7 @@ npm run db:generate   # drizzle-kit generate (creates migration files in src/db/
 npm run db:migrate    # apply pending migrations
 npm run db:studio     # Drizzle Studio web UI
 npm run db:seed:templates # seed layout templates
+npm run db:seed:retailers # seed affiliate retailers
 ```
 
 **Single test file:** `npx vitest run src/lib/example.test.ts`
@@ -74,7 +75,19 @@ Use `rounded-full` (buttons/CTAs/tabs), `rounded-lg` (cards/inputs/dialogs), `sh
 - **Canvas:** call `centerAndFitViewport()` after confirming `fabricCanvas` is non-null (subscribe via Zustand selector, not RAF)
 - **Layout store:** call `store.applyLayout()` **after** all setters
 - **Mobile:** Studio is desktop-only (`StudioGate` redirects mobile). Mobile shell has 3 nav items: Home, Upload FAB, Profile/Sign In
-- **Auth flow:** Cognito sign-in → HTTP-only cookies. `proxy.ts` verifies JWT via JWKS for protected routes. `getSession()` does DB lookup for role. Roles: `free | admin` (`src/lib/role-utils.ts`)
+- **Auth flow:** Cognito sign-in → HTTP-only cookies. `proxy.ts` verifies JWT via JWKS for protected routes. `getSession()` does DB lookup for role. Roles: `free | admin`
+- **Affiliate:** Awin deeplinks via `src/lib/affiliate/deeplink.ts`. Click tracking via `GET /api/affiliate/click/:fabricId` (302 redirect + DB log). Ingest pipeline in `src/lib/affiliate/ingest/`. Awin MasterTag in `<head>` via `AwinMasterTag` component.
+
+## Affiliate Architecture
+
+- **Monetization:** 100% free app. Revenue from Awin affiliate commissions on fabric purchases.
+- **Ingest pipeline:** `src/lib/affiliate/ingest/` — Awin feed adapter, ScrapingBee adapter, CSV adapter → filter → normalize → upsert → image rehost to S3
+- **Trigger:** `POST /api/admin/ingest/run` (admin-only, body: `{ retailerSlug }`) or `GET /api/cron/ingest` (bearer token via `CRON_SECRET`)
+- **Click tracking:** `GET /api/affiliate/click/:fabricId` → logs click (respects DNT/GPC) → 302 to Awin deeplink
+- **Deeplink builder:** `src/lib/affiliate/deeplink.ts` — builds `awin1.com/cread.php` URLs with publisher ID
+- **Awin MasterTag:** `src/components/tracking/AwinMasterTag.tsx` — DWIN pixel for conversion attribution (needs `NEXT_PUBLIC_AWIN_PUBLISHER_ID`)
+- **Retailer seed:** `npm run db:seed:retailers` — seeds `retailers` table; edit `src/db/seed/retailer-seed-data.ts` with Awin merchant IDs
+- **Key env vars:** `AWIN_PUBLISHER_ID`, `NEXT_PUBLIC_AWIN_PUBLISHER_ID`, `AWIN_API_TOKEN`, `CRON_SECRET`, `SCRAPINGBEE_API_KEY`
 
 ## Testing
 

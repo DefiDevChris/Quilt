@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { AuthFormInner } from './AuthFormInner';
+import { SocialLoginButtons } from './SocialLoginButtons';
 
 interface AuthFormProps {
   mode: 'signin' | 'signup';
@@ -12,45 +13,57 @@ export function AuthForm({ mode }: AuthFormProps) {
   const isSignUp = mode === 'signup';
 
   return (
-    <div className="w-full max-w-[500px] mx-auto bg-surface border border-default rounded-lg p-[2.75rem] relative">
-      {/* Logo + Brand + Heading */}
-      <div className="flex flex-col items-center mb-8">
-        <Link href="/" className="w-24 h-24 mb-3 relative block">
-          <Image
-            src="/logo.png"
-            alt="QuiltCorgi — Back to home"
-            fill
-            sizes="96px"
-            className="object-contain"
-            priority
-          />
-        </Link>
-        <span
-          className="text-2xl font-bold text-default mb-1"
-          style={{ fontFamily: 'var(--font-heading)' }}
-        >
-          QuiltCorgi
-        </span>
-        <h1
-          className="text-center text-[2rem] font-semibold leading-[1.1] text-default"
-          style={{ fontFamily: 'var(--font-heading)' }}
-        >
-          {isSignUp ? 'Create your account' : 'Welcome back'}
-        </h1>
-      </div>
+    <div className="auth-form-panel">
+      <div className="auth-form-inner">
+        {/* Heading */}
+        <div className="mb-6">
+          <div className="flex items-start gap-3">
+            <Link href="/" className="relative block w-14 h-14 shrink-0">
+              <Image
+                src="/logo.png"
+                alt="QuiltCorgi — Back to home"
+                fill
+                sizes="56px"
+                className="object-contain"
+                priority
+              />
+            </Link>
+            <div>
+              <h1 className="font-[family-name:var(--font-heading)] text-[2rem] font-bold text-[var(--color-text)] leading-[1.1] tracking-tight">
+                {isSignUp ? 'Create your account' : 'Welcome back'}
+              </h1>
+                <p className="text-[var(--color-text-dim)] text-sm leading-relaxed max-w-sm">
+                  {isSignUp
+                    ? 'Start designing beautiful quilts today'
+                    : 'Sign in to continue your quilting journey'}
+                </p>
+              </div>
+            </div>
+          </div>
 
-      <AuthFormInner mode={mode} />
+          <AuthFormInner mode={mode} />
 
-      <div className="mt-10 flex flex-col items-center gap-3">
-        <p className="text-sm text-dim font-medium">
-          {isSignUp ? 'Already have an account?' : "Don't have an account?"}
-        </p>
+        {/* Social login */}
+        <div className="auth-form-divider">
+          <span className="auth-form-divider-text">or</span>
+        </div>
+
+        <SocialLoginButtons mode={mode} />
+
+        {/* Divider */}
+        <div className="auth-form-divider">
+          <span className="auth-form-divider-text">
+            {isSignUp ? 'Already have an account?' : "Don't have an account?"}
+          </span>
+        </div>
+
         <Link
           href={isSignUp ? '/auth/signin' : '/auth/signup'}
-          className="btn-secondary-sm w-full"
+          className="auth-alt-btn"
         >
           {isSignUp ? 'Sign In' : 'Create Account'}
         </Link>
+
       </div>
     </div>
   );

@@ -21,6 +21,7 @@
     "type-check": "tsc --noEmit",
     "db:migrate": "drizzle-kit migrate",
     "db:seed:templates": "tsx src/db/seed/seed-templates.ts",
+    "db:seed:retailers": "tsx src/db/seed/seed-retailers.ts",
     "db:local:up": "docker compose up -d --wait",
     "db:local:down": "docker compose down"
   },

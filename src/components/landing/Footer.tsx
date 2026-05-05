@@ -101,6 +101,11 @@ export default function Footer() {
                   Terms of Service
                 </Link>
               </li>
+              <li>
+                <Link href="/affiliate-disclosure" className="hover:text-primary transition-colors duration-150">
+                  Affiliate Disclosure
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

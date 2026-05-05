@@ -52,6 +52,12 @@ export type PatternResult = {
   backgroundFabric?: string;
 };
 
+export type TargetQuiltSize = {
+  width: number;
+  height: number;
+  pieceSize: number;
+};
+
 export type WizardStep = 'upload' | 'background' | 'canvas';
 
 type PhotoToQuiltState = {
@@ -71,6 +77,8 @@ type PhotoToQuiltState = {
   enhance: number;
   showGrid: boolean;
   showBlockGrid: boolean;
+
+  targetQuiltSize: TargetQuiltSize | null;
 
   editMode: 'view' | 'paint' | 'erase';
   paintColorIdx: number;
@@ -105,6 +113,8 @@ type PhotoToQuiltActions = {
   setEnhance: (val: number) => void;
   setShowGrid: (val: boolean) => void;
   setShowBlockGrid: (val: boolean) => void;
+
+  setTargetQuiltSize: (size: TargetQuiltSize | null) => void;
 
   setEditMode: (mode: 'view' | 'paint' | 'erase') => void;
   setPaintColorIdx: (idx: number) => void;
@@ -143,6 +153,8 @@ const initialState: PhotoToQuiltState = {
   showGrid: true,
   showBlockGrid: true,
 
+  targetQuiltSize: null,
+
   editMode: 'view',
   paintColorIdx: 0,
 
@@ -178,6 +190,8 @@ export const usePhotoToQuiltStore = create<PhotoToQuiltState & PhotoToQuiltActio
   setEnhance: (enhance) => set({ enhance }),
   setShowGrid: (showGrid) => set({ showGrid }),
   setShowBlockGrid: (showBlockGrid) => set({ showBlockGrid }),
+
+  setTargetQuiltSize: (targetQuiltSize) => set({ targetQuiltSize }),
 
   setEditMode: (editMode) => set({ editMode }),
   setPaintColorIdx: (paintColorIdx) => set({ paintColorIdx }),

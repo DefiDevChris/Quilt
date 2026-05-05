@@ -67,7 +67,26 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>6. Your Rights</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>6. Affiliate Tracking</h2>
+            <p>
+              QuiltCorgi participates in the Awin affiliate network. When you click an affiliate
+              link to a fabric retailer, we record a minimal click event that includes the fabric
+              clicked, the referring page, a one-way hash of your IP address (not your actual IP),
+              and your browser&apos;s user-agent string.
+            </p>
+            <p className="mt-3">
+              Awin may set cookies on your device for conversion tracking. These cookies are governed
+              by <a href="https://www.awin.com/gb/privacy" target="_blank" rel="noopener noreferrer" className="text-primary">Awin&apos;s Privacy Policy</a>.
+              QuiltCorgi does not control or have access to these cookies.
+            </p>
+            <p className="mt-3">
+              We respect Do Not Track (DNT) and Global Privacy Control (GPC) browser signals. If
+              either signal is detected, no click event is recorded by QuiltCorgi.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>7. Your Rights</h2>
             <p>You have the right to:</p>
             <ul className="list-disc pl-6 mt-3 space-y-1">
               <li>Access your personal data</li>
@@ -80,7 +99,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>7. Children&rsquo;s Privacy</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>8. Children&rsquo;s Privacy</h2>
             <p>
               Our service does not address anyone under the age of 13. We do not knowingly collect personally
               identifiable information from children under 13.
@@ -88,7 +107,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>8. Changes to This Policy</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>9. Changes to This Policy</h2>
             <p>
               We may update our Privacy Policy from time to time. We will notify you of any changes by posting the
               new Privacy Policy on this page.
@@ -96,7 +115,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>9. Contact Us</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>10. Contact Us</h2>
             <p>
               If you have any questions about this Privacy Policy, please contact us at:
               <a href="mailto:privacy@quiltcorgi.com" className="text-primary">

@@ -18,6 +18,7 @@ export const retailers = pgTable(
     network: varchar('network', { length: 50 }).notNull().default('awin'),
     networkMerchantId: varchar('networkMerchantId', { length: 50 }),
     logoUrl: text('logoUrl'),
+    feedUrl: text('feedUrl'),
     isActive: boolean('isActive').notNull().default(true),
     createdAt: timestamp('createdAt', { mode: 'date', withTimezone: true })
       .notNull()

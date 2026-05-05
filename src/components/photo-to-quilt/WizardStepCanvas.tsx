@@ -21,6 +21,9 @@ import RightPanel from './RightPanel';
 
 const BLOCK_SIZE = 3;
 
+/** Snap to even quarter-inch to prevent FP drift in stored dimensions */
+const snapToQuarterInch = (value: number): number => Math.round(value * 4) / 4;
+
 export default function WizardStepCanvas() {
   const router = useRouter();
 
@@ -416,8 +419,8 @@ export default function WizardStepCanvas() {
     setSaveError(null);
     try {
       const canvasData = patternResultToFabricJson(result);
-      const quiltW = result.cols * result.pieceSizeInches;
-      const quiltH = result.rows * result.pieceSizeInches;
+      const quiltW = snapToQuarterInch(result.cols * result.pieceSizeInches);
+      const quiltH = snapToQuarterInch(result.rows * result.pieceSizeInches);
       const res = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

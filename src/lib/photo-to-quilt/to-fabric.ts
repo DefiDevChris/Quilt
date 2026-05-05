@@ -1,5 +1,13 @@
 import { PIXELS_PER_INCH } from '@/lib/constants/canvas';
 
+// FP rounding helpers to eliminate drift when snapping to pixels
+const PX_EPSILON = 0.01;
+function snapPx(value: number): number {
+  // Snap to nearest integer pixel coordinate/dimension
+  // We keep the helper centralized for easy adjustments if needed
+  return Math.round(value);
+}
+
 /**
  * Minimal Pattern types duplicated here so this lib module does not import a
  * component. Types are erased at compile time and carry no runtime / DOM
@@ -39,20 +47,21 @@ export function patternResultToFabricJson(
   result: PatternResult,
 ): Record<string, unknown> {
   const ppi = PIXELS_PER_INCH;
-  const cellPx = result.pieceSizeInches * ppi;
+  // Snap cell size to integer pixels to avoid FP drift
+  const cellPx = Math.round(result.pieceSizeInches * ppi);
   const objects: Record<string, unknown>[] = [];
 
   for (const cell of result.cells) {
     for (const piece of cell.pieces) {
       if (piece.isBackground) continue;
 
-      const left = cell.x * cellPx;
-      const top = cell.y * cellPx;
+      const left = snapPx(cell.x * cellPx);
+      const top = snapPx(cell.y * cellPx);
       const fill = result.palette[piece.colorIndex];
 
       if (piece.kind === 'square') {
-        const w = cellPx * (piece.spanW ?? 1);
-        const h = cellPx * (piece.spanH ?? 1);
+        const w = snapPx(cellPx * (piece.spanW ?? 1));
+        const h = snapPx(cellPx * (piece.spanH ?? 1));
         objects.push({
           type: 'rect',
           left,
@@ -72,15 +81,15 @@ export function patternResultToFabricJson(
           type: 'polygon',
           left,
           top,
-          width: cellPx,
-          height: cellPx,
+          width: snapPx(cellPx),
+          height: snapPx(cellPx),
           fill,
           stroke: fill,
           strokeWidth: 0.5,
           points: [
-            { x: 0, y: 0 },
-            { x: cellPx, y: 0 },
-            { x: 0, y: cellPx },
+            { x: snapPx(0), y: snapPx(0) },
+            { x: snapPx(cellPx), y: snapPx(0) },
+            { x: snapPx(0), y: snapPx(cellPx) },
           ],
           originX: 'left',
           originY: 'top',
@@ -92,15 +101,15 @@ export function patternResultToFabricJson(
           type: 'polygon',
           left,
           top,
-          width: cellPx,
-          height: cellPx,
+          width: snapPx(cellPx),
+          height: snapPx(cellPx),
           fill,
           stroke: fill,
           strokeWidth: 0.5,
           points: [
-            { x: cellPx, y: 0 },
-            { x: cellPx, y: cellPx },
-            { x: 0, y: cellPx },
+            { x: snapPx(cellPx), y: snapPx(0) },
+            { x: snapPx(cellPx), y: snapPx(cellPx) },
+            { x: snapPx(0), y: snapPx(cellPx) },
           ],
           originX: 'left',
           originY: 'top',

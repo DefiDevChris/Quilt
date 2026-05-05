@@ -72,7 +72,28 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>7. Governing Law</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>7. Affiliate Links &amp; Commissions</h2>
+            <p>
+              QuiltCorgi participates in affiliate marketing programmes, including the Awin network.
+              Links to third-party fabric retailers may be affiliate links. If you make a purchase
+              through an affiliate link, QuiltCorgi may earn a commission at no extra cost to you.
+            </p>
+            <p className="mt-3">
+              Fabric prices displayed on QuiltCorgi are sourced from third-party retailers and may
+              change without notice. QuiltCorgi does not guarantee the accuracy of pricing or
+              availability information. Please verify all details on the retailer&apos;s website
+              before purchasing.
+            </p>
+            <p className="mt-3">
+              For full details, see our{' '}
+              <a href="/affiliate-disclosure" className="text-primary">
+                Affiliate Disclosure
+              </a>.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>8. Governing Law</h2>
             <p>
               These terms shall be governed by and construed in accordance with the laws of the United States, without
               regard to its conflict of law provisions.
@@ -80,14 +101,14 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>8. Changes to Terms</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>9. Changes to Terms</h2>
             <p>
               We reserve the right to modify these terms at any time. We will provide notice of significant changes.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>9. Contact Us</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-default" style={{ fontFamily: 'var(--font-heading)' }}>10. Contact Us</h2>
             <p>
               If you have any questions about these Terms, please contact us at:
               <a href="mailto:legal@quiltcorgi.com" className="text-primary">

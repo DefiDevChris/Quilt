@@ -1,15 +1,17 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 import { fabrics } from '@/db/schema';
-import { requireAdminSession } from '@/lib/auth-helpers';
+import { getRequiredSession, requireAdmin } from '@/lib/auth-helpers';
 import { errorResponse, validationErrorResponse } from '@/lib/api-responses';
 import { adminCreateFabricSchema } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
-  const result = await requireAdminSession();
-  if (result instanceof Response) return result;
+  const session = await getRequiredSession();
+  if (!session) return new Response('Unauthorized', { status: 401 });
+  const check = requireAdmin(session.user.role);
+  if (check instanceof Response) return check;
 
   try {
     const body = await request.json();

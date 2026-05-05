@@ -1,54 +1,34 @@
 import { NextRequest } from 'next/server';
-import { desc, count } from 'drizzle-orm';
+import { desc } from 'drizzle-orm';
 import { db } from '@/lib/db';
 import { blocks } from '@/db/schema';
-import { requireAdminSession } from '@/lib/auth-helpers';
+import { getRequiredSession, requireAdmin } from '@/lib/auth-helpers';
 import { errorResponse, validationErrorResponse } from '@/lib/api-responses';
-import { adminCreateBlockSchema, adminPaginationSchema } from '@/lib/validation';
+import { adminCreateBlockSchema } from '@/lib/validation';
 import { sanitizeSvg } from '@/lib/sanitize-svg';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
-  const result = await requireAdminSession();
-  if (result instanceof Response) return result;
-
-  const url = request.nextUrl;
-  const parsed = adminPaginationSchema.safeParse({
-    page: url.searchParams.get('page') ?? undefined,
-    limit: url.searchParams.get('limit') ?? undefined,
-  });
-
-  if (!parsed.success) {
-    return validationErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid parameters');
-  }
-
-  const { page, limit } = parsed.data;
-  const offset = (page - 1) * limit;
+export async function GET() {
+  const session = await getRequiredSession();
+  if (!session) return new Response('Unauthorized', { status: 401 });
+  const check = requireAdmin(session.user.role);
+  if (check instanceof Response) return check;
 
   try {
-    const [blockRows, [totalRow]] = await Promise.all([
-      db.select().from(blocks).orderBy(desc(blocks.createdAt)).limit(limit).offset(offset),
-      db.select({ count: count() }).from(blocks),
-    ]);
-
-    const total = totalRow?.count ?? 0;
-
-    return Response.json({
-      success: true,
-      data: {
-        blocks: blockRows,
-        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
-      },
-    });
-  } catch (err) { console.error('[admin/blocks]', err);
+    const blockRows = await db.select().from(blocks).orderBy(desc(blocks.createdAt));
+    return Response.json({ success: true, data: { blocks: blockRows } });
+  } catch (err) {
+    console.error('[admin/blocks]', err);
     return errorResponse('Failed to fetch blocks', 'INTERNAL_ERROR', 500);
   }
 }
 
 export async function POST(request: NextRequest) {
-  const result = await requireAdminSession();
-  if (result instanceof Response) return result;
+  const session = await getRequiredSession();
+  if (!session) return new Response('Unauthorized', { status: 401 });
+  const check = requireAdmin(session.user.role);
+  if (check instanceof Response) return check;
 
   try {
     const body = await request.json();
@@ -69,7 +49,8 @@ export async function POST(request: NextRequest) {
       .returning();
 
     return Response.json({ success: true, data: created }, { status: 201 });
-  } catch (err) { console.error('[admin/blocks]', err);
+  } catch (err) {
+    console.error('[admin/blocks]', err);
     return errorResponse('Failed to create block', 'INTERNAL_ERROR', 500);
   }
 }
