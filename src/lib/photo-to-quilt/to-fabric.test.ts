@@ -145,7 +145,8 @@ describe('patternResultToFabricJson', () => {
         for (const child of group.objects) {
           expect(child.__pieceRole).toBe('patch');
           expect(child.__pieceKind).toBe('square');
-          expect(child.__sizeInches).toEqual({ w: pieceSizeInches, h: pieceSizeInches });
+          expect(typeof child.__sizeInches).toBe('number');
+          expect(child.__sizeInches).toBe(pieceSizeInches);
           expect(typeof child.id).toBe('string');
           expect(allIds.has(child.id)).toBe(false);
           allIds.add(child.id);
@@ -207,7 +208,8 @@ describe('patternResultToFabricJson', () => {
         for (const child of group.objects) {
           expect(child.__pieceRole).toBe('patch');
           expect(['square', 'triangle-a', 'triangle-b']).toContain(child.__pieceKind);
-          expect(child.__sizeInches).toEqual({ w: pieceSizeInches, h: pieceSizeInches });
+          expect(typeof child.__sizeInches).toBe('number');
+          expect(child.__sizeInches).toBe(pieceSizeInches);
           expect(typeof child.id).toBe('string');
           expect(allIds.has(child.id)).toBe(false);
           allIds.add(child.id);
@@ -217,7 +219,7 @@ describe('patternResultToFabricJson', () => {
   });
 
   describe('Geometry tests', () => {
-    it('should position patches at correct pixel coordinates based on cell position', () => {
+    it('should position square patches at correct pixel coordinates based on cell position', () => {
       const pattern = createAllSquaresPattern(9, 9, blockSize, pieceSizeInches);
       const json = patternResultToFabricJson(pattern);
       const parsed = JSON.parse(JSON.stringify(json));
@@ -232,8 +234,53 @@ describe('patternResultToFabricJson', () => {
           const expectedLeft = (cellX - bx * blockSize) * cellPx;
           const expectedTop = (cellY - by * blockSize) * cellPx;
 
+          // For square patches, left === cell.x * pieceSizeInches * 96 and width === pieceSizeInches * 96
           expect(child.left).toBeCloseTo(expectedLeft, 0);
           expect(child.top).toBeCloseTo(expectedTop, 0);
+          expect(child.width).toBeCloseTo(cellPx, 0);
+          expect(child.height).toBeCloseTo(cellPx, 0);
+        }
+      }
+    });
+
+    it('should have triangle-a patches with canonical vertex set (TL, TR, BL)', () => {
+      const pattern = createAllHSTsPattern(3, 3, blockSize, pieceSizeInches);
+      const json = patternResultToFabricJson(pattern);
+      const parsed = JSON.parse(JSON.stringify(json));
+
+      const cellPx = Math.round(pieceSizeInches * ppi);
+      const canonicalA = [
+        { x: 0, y: 0 },
+        { x: cellPx, y: 0 },
+        { x: 0, y: cellPx },
+      ];
+
+      for (const group of parsed.objects) {
+        for (const child of group.objects) {
+          if (child.__pieceKind === 'triangle-a') {
+            expect(child.points).toEqual(canonicalA);
+          }
+        }
+      }
+    });
+
+    it('should have triangle-b patches with canonical vertex set (TR, BR, BL)', () => {
+      const pattern = createAllHSTsPattern(3, 3, blockSize, pieceSizeInches);
+      const json = patternResultToFabricJson(pattern);
+      const parsed = JSON.parse(JSON.stringify(json));
+
+      const cellPx = Math.round(pieceSizeInches * ppi);
+      const canonicalB = [
+        { x: cellPx, y: 0 },
+        { x: cellPx, y: cellPx },
+        { x: 0, y: cellPx },
+      ];
+
+      for (const group of parsed.objects) {
+        for (const child of group.objects) {
+          if (child.__pieceKind === 'triangle-b') {
+            expect(child.points).toEqual(canonicalB);
+          }
         }
       }
     });
@@ -295,6 +342,30 @@ describe('patternResultToFabricJson', () => {
       expect(parsed.version).toBe('7.2.0');
       expect(parsed.objects).toBeInstanceOf(Array);
       expect(parsed.backgroundColor).toBeUndefined();
+    });
+
+    it('round-trip via JSON.parse(JSON.stringify(...)) preserves every key', () => {
+      const pattern = createMixedPattern(6, 6, blockSize, pieceSizeInches);
+      const json = patternResultToFabricJson(pattern);
+      const serialized = JSON.stringify(json);
+      const parsed = JSON.parse(serialized);
+
+      for (const group of parsed.objects) {
+        // Group invariants
+        expect(group.__isBlockGroup).toBe(true);
+        expect(typeof group.id).toBe('string');
+        expect(group.subTargetCheck).toBe(true);
+        expect(group.__photoQuiltBlock).toBeDefined();
+
+        for (const child of group.objects) {
+          // Patch invariants
+          expect(child.__pieceRole).toBe('patch');
+          expect(['square', 'triangle-a', 'triangle-b']).toContain(child.__pieceKind);
+          expect(typeof child.__sizeInches).toBe('number');
+          expect(typeof child.id).toBe('string');
+          expect(child.__photoQuiltCell).toBeDefined();
+        }
+      }
     });
   });
 });

@@ -69,11 +69,9 @@ export function patternResultToFabricJson(
           id: patchId,
           __pieceRole: 'patch',
           __pieceKind: piece.kind,
-          __sizeInches: { w: result.pieceSizeInches, h: result.pieceSizeInches },
+          __sizeInches: result.pieceSizeInches,
           __photoQuiltCell: { x: cell.x, y: cell.y },
           fill,
-          stroke: 'transparent',
-          strokeWidth: 0,
           type: piece.kind === 'square' ? 'rect' : 'polygon',
         };
 

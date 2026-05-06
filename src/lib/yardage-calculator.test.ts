@@ -63,6 +63,8 @@ describe('yardage-calculator HST math', () => {
     expect(row.cutInstructions).toContain('Cut 4 squares at 3.875" for 8 HSTs');
     expect(row.extraHSTs).toBe(0);
     expect(row.shapeCount).toBe(20); // 12 squares + 8 HSTs
+    expect(row.stripCount).toBeGreaterThan(0);
+    expect(row.stripWidthInches).toBeGreaterThan(0);
   });
 
   it('aggregates mixed fills into separate color groups', () => {

@@ -8,12 +8,25 @@ import { computeCanvasYardage } from '@/lib/yardage-calculator';
 import { generatePrintListPdf } from '@/lib/printlist/generate';
 import { useToast } from '@/components/ui/ToastProvider';
 
+interface BlockCell {
+  color: string;
+  hstColor?: string;
+  hstOrientation?: 'tl-br' | 'tr-bl' | null;
+}
+
+interface BlockData {
+  bx: number;
+  by: number;
+  cells: BlockCell[][]; // 3x3 grid
+}
+
 export function PrintListButton() {
   const projectId = useProjectStore((s) => s.projectId);
   const projectName = useProjectStore((s) => s.projectName);
   const projectMode = useProjectStore((s) => s.mode);
   const canvasWidth = useProjectStore((s) => s.canvasWidth);
   const canvasHeight = useProjectStore((s) => s.canvasHeight);
+  const fabricPresets = useProjectStore((s) => s.fabricPresets);
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,14 +43,78 @@ export function PrintListButton() {
     setError(null);
 
     try {
-      const canvas = useCanvasStore.getState().fabricCanvas as any;
+      const canvas = useCanvasStore.getState().fabricCanvas;
       const yardage = computeCanvasYardage({
         canvas,
         quiltWidth: canvasWidth,
         quiltHeight: canvasHeight,
         wof: 42,
-        lookupFabric: (id) => ({ name: `Fabric ${id}`, thumbnailUrl: null }),
+        lookupFabric: (id) => {
+          const preset = fabricPresets?.find((f) => f.id === id);
+          return preset ? { name: preset.name, thumbnailUrl: preset.imageUrl } : undefined;
+        },
       });
+
+      // Reconstruct blocks from canvas objects
+      const blocks: BlockData[] = [];
+      const objects = canvas?.getObjects() ?? [];
+      
+      for (const obj of objects) {
+        if (!(obj as any).__isBlockGroup) continue;
+        
+        const blockGroup = obj as any;
+        const { bx, by } = blockGroup.__photoQuiltBlock || {};
+        if (bx === undefined || by === undefined) continue;
+
+        // Initialize 3x3 cells with background color
+        const cells: BlockCell[][] = Array(3).fill(null).map(() => Array(3).fill(null).map(() => ({ color: '#ffffff' })));
+        
+        const children = blockGroup._objects ?? blockGroup.getObjects?.() ?? [];
+        for (const child of children) {
+          if ((child as any).__pieceRole !== 'patch') continue;
+          
+          const pieceKind = (child as any).__pieceKind as string;
+          const { x, y } = (child as any).__photoQuiltCell || {};
+          if (x === undefined || y === undefined) continue;
+          
+          // Compute local coordinates inside the 3x3 block
+          const dx = x - bx * 3;
+          const dy = y - by * 3;
+          if (dx < 0 || dx >= 3 || dy < 0 || dy >= 3) continue;
+          
+          const fill = (child.fill as string) || '#ffffff';
+          
+          if (pieceKind === 'square') {
+            cells[dy][dx] = { color: fill, hstOrientation: null };
+          } else if (pieceKind === 'triangle-a') {
+            // triangle-a is TL-BR diagonal (tl-br)
+            const existing = cells[dy][dx];
+            cells[dy][dx] = {
+              color: existing?.hstColor ? existing.color : fill,
+              hstColor: existing?.hstColor ? existing.hstColor : fill,
+              hstOrientation: 'tl-br',
+            };
+          } else if (pieceKind === 'triangle-b') {
+            // triangle-b is TR-BL diagonal (tr-bl)
+            const existing = cells[dy][dx];
+            cells[dy][dx] = {
+              color: existing?.hstColor ? existing.color : fill,
+              hstColor: existing?.hstColor ? existing.hstColor : fill,
+              hstOrientation: 'tr-bl',
+            };
+          }
+        }
+
+        blocks.push({ bx, by, cells });
+      }
+
+      // Compute quiltLayout from blocks
+      const quiltLayout = blocks.length > 0
+        ? {
+            rows: Math.max(...blocks.map((b) => b.by)) + 1,
+            cols: Math.max(...blocks.map((b) => b.bx)) + 1,
+          }
+        : { rows: 1, cols: 1 };
 
       const printListData = {
         items: yardage.fabrics.map((f) => ({
@@ -72,11 +149,11 @@ export function PrintListButton() {
           hex: f.fillColor,
           cutInstructions: f.cutInstructions,
           totalYardage: f.yardsRequired,
-          strips: 0,
+          strips: f.stripCount,
           wof: 42,
         })),
-        blocks: [],
-        quiltLayout: { rows: 1, cols: 1 },
+        blocks,
+        quiltLayout,
         paperSize: 'letter',
       });
 
@@ -96,7 +173,7 @@ export function PrintListButton() {
     } finally {
       setLoading(false);
     }
-  }, [projectId, projectName, canvasWidth, canvasHeight, toast]);
+  }, [projectId, projectName, canvasWidth, canvasHeight, fabricPresets, toast]);
 
   return (
     <div className="flex items-center gap-2">

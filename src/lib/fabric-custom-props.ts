@@ -29,7 +29,7 @@ const CUSTOM_PROPERTIES = [
 
   // Photo-to-quilt block metadata
   '__pieceKind',      // 'square' | 'triangle-a' | 'triangle-b'
-  '__sizeInches',     // { w: number; h: number }
+  '__sizeInches',     // number — finished piece size in inches
   '__photoQuiltCell', // { x: number; y: number }
   '__photoQuiltBlock', // { bx: number; by: number }
 ] as const;
