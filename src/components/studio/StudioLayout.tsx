@@ -29,7 +29,7 @@ const TOOLBAR_PX = 88;
 const CONTEXT_PANEL_PX = 320;
 
 /**
- * StudioLayout
+ * StudioLayout — the Phase 2 (designing) studio chrome.
  *
  * Design-phase shell. Renders the full studio chrome once the project is
  * loaded:

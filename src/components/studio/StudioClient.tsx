@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
 import { useProjectStore } from '@/stores/projectStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import type { Project } from '@/types/project';
@@ -100,6 +101,29 @@ export function StudioClient({ projectId }: StudioClientProps) {
   const project = loadState.project;
 
   const phase = layoutLocked ? ('designing' as const) : ('configuring' as const);
+
+  if (fetchState.status === 'loading' || fetchState.status === 'idle') {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <p className="text-sm text-[var(--color-text-dim)]">Loading project…</p>
+      </div>
+    );
+  }
+
+  if (fetchState.status === 'error' || !fetchState.project) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-8">
+        <p className="text-sm font-semibold text-[var(--color-text)]">
+          Couldn&apos;t load project
+        </p>
+        <p className="text-xs text-[var(--color-text-dim)]">
+          {fetchState.error ?? 'Unknown error'}
+        </p>
+      </div>
+    );
+  }
+
+  const project = fetchState.project;
 
   return (
     <>

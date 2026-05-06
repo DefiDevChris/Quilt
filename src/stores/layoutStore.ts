@@ -39,6 +39,13 @@ interface LayoutStoreState {
   applyLayout: () => void;
   /** Commit layout/template and lock all layout setters (called on "Start Designing") */
   applyLayoutAndLock: () => void;
+  /**
+   * Commit a freeform mode (no fence) and lock the choice. Sets `layoutLocked`
+   * to true to advance from configuring → designing phase, but unlike
+   * `applyLayoutAndLock` does NOT set `hasAppliedLayout` (no fence is drawn,
+   * so drawing tools remain available in the toolbar).
+   */
+  applyFreeformAndLock: () => void;
   /** Clear the applied layout — removes fence and resets state */
   clearLayout: () => void;
   reset: () => void;
