@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
@@ -340,6 +341,10 @@ const [canvasScale, setCanvasScale] = useState(1);
             <span className="text-xs ml-1" style={{ color: COLORS.textDim }}>Sash″</span>
           </div>
         </div>
+        <div className="flex-1 overflow-hidden flex flex-col">
+          <BlockLibrary onBlockDragStart={handleBlockDragStart} />
+        </div>
+      </aside>
 
         <div className="w-20" /> {/* Spacer for balance */}
       </header>

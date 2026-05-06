@@ -1,0 +1,195 @@
+
+> quiltcorgi@0.1.0 dev
+> next dev --turbopack
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 576ms
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+○ Compiling /picture-my-blocks ...
+ GET /picture-my-blocks 200 in 7.7s (next.js: 5.5s, application-code: 2.2s)
+[browser] eval() is not supported in this environment. If this page was served with a `Content-Security-Policy` header, make sure that `unsafe-eval` is included. React requires eval() in development mode for various debugging features like reconstructing callstacks from a different environment.
+React will never use eval() in production mode
+[shop/settings] Error: Failed query: select "value" from "site_settings" where "site_settings"."key" = $1 limit $2
+params: shop_enabled,1
+    at async GET (src/app/api/shop/settings/route.ts:13:19)
+  11 | export async function GET() {
+  12 |   try {
+> 13 |     const [row] = await db
+     |                   ^
+  14 |       .select({ value: siteSettings.value })
+  15 |       .from(siteSettings)
+  16 |       .where(eq(siteSettings.key, 'shop_enabled')) {
+  query: 'select "value" from "site_settings" where "site_settings"."key" = $1 limit $2',
+  params: [ 'shop_enabled', 1 ],
+  [cause]: AggregateError:
+      at async GET (src/app/api/shop/settings/route.ts:13:19)
+    11 | export async function GET() {
+    12 |   try {
+  > 13 |     const [row] = await db
+       |                   ^
+    14 |       .select({ value: siteSettings.value })
+    15 |       .from(siteSettings)
+    16 |       .where(eq(siteSettings.key, 'shop_enabled')) {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+ GET /api/shop/settings 200 in 3.3s (next.js: 2.1s, proxy.ts: 265ms, application-code: 859ms)
+○ Compiling /api/shop/settings ...
+ GET /picture-my-blocks 200 in 144ms (next.js: 13ms, application-code: 131ms)
+[browser] eval() is not supported in this environment. If this page was served with a `Content-Security-Policy` header, make sure that `unsafe-eval` is included. React requires eval() in development mode for various debugging features like reconstructing callstacks from a different environment.
+React will never use eval() in production mode
+ GET /api/blocks?page=1&limit=50&scope=system 401 in 46ms (next.js: 30ms, proxy.ts: 11ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 59ms (next.js: 27ms, proxy.ts: 9ms, application-code: 22ms)
+ GET /api/blocks?scope=user&limit=100 401 in 59ms (next.js: 29ms, proxy.ts: 10ms, application-code: 20ms)
+ GET /api/fabrics?scope=user&limit=100 401 in 58ms (next.js: 31ms, proxy.ts: 9ms, application-code: 17ms)
+[shop/settings] Error: Failed query: select "value" from "site_settings" where "site_settings"."key" = $1 limit $2
+params: shop_enabled,1
+    at async GET (src/app/api/shop/settings/route.ts:13:19)
+  11 | export async function GET() {
+  12 |   try {
+> 13 |     const [row] = await db
+     |                   ^
+  14 |       .select({ value: siteSettings.value })
+  15 |       .from(siteSettings)
+  16 |       .where(eq(siteSettings.key, 'shop_enabled')) {
+  query: 'select "value" from "site_settings" where "site_settings"."key" = $1 limit $2',
+  params: [ 'shop_enabled', 1 ],
+  [cause]: AggregateError:
+      at async GET (src/app/api/shop/settings/route.ts:13:19)
+    11 | export async function GET() {
+    12 |   try {
+  > 13 |     const [row] = await db
+       |                   ^
+    14 |       .select({ value: siteSettings.value })
+    15 |       .from(siteSettings)
+    16 |       .where(eq(siteSettings.key, 'shop_enabled')) {
+    code: 'ECONNREFUSED',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+ GET /api/shop/settings 200 in 398ms (next.js: 25ms, proxy.ts: 7ms, application-code: 366ms)
+ GET /api/auth/cognito/session 200 in 369ms (next.js: 345ms, proxy.ts: 13ms, application-code: 10ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 377ms (next.js: 43ms, proxy.ts: 319ms, application-code: 16ms)
+ GET /api/blocks?page=1&limit=50&scope=system 401 in 75ms (next.js: 32ms, proxy.ts: 26ms, application-code: 16ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 19ms (next.js: 4ms, proxy.ts: 5ms, application-code: 10ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 5ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 17ms (next.js: 4ms, proxy.ts: 6ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 3ms, proxy.ts: 4ms, application-code: 9ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 3ms, proxy.ts: 5ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 19ms (next.js: 4ms, proxy.ts: 6ms, application-code: 8ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 22ms (next.js: 4ms, proxy.ts: 7ms, application-code: 11ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 4ms, proxy.ts: 3ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 5ms, proxy.ts: 3ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 3ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 3ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 33ms (next.js: 8ms, proxy.ts: 19ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 4ms, proxy.ts: 4ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 5ms, proxy.ts: 3ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 4ms, proxy.ts: 4ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 3ms, proxy.ts: 4ms, application-code: 8ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 4ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 18ms (next.js: 7ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 27ms (next.js: 19ms, proxy.ts: 4ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 3ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 5ms, proxy.ts: 3ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 3ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 4ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 3ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 3ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 18ms (next.js: 7ms, proxy.ts: 6ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 4ms, proxy.ts: 3ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 3ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 3ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 11ms (next.js: 3ms, proxy.ts: 4ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 4ms, proxy.ts: 4ms, application-code: 9ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 4ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 4ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 5ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 17ms (next.js: 5ms, proxy.ts: 5ms, application-code: 8ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 5ms, proxy.ts: 3ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 11ms (next.js: 3ms, proxy.ts: 3ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 4ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 7ms, proxy.ts: 4ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 4ms, proxy.ts: 4ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 27ms (next.js: 18ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 4ms, proxy.ts: 4ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 4ms, proxy.ts: 5ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 5ms, proxy.ts: 4ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 11ms (next.js: 3ms, proxy.ts: 3ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 6ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 6ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 3ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 3ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 5ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 4ms, proxy.ts: 4ms, application-code: 8ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 4ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 3ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 4ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 18ms (next.js: 7ms, proxy.ts: 4ms, application-code: 8ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 3ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 6ms, proxy.ts: 4ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 4ms, proxy.ts: 3ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 24ms (next.js: 13ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 23ms (next.js: 12ms, proxy.ts: 5ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 17ms (next.js: 7ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 18ms (next.js: 4ms, proxy.ts: 4ms, application-code: 10ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 18ms (next.js: 7ms, proxy.ts: 5ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 18ms (next.js: 5ms, proxy.ts: 5ms, application-code: 8ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 17ms (next.js: 7ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 22ms (next.js: 10ms, proxy.ts: 6ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 22ms (next.js: 6ms, proxy.ts: 7ms, application-code: 10ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 17ms (next.js: 5ms, proxy.ts: 5ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 4ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 11ms (next.js: 3ms, proxy.ts: 3ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 23ms (next.js: 8ms, proxy.ts: 4ms, application-code: 11ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 5ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 4ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 3ms, proxy.ts: 4ms, application-code: 8ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 3ms, proxy.ts: 3ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 3ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 15ms (next.js: 4ms, proxy.ts: 5ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 4ms, proxy.ts: 5ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 33ms (next.js: 23ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 5ms, proxy.ts: 5ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 11ms (next.js: 4ms, proxy.ts: 4ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 12ms (next.js: 4ms, proxy.ts: 4ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 5ms, proxy.ts: 4ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 3ms, proxy.ts: 5ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 5ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 3ms, proxy.ts: 4ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 17ms (next.js: 5ms, proxy.ts: 5ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 28ms (next.js: 5ms, proxy.ts: 17ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 5ms, proxy.ts: 5ms, application-code: 6ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 22ms (next.js: 8ms, proxy.ts: 4ms, application-code: 10ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 4ms, proxy.ts: 5ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 4ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 14ms (next.js: 5ms, proxy.ts: 3ms, application-code: 5ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 5ms, proxy.ts: 4ms, application-code: 7ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 16ms (next.js: 3ms, proxy.ts: 3ms, application-code: 10ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 17ms (next.js: 4ms, proxy.ts: 5ms, application-code: 8ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 11ms (next.js: 3ms, proxy.ts: 3ms, application-code: 4ms)
+ GET /api/fabrics?page=1&limit=50&scope=all 401 in 13ms (next.js: 4ms, proxy.ts: 4ms, application-code: 6ms)
