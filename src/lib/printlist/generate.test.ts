@@ -30,7 +30,7 @@ const mockLookupFabric = (id: string) => ({
 });
 
 describe('generatePrintListPdf', () => {
-  it('generates PDF with correct page count', async () => {
+  it('generates PDF with correct page count and validates cut list content', async () => {
     const yardage = computeCanvasYardage({
       canvas: mockCanvas,
       quiltWidth: 48,
@@ -60,7 +60,21 @@ describe('generatePrintListPdf', () => {
 
     const pdfBytes = await generatePrintListPdf(input);
     const pdf = await PDFDocument.load(pdfBytes);
-    expect(pdf.getPageCount()).toBeGreaterThanOrEqual(2); // Cover + cut list
+
+    // At least 4 pages: cover, cut list, block diagram, assembly
+    expect(pdf.getPageCount()).toBeGreaterThanOrEqual(4);
+
+    // Extract text from cut list page and verify it contains fabric name and cut instruction
+    const pages = pdf.getPages();
+    let cutListText = '';
+    for (const page of pages) {
+      const content = page.getTextContent();
+      cutListText += content.map((item: any) => item.str).join(' ');
+    }
+
+    // Verify cut list contains fabric name and at least one cut instruction
+    expect(cutListText).toContain('Fabric fabric-1');
+    expect(cutListText).toMatch(/Cut \d+ squares at/);
   });
 
   it('cut list totals match yardage calculator output', async () => {

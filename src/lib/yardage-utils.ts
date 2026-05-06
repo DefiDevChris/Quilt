@@ -33,6 +33,8 @@ export interface YardageResult {
   fatQuartersRequired: number;
   cutInstructions: string[];
   extraHSTs: number;
+  stripCount: number;
+  stripWidthInches: number;
 }
 
 export type WOF = 42 | 44 | 45 | 54 | 60;
@@ -108,6 +110,8 @@ export function computeYardageEstimates(
     const cutInstructions: string[] = [];
     let totalAreaSqIn = 0;
     let extraHSTs = 0;
+    let stripCount = 0;
+    let stripWidthInches = 0;
 
     const plainBySize = new Map<number, number>();
     const hstBySize = new Map<number, { a: number; b: number }>();
@@ -137,6 +141,11 @@ export function computeYardageEstimates(
       const area = count * cutSize * cutSize;
       totalAreaSqIn += area;
       cutInstructions.push(`Cut ${count} squares at ${cutSize}" for plain squares`);
+      // Compute strips: squares_per_strip = floor(WOF / cutSize), strips = ceil(count / squares_per_strip)
+      const squaresPerStrip = Math.floor(wofInches / cutSize);
+      const stripsForThisSize = squaresPerStrip > 0 ? Math.ceil(count / squaresPerStrip) : count;
+      stripCount += stripsForThisSize;
+      stripWidthInches = Math.max(stripWidthInches, cutSize);
     }
 
     // Process HSTs
@@ -150,6 +159,11 @@ export function computeYardageEstimates(
       totalAreaSqIn += area;
       cutInstructions.push(`Cut ${totalCutSquares} squares at ${cutSize}" for ${hstCount} HSTs`);
       extraHSTs += unpaired;
+      // Compute strips for HSTs
+      const squaresPerStrip = Math.floor(wofInches / cutSize);
+      const stripsForThisSize = squaresPerStrip > 0 ? Math.ceil(totalCutSquares / squaresPerStrip) : totalCutSquares;
+      stripCount += stripsForThisSize;
+      stripWidthInches = Math.max(stripWidthInches, cutSize);
     }
 
     const rawYards = calculateYardage(totalAreaSqIn, wofInches, wasteMargin);
@@ -167,6 +181,8 @@ export function computeYardageEstimates(
       fatQuartersRequired,
       cutInstructions,
       extraHSTs,
+      stripCount,
+      stripWidthInches,
     };
   });
 

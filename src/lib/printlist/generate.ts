@@ -15,7 +15,8 @@ type CutListItem = {
 
 type BlockCell = {
   color: string;
-  hstOrientation?: 'left' | 'right' | null;
+  hstColor?: string;
+  hstOrientation?: 'tl-br' | 'tr-bl' | null;
 };
 
 type BlockData = {
@@ -291,14 +292,16 @@ async function addBlockDiagramPages(
           const orientation = cell.hstOrientation;
           const midX = x + cellSize / 2;
           const midY = cellY + cellSize / 2;
-          if (orientation === 'left') {
+          if (orientation === 'tl-br') {
+            // Top-left to bottom-right diagonal
             currentPage.drawLine({
               start: { x, y: cellY + cellSize },
               end: { x: x + cellSize, y: cellY },
               thickness: 1,
               color: rgb(0, 0, 0),
             });
-          } else if (orientation === 'right') {
+          } else if (orientation === 'tr-bl') {
+            // Top-right to bottom-left diagonal
             currentPage.drawLine({
               start: { x, y: cellY },
               end: { x: x + cellSize, y: cellY + cellSize },
@@ -306,6 +309,25 @@ async function addBlockDiagramPages(
               color: rgb(0, 0, 0),
             });
           }
+        }
+
+        // Draw HST overlay triangle if hstColor is present
+        if (cell.hstColor && cell.hstOrientation) {
+          const orientation = cell.hstOrientation;
+          const points = orientation === 'tl-br'
+            ? [
+                { x, y: cellY + cellSize },
+                { x: x + cellSize, y: cellY },
+                { x: x + cellSize, y: cellY + cellSize },
+              ]
+            : [
+                { x, y: cellY },
+                { x: x + cellSize, y: cellY },
+                { x, y: cellY + cellSize },
+              ];
+          currentPage.drawPolygon(points.map(p => ({ x: p.x, y: p.y })), {
+            color: hexToRgb(cell.hstColor!),
+          });
         }
 
         // Draw cell coordinates
