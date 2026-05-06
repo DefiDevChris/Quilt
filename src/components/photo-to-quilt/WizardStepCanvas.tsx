@@ -9,20 +9,16 @@ import {
   normalizeCells,
   recomputeResult,
   findClickedPiece,
-  generatePatternResult,
+  generatePatternFromTarget,
   downloadDataUrl,
   buildSvg,
 } from '@/lib/photo-to-quilt/processing';
 import { patternResultToFabricJson } from '@/lib/photo-to-quilt/to-fabric';
-import { autoPieceSize } from '@/lib/photo-to-quilt/auto-piece-size';
 import CanvasToolbar from './CanvasToolbar';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
 
 const BLOCK_SIZE = 3;
-
-/** Snap to even quarter-inch to prevent FP drift in stored dimensions */
-const snapToQuarterInch = (value: number): number => Math.round(value * 4) / 4;
 
 export default function WizardStepCanvas() {
   const router = useRouter();
@@ -46,6 +42,7 @@ export default function WizardStepCanvas() {
   const isSaving = usePhotoToQuiltStore((s) => s.isSaving);
   const saveError = usePhotoToQuiltStore((s) => s.saveError);
   const showStartOverConfirm = usePhotoToQuiltStore((s) => s.showStartOverConfirm);
+  const targetQuiltSize = usePhotoToQuiltStore((s) => s.targetQuiltSize);
 
   const setResult = usePhotoToQuiltStore((s) => s.setResult);
   const setHistory = usePhotoToQuiltStore((s) => s.setHistory);
@@ -199,24 +196,25 @@ export default function WizardStepCanvas() {
 
   const generatePattern = useCallback(() => {
     if (!image || !mask) return;
+    const target = usePhotoToQuiltStore.getState().targetQuiltSize;
+    if (!target) return;
     setGenerating(true);
     requestAnimationFrame(() => {
       try {
-        const ps = autoPieceSize();
-        const newResult = generatePatternResult(
+        const newResult = generatePatternFromTarget({
           image,
           mask,
           workingSize,
-          pieceSizeDetail,
+          targetWidthIn: target.width,
+          targetHeightIn: target.height,
+          pieceSizeInches: target.pieceSize,
           colorCount,
           enhance,
           showGrid,
-          imageAspect,
-        );
-        const finalResult = { ...newResult, pieceSizeInches: ps };
-        renderCanvas(finalResult.cells, finalResult.palette);
-        setResult(finalResult);
-        setHistory([finalResult]);
+        });
+        renderCanvas(newResult.cells, newResult.palette);
+        setResult(newResult);
+        setHistory([newResult]);
         setHistoryIndex(0);
         setEditMode('view');
       } finally {
@@ -227,11 +225,9 @@ export default function WizardStepCanvas() {
     image,
     mask,
     workingSize,
-    pieceSizeDetail,
     colorCount,
     enhance,
     showGrid,
-    imageAspect,
     renderCanvas,
     setResult,
     setHistory,
@@ -241,18 +237,18 @@ export default function WizardStepCanvas() {
   ]);
 
   useEffect(() => {
-    if (image && mask && !result && !generating) {
+    if (image && mask && !result && !generating && targetQuiltSize) {
       const t = setTimeout(() => generatePattern(), 50);
       return () => clearTimeout(t);
     }
-  }, [image, mask, result, generating, generatePattern]);
+  }, [image, mask, result, generating, generatePattern, targetQuiltSize]);
 
   useEffect(() => {
-    if (image && mask && result && !generating) {
+    if (image && mask && result && !generating && targetQuiltSize) {
       const t = setTimeout(() => generatePattern(), 300);
       return () => clearTimeout(t);
     }
-  }, [pieceSizeDetail, colorCount, enhance, generatePattern, image, mask, result, generating]);
+  }, [pieceSizeDetail, colorCount, enhance, generatePattern, image, mask, result, generating, targetQuiltSize]);
 
   const handleCanvasInteraction = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -409,18 +405,24 @@ export default function WizardStepCanvas() {
   }, []);
 
   const handleSaveToStudio = async () => {
-    if (!result) return;
+    if (!result || !targetQuiltSize) return;
     const user = useAuthStore.getState().user;
     if (!user) {
       router.push('/auth/signin?callbackUrl=/photo-to-quilt');
       return;
     }
+    const target = targetQuiltSize;
+const patternWidth = result.cols * result.pieceSizeInches;
+const patternHeight = result.rows * result.pieceSizeInches;
+if (Math.abs(patternWidth - target.width) >= 1e-9 || Math.abs(patternHeight - target.height) >= 1e-9) {
+  setSaveError("Size mismatch: pattern dimensions don't match target size");
+  setIsSaving(false);
+  return;
+}
     setIsSaving(true);
     setSaveError(null);
     try {
       const canvasData = patternResultToFabricJson(result);
-      const quiltW = snapToQuarterInch(result.cols * result.pieceSizeInches);
-      const quiltH = snapToQuarterInch(result.rows * result.pieceSizeInches);
       const res = await fetch('/api/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -428,8 +430,8 @@ export default function WizardStepCanvas() {
           name: saveName.trim() || 'Photo Quilt Design',
           mode: 'photo-to-quilt',
           unitSystem: 'imperial',
-          canvasWidth: quiltW,
-          canvasHeight: quiltH,
+          canvasWidth: target.width,
+          canvasHeight: target.height,
           canvasData,
         }),
       });
@@ -484,7 +486,8 @@ export default function WizardStepCanvas() {
                 setSaveError(null);
                 setShowSaveModal(true);
               }}
-              className="btn-primary text-sm inline-flex items-center gap-1.5"
+              disabled={!targetQuiltSize}
+              className={`btn-primary text-sm inline-flex items-center gap-1.5 ${!targetQuiltSize ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <Save size={14} />
               Continue in Studio

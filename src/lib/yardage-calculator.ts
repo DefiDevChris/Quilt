@@ -52,6 +52,8 @@ interface CanvasLikeObject {
   readonly __pieceRole?: string;
   readonly _objects?: CanvasLikeObject[];
   readonly getObjects?: () => CanvasLikeObject[];
+  readonly __pieceKind?: string;
+  readonly __sizeInches?: number;
 }
 
 /** Lookup hook for resolving fabricId → display info (name + thumbnail). */
@@ -131,6 +133,8 @@ export function extractCanvasShapes(
       fabricName: lookupResult?.name ?? null,
       fillColor,
       type: obj.type ?? 'rect',
+      __pieceKind: obj.__pieceKind as CanvasShapeData['__pieceKind'],
+      __sizeInches: obj.__sizeInches,
     });
   }
 
@@ -231,7 +235,15 @@ export function formatShoppingList(
       const yards = row.yardsRequired > 0
         ? toMixedNumberString(decimalToFraction(row.yardsRequired))
         : '0';
-      lines.push(`  • ${row.displayName} — ${yards} yd (${row.shapeCount} pieces)`);
+      lines.push(`  • [${row.fillColor}] ${row.displayName} — ${yards} yd (${row.shapeCount} pieces)`);
+      if (row.cutInstructions.length > 0) {
+        for (const instruction of row.cutInstructions) {
+          lines.push(`    ${instruction}`);
+        }
+      }
+      if (row.extraHSTs > 0) {
+        lines.push(`    Extra HSTs: ${row.extraHSTs}`);
+      }
     }
   }
 

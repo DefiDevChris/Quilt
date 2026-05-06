@@ -18,6 +18,7 @@ import { SaveAsTemplateModal } from '@/components/studio/SaveAsTemplateModal';
 import { EditPreviewToggle } from '@/components/studio/EditPreviewToggle';
 import { ReferenceImageToggle } from '@/components/studio/ReferenceImageToggle';
 import { ModeChip } from '@/components/studio/ModeChip';
+import { PrintListButton } from '@/components/photo-to-quilt/PrintListButton';
 import { TooltipHint } from '@/components/ui/TooltipHint';
 import { useToast } from '@/components/ui/ToastProvider';
 import { clearAllFabricsOnCanvas } from '@/lib/canvas-clear-fabrics';
@@ -266,8 +267,9 @@ export function StudioTopBar({
           )}
 
       <EditPreviewToggle />
-          <ReferenceImageToggle />
-        </div>
+      <ReferenceImageToggle />
+      <PrintListButton />
+    </div>
       </div>
 
       <CommandPalette

@@ -88,6 +88,9 @@ export function validQuiltSizes(imageAspect: number): ValidQuiltSize[] {
     const key = `${width}x${height}`;
     if (seen.has(key)) return;
     seen.add(key);
+    const entryAspect = width / height;
+    const withinTolerance = Math.abs(entryAspect - imageAspect) <= imageAspect * 0.05;
+    const finalLabel = withinTolerance ? label : (label ? `${label} (adj)` : '(adj)');
     results.push({
       width,
       height,
@@ -96,7 +99,7 @@ export function validQuiltSizes(imageAspect: number): ValidQuiltSize[] {
       rows: height / ps,
       blockCols: (width / ps) / 3,
       blockRows: (height / ps) / 3,
-      label,
+      label: finalLabel,
     });
   };
 
@@ -104,14 +107,12 @@ export function validQuiltSizes(imageAspect: number): ValidQuiltSize[] {
     tryAdd(preset.width, preset.height, preset.label);
     if (imageAspect > 0) {
       const presetAspect = preset.width / preset.height;
-      if (Math.abs(presetAspect - imageAspect) > 0.05) {
-        if (presetAspect > imageAspect) {
-          const adjW = Math.round(preset.height * imageAspect * 4) / 4;
-          tryAdd(adjW, preset.height, `${preset.label} (adj)`);
-        } else {
-          const adjH = Math.round(preset.width / imageAspect * 4) / 4;
-          tryAdd(preset.width, adjH, `${preset.label} (adj)`);
-        }
+      if (presetAspect > imageAspect) {
+        const adjW = Math.round(preset.height * imageAspect * 4) / 4;
+        tryAdd(adjW, preset.height, preset.label);
+      } else if (presetAspect < imageAspect) {
+        const adjH = Math.round(preset.width / imageAspect * 4) / 4;
+        tryAdd(preset.width, adjH, preset.label);
       }
     }
   }

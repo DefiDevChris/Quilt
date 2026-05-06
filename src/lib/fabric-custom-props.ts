@@ -26,6 +26,12 @@ const CUSTOM_PROPERTIES = [
   '_fenceElement', // boolean — marks an object as a fence rect
   '_fenceAreaId', // string — unique area identifier (e.g., 'cell-0-1')
   '_fenceRole', // LayoutAreaRole — 'block-cell' | 'sashing' | 'border' | etc.
+
+  // Photo-to-quilt block metadata
+  '__pieceKind',      // 'square' | 'triangle-a' | 'triangle-b'
+  '__sizeInches',     // { w: number; h: number }
+  '__photoQuiltCell', // { x: number; y: number }
+  '__photoQuiltBlock', // { bx: number; by: number }
 ] as const;
 
 let registered = false;

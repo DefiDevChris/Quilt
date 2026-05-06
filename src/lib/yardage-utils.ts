@@ -10,6 +10,8 @@ export interface CanvasShapeData {
   fabricName: string | null;
   fillColor: string;
   type: string;
+  __pieceKind?: 'triangle-a' | 'triangle-b' | string;
+  __sizeInches?: number;
 }
 
 export interface FabricGroup {
@@ -29,6 +31,8 @@ export interface YardageResult {
   totalAreaSqIn: number;
   yardsRequired: number;
   fatQuartersRequired: number;
+  cutInstructions: string[];
+  extraHSTs: number;
 }
 
 export type WOF = 42 | 44 | 45 | 54 | 60;
@@ -69,14 +73,6 @@ export function groupShapesByFabric(shapes: CanvasShapeData[]): FabricGroup[] {
   return Array.from(groupMap.values());
 }
 
-export function calculateTotalArea(shapes: CanvasShapeData[], pixelsPerUnit: number): number {
-  return shapes.reduce((sum, shape) => {
-    const widthUnits = (shape.widthPx * shape.scaleX) / pixelsPerUnit;
-    const heightUnits = (shape.heightPx * shape.scaleY) / pixelsPerUnit;
-    return sum + widthUnits * heightUnits;
-  }, 0);
-}
-
 export function calculateYardage(
   totalAreaSqIn: number,
   wofInches: number,
@@ -109,7 +105,53 @@ export function computeYardageEstimates(
   const groups = groupShapesByFabric(shapes);
 
   const results: YardageResult[] = groups.map((group) => {
-    const totalAreaSqIn = calculateTotalArea(group.shapes, pixelsPerInch);
+    const cutInstructions: string[] = [];
+    let totalAreaSqIn = 0;
+    let extraHSTs = 0;
+
+    const plainBySize = new Map<number, number>();
+    const hstBySize = new Map<number, { a: number; b: number }>();
+
+    for (const shape of group.shapes) {
+      const finishedSize = shape.__sizeInches ?? (shape.widthPx * shape.scaleX) / pixelsPerInch;
+
+      if (shape.__pieceKind === 'triangle-a' || shape.__pieceKind === 'triangle-b') {
+        if (!hstBySize.has(finishedSize)) {
+          hstBySize.set(finishedSize, { a: 0, b: 0 });
+        }
+        const entry = hstBySize.get(finishedSize)!;
+        if (shape.__pieceKind === 'triangle-a') {
+          entry.a++;
+        } else {
+          entry.b++;
+        }
+      } else {
+        const count = plainBySize.get(finishedSize) || 0;
+        plainBySize.set(finishedSize, count + 1);
+      }
+    }
+
+    // Process plain squares
+    for (const [finishedSize, count] of plainBySize.entries()) {
+      const cutSize = finishedSize + 0.5;
+      const area = count * cutSize * cutSize;
+      totalAreaSqIn += area;
+      cutInstructions.push(`Cut ${count} squares at ${cutSize}" for plain squares`);
+    }
+
+    // Process HSTs
+    for (const [finishedSize, { a, b }] of hstBySize.entries()) {
+      const pairs = Math.min(a, b);
+      const unpaired = (a - pairs) + (b - pairs);
+      const totalCutSquares = pairs + unpaired;
+      const cutSize = finishedSize + 0.875;
+      const hstCount = pairs * 2 + unpaired;
+      const area = totalCutSquares * cutSize * cutSize;
+      totalAreaSqIn += area;
+      cutInstructions.push(`Cut ${totalCutSquares} squares at ${cutSize}" for ${hstCount} HSTs`);
+      extraHSTs += unpaired;
+    }
+
     const rawYards = calculateYardage(totalAreaSqIn, wofInches, wasteMargin);
     const yardsRequired = rawYards > 0 ? roundUpToEighth(rawYards) : 0;
     const fatQuartersRequired = calculateFatQuarters(totalAreaSqIn, wasteMargin);
@@ -123,6 +165,8 @@ export function computeYardageEstimates(
       totalAreaSqIn,
       yardsRequired,
       fatQuartersRequired,
+      cutInstructions,
+      extraHSTs,
     };
   });
 

@@ -250,6 +250,11 @@ export const adminCreateBlockSchema = z.object({
 
 export const adminUpdateBlockSchema = adminCreateBlockSchema.omit({ isDefault: true }).partial();
 
+export const printlistSchema = z.object({
+  items: z.any(),
+  paperSize: z.enum(['letter', 'a4']).default('letter'),
+});
+
 export const adminCreateFabricSchema = z.object({
   name: z.string().min(1).max(255),
   imageUrl: z.string().url(),

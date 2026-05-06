@@ -3,16 +3,9 @@ import { PIXELS_PER_INCH } from '@/lib/constants/canvas';
 // FP rounding helpers to eliminate drift when snapping to pixels
 const PX_EPSILON = 0.01;
 function snapPx(value: number): number {
-  // Snap to nearest integer pixel coordinate/dimension
-  // We keep the helper centralized for easy adjustments if needed
   return Math.round(value);
 }
 
-/**
- * Minimal Pattern types duplicated here so this lib module does not import a
- * component. Types are erased at compile time and carry no runtime / DOM
- * dependency.
- */
 interface PatternPiece {
   colorIndex: number;
   kind: 'square' | 'triangle-a' | 'triangle-b';
@@ -38,91 +31,118 @@ interface PatternResult {
   backgroundFabric?: string;
 }
 
-/**
- * Convert a photo-to-quilt PatternResult into Fabric.js 7 JSON that can be
- * loaded with canvas.loadFromJSON().  Each grid cell becomes a Fabric Rect
- * or Polygon so the design is fully editable inside the studio.
- */
 export function patternResultToFabricJson(
   result: PatternResult,
 ): Record<string, unknown> {
   const ppi = PIXELS_PER_INCH;
-  // Snap cell size to integer pixels to avoid FP drift
-  const cellPx = Math.round(result.pieceSizeInches * ppi);
+  const cellPx = snapPx(result.pieceSizeInches * ppi);
+  const blockSize = result.blockSize;
   const objects: Record<string, unknown>[] = [];
 
+  // Group cells by 3x3 block coordinates (bx, by)
+  const blockMap = new Map<string, { bx: number; by: number; cells: PatternCell[] }>();
   for (const cell of result.cells) {
-    for (const piece of cell.pieces) {
-      if (piece.isBackground) continue;
+    const bx = Math.floor(cell.x / blockSize);
+    const by = Math.floor(cell.y / blockSize);
+    const key = `${bx}-${by}`;
+    if (!blockMap.has(key)) {
+      blockMap.set(key, { bx, by, cells: [] });
+    }
+    blockMap.get(key)!.cells.push(cell);
+  }
 
-      const left = snapPx(cell.x * cellPx);
-      const top = snapPx(cell.y * cellPx);
-      const fill = result.palette[piece.colorIndex];
+  // Process each block into a Fabric group
+  for (const { bx, by, cells: blockCells } of blockMap.values()) {
+    const patches: Record<string, unknown>[] = [];
 
-      if (piece.kind === 'square') {
-        const w = snapPx(cellPx * (piece.spanW ?? 1));
-        const h = snapPx(cellPx * (piece.spanH ?? 1));
-        objects.push({
-          type: 'rect',
-          left,
-          top,
-          width: w,
-          height: h,
+    for (const cell of blockCells) {
+      const dx = cell.x - bx * blockSize;
+      const dy = cell.y - by * blockSize;
+
+      for (let idx = 0; idx < cell.pieces.length; idx++) {
+        const piece = cell.pieces[idx];
+        if (piece.isBackground) continue;
+
+        const fill = result.palette[piece.colorIndex];
+        const patchId = `p2q-${by}-${bx}-${dy}-${dx}-${idx}`;
+        const patch: Record<string, unknown> = {
+          id: patchId,
+          __pieceRole: 'patch',
+          __pieceKind: piece.kind,
+          __sizeInches: { w: result.pieceSizeInches, h: result.pieceSizeInches },
+          __photoQuiltCell: { x: cell.x, y: cell.y },
           fill,
-          stroke: fill,
-          strokeWidth: 0.5,
-          originX: 'left',
-          originY: 'top',
-          selectable: true,
-          evented: true,
-        });
-      } else if (piece.kind === 'triangle-a') {
-        objects.push({
-          type: 'polygon',
-          left,
-          top,
-          width: snapPx(cellPx),
-          height: snapPx(cellPx),
-          fill,
-          stroke: fill,
-          strokeWidth: 0.5,
-          points: [
-            { x: snapPx(0), y: snapPx(0) },
-            { x: snapPx(cellPx), y: snapPx(0) },
-            { x: snapPx(0), y: snapPx(cellPx) },
-          ],
-          originX: 'left',
-          originY: 'top',
-          selectable: true,
-          evented: true,
-        });
-      } else if (piece.kind === 'triangle-b') {
-        objects.push({
-          type: 'polygon',
-          left,
-          top,
-          width: snapPx(cellPx),
-          height: snapPx(cellPx),
-          fill,
-          stroke: fill,
-          strokeWidth: 0.5,
-          points: [
-            { x: snapPx(cellPx), y: snapPx(0) },
-            { x: snapPx(cellPx), y: snapPx(cellPx) },
-            { x: snapPx(0), y: snapPx(cellPx) },
-          ],
-          originX: 'left',
-          originY: 'top',
-          selectable: true,
-          evented: true,
-        });
+          stroke: 'transparent',
+          strokeWidth: 0,
+          type: piece.kind === 'square' ? 'rect' : 'polygon',
+        };
+
+        const patchLeft = snapPx(dx * cellPx);
+        const patchTop = snapPx(dy * cellPx);
+
+        if (piece.kind === 'square') {
+          const w = snapPx(cellPx * (piece.spanW ?? 1));
+          const h = snapPx(cellPx * (piece.spanH ?? 1));
+          Object.assign(patch, {
+            left: patchLeft,
+            top: patchTop,
+            width: w,
+            height: h,
+            originX: 'left',
+            originY: 'top',
+          });
+        } else {
+          const points = piece.kind === 'triangle-a'
+            ? [
+                { x: snapPx(0), y: snapPx(0) },
+                { x: snapPx(cellPx), y: snapPx(0) },
+                { x: snapPx(0), y: snapPx(cellPx) },
+              ]
+            : [
+                { x: snapPx(cellPx), y: snapPx(0) },
+                { x: snapPx(cellPx), y: snapPx(cellPx) },
+                { x: snapPx(0), y: snapPx(cellPx) },
+              ];
+          Object.assign(patch, {
+            left: patchLeft,
+            top: patchTop,
+            points,
+            originX: 'left',
+            originY: 'top',
+          });
+        }
+
+        patches.push(patch);
       }
     }
+
+    // Skip empty blocks with no valid patches
+    if (patches.length === 0) continue;
+
+    const groupId = `p2q-block-${by}-${bx}`;
+    const groupLeft = snapPx(bx * blockSize * cellPx);
+    const groupTop = snapPx(by * blockSize * cellPx);
+
+    const group: Record<string, unknown> = {
+      type: 'group',
+      __isBlockGroup: true,
+      __blockId: groupId,
+      __photoQuiltBlock: { bx, by },
+      id: groupId,
+      subTargetCheck: true,
+      interactive: true,
+      originX: 'left',
+      originY: 'top',
+      left: groupLeft,
+      top: groupTop,
+      objects: patches,
+    };
+
+    objects.push(group);
   }
 
   return {
     version: '7.2.0',
     objects,
-    backgroundColor: result.backgroundFabric ?? 'transparent',
   };
 }

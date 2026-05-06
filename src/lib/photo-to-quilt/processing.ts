@@ -1135,6 +1135,113 @@ export function generatePatternResult(
   const cellW = crop.width / gridCols;
   const cellH = crop.height / gridRows;
 
+  return buildPatternFromGrid(
+    rawImgData,
+    mask,
+    crop,
+    gridCols,
+    gridRows,
+    cellW,
+    cellH,
+    contrast,
+    saturation,
+    brightness,
+    colorCount,
+    pieceSizeInches,
+    showGrid,
+  );
+}
+
+/**
+ * Generate a pattern driven by explicit target dimensions in inches.
+ * Cols and rows are derived from targetWidthIn / pieceSizeInches and
+ * targetHeightIn / pieceSizeInches — both must be positive multiples of BLOCK_SIZE (3).
+ */
+export function generatePatternFromTarget({
+  image,
+  mask,
+  workingSize,
+  targetWidthIn,
+  targetHeightIn,
+  pieceSizeInches,
+  colorCount,
+  enhance,
+  showGrid,
+}: {
+  image: HTMLImageElement;
+  mask: Uint8Array;
+  workingSize: { width: number; height: number };
+  targetWidthIn: number;
+  targetHeightIn: number;
+  pieceSizeInches: number;
+  colorCount: number;
+  enhance: number;
+  showGrid: boolean;
+}): PatternResult {
+  const cols = Math.round(targetWidthIn / pieceSizeInches);
+  const rows = Math.round(targetHeightIn / pieceSizeInches);
+
+  if (cols <= 0 || rows <= 0) {
+    throw new Error('Calculated cols/rows must be positive.');
+  }
+  if (cols % BLOCK_SIZE !== 0 || rows % BLOCK_SIZE !== 0) {
+    throw new Error(
+      `Grid dimensions (${cols}×${rows}) must be multiples of ${BLOCK_SIZE}. ` +
+      `Check target size ${targetWidthIn}"×${targetHeightIn}" ÷ ${pieceSizeInches}" pieces.`,
+    );
+  }
+
+  const contrast = 100 + enhance * 0.2;
+  const saturation = 100 + enhance * 0.3;
+  const brightness = 100 + enhance * 0.08;
+
+  const rawImgData = getCanvasImageData(
+    image,
+    workingSize.width,
+    workingSize.height,
+  );
+  const crop = findSubjectCrop(
+    mask,
+    workingSize.width,
+    workingSize.height,
+  );
+
+  const cellW = crop.width / cols;
+  const cellH = crop.height / rows;
+
+  return buildPatternFromGrid(
+    rawImgData,
+    mask,
+    crop,
+    cols,
+    rows,
+    cellW,
+    cellH,
+    contrast,
+    saturation,
+    brightness,
+    colorCount,
+    pieceSizeInches,
+    showGrid,
+  );
+}
+
+function buildPatternFromGrid(
+  rawImgData: ImageData,
+  mask: Uint8Array,
+  crop: CropBox,
+  gridCols: number,
+  gridRows: number,
+  cellW: number,
+  cellH: number,
+  contrast: number,
+  saturation: number,
+  brightness: number,
+  colorCount: number,
+  pieceSizeInches: number,
+  showGrid: boolean,
+): PatternResult {
+
   const { posterized, palette: paletteRgb } =
     posterizeImageData(
       rawImgData,
