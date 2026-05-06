@@ -57,3 +57,9 @@ yarn-error.log*
 
 # Turborepo/Turbopack
 .turbo
+
+# Fabric images (auto-ingested, should not be tracked)
+public/fabrics/
+
+# Unused shop images
+public/images/shop/
