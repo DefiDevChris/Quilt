@@ -1,33 +1,62 @@
-```gitignore
 # Dependencies
 node_modules/
+.pnp
+.pnp.js
 
-# Build outputs
-dist/
-build/
+# Testing
+coverage/
+playwright-report/
+test-results/
+.nyc_output
+
+# Next.js
 .next/
 out/
 
-# Logs
-*.log
+# Production
+build/
+dist/
+
+# Misc
+.DS_Store
+*.pem
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
 # Environment variables
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
 *.env.*
+!.env.example
 
-# IDE files
+# TypeScript
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# IDEs and editors
 .vscode/
 .idea/
 *.swp
 *.swo
 *.tmp
+.shproj
+*.sublime-project
+*.sublime-workspace
 
-# Python specific
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
 .Python
 env/
 venv/
@@ -41,96 +70,9 @@ pip-delete-this-directory.txt
 nosetests.xml
 coverage.xml
 *.cover
-*.log
-.gitattributes
-.next
-*~
-.DS_Store
-*.sublime-workspace
 .pytest_cache/
 .mypy_cache/
 .hypothesis/
 
-# Node.js specific
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-node_modules/
-dist/
-build/
-.next/
-out/
-.nuxt/
-coverage/
-*.min.js
-*.min.css
-
-# TypeScript/JavaScript build output
-lib/
-es/
-esm/
-umd/
-dist/
-build/
-.next/
-out/
-
-# Test coverage
-coverage/
-*.lcov
-*.profdata
-*.coverage
-coverage-final.json
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-*.DS_Store
-Icon?
-```
-
-Wait, let me reconsider this. Looking at the modified files, they are all TypeScript/React source files and test files. Let me check if there are any build artifacts in the change list...
-
-The modified files are only source code files (.tsx, .ts) and test files (.test.ts). There are no build artifacts, dependency directories, or temporary files in the change list.
-
-```gitignore
-# Dependencies
-node_modules/
-
-# Build outputs
-dist/
-build/
-
-# Logs
-*.log
-
-# Environment variables
-.env
-.env.local
-*.env.*
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*.tmp
-
-# TypeScript/JavaScript build output
-lib/
-es/
-esm/
-umd/
-
-# Test coverage
-coverage/
-
-# OS generated files
-.DS_Store
-Thumbs.db
-```
+# Git
+.gitattributes
