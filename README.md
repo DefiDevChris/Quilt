@@ -5,7 +5,7 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 ## What You Can Do
 
 - **Design Studio** — Pick a layout template (or start with a free-form canvas), configure borders, sashing, cornerstones, and block cells. Assign fabrics to every area. Two worktable modes: Worktable (full quilt canvas) and Block Builder (dedicated 3-pane drafting workspace for custom blocks). Photo-to-Quilt wizard converts photos into quilt designs. Picture My Blocks matches photos to block patterns.
-- **Block Library** — 50 traditional quilt block SVGs. Draft your own with the Freeform or BlockBuilder tools (Freedraw, Rectangle, Triangle, Curve), or upload a photo of a finished sewn block as a non-editable image block. Filter by SVG, Custom, or Photo blocks.
+- **Block Library** — Traditional quilt block SVGs including Log Cabin, Nine Patch, Star, and more. Draft your own with the Freeform or BlockBuilder tools (Freedraw, Rectangle, Triangle, Curve), or upload a photo of a finished sewn block as a non-editable image block. Filter by SVG, Custom, or Photo blocks.
 - **Yardage & Cutting** — Automatic fabric calculations with rotary cutting guides.
 - **Print-Ready Patterns** — PDF export with quilt overview, fabric requirements, cutting directions, block assembly diagrams, and individual cutting templates at exact 1:1 scale with seam allowance.
 - **Affiliate Fabric Ingestion** — Retailer catalog ingestion with affiliate click tracking and commission management.
@@ -14,16 +14,17 @@ Design your quilts, calculate your yardage, and print true-scale patterns with s
 
 | Layer     | Technology                                           |
 | --------- | ---------------------------------------------------- |
-| Framework | Next.js 16.2.2 (App Router) + TypeScript + React 19  |
+| Framework | Next.js 16.2.3 (App Router, Turbopack) + TypeScript + React 19.2 |
 | Styling   | Tailwind CSS v4                                      |
 | Canvas    | Fabric.js 7.2                                        |
-| State | Zustand (10 stores) |
+| State     | Zustand 5.0 (10 stores) |
 | Auth      | AWS Cognito (email/password, JWT via JWKS)           |
-| Database | PostgreSQL + Drizzle ORM 0.45 (10 table files + enums + index) |
+| Database  | PostgreSQL + Drizzle ORM 0.45 (11 table files + enums + index) |
 | Storage   | AWS S3 + CloudFront CDN                              |
 | Secrets   | AWS Secrets Manager                                  |
-| PDF | pdf-lib (client-side 1:1 scale) |
+| PDF       | pdf-lib (client-side 1:1 scale) |
 | Affiliate | Retailer ingestion + affiliate click tracking (S3, CloudFront) |
+| Rate Limiting | Upstash Redis                                   |
 | Testing   | Vitest + Playwright E2E                              |
 
 ## Design System
@@ -51,12 +52,11 @@ Full spec lives in `brand_config.json` (authoritative) → `src/lib/design-syste
 
 ## Product Tiers
 
-- **Free:** 20 blocks, 10 fabrics, no save/export
-- **Admin:** Full access, moderation tools
+- **Free:** Full access to all features. The app is 100% free — revenue comes from affiliate commissions on fabric purchases.
 
 ## Roles
 
-`free | admin` — defined in `src/lib/role-utils.ts`
+`free | admin` — defined in `src/lib/cognito-session.ts`
 
 ## Getting Started
 
@@ -88,6 +88,7 @@ npm run db:migrate       # Run pending migrations
 npm run db:push          # Push schema directly (no migration file)
 npm run db:studio        # Open Drizzle Studio web UI
 npm run db:seed:templates # Seed layout templates
+npm run db:seed:retailers # Seed affiliate retailers
 ```
 
 ## Project Structure
@@ -107,7 +108,7 @@ src/
     auth/                        # Sign-in/sign-up forms
     blocks/                      # BlockBuilder, BlockLibrary, BlockSearch, BlockPreview, etc.
     canvas/                      # Canvas toolbar and controls
-    editor/                      # Editor components
+    dashboard/                   # Dashboard components
     fabrics/                     # Fabric browsing and management
     help/                        # Help/onboarding
     landing/                     # Landing page
@@ -117,13 +118,14 @@ src/
     picture-my-blocks/           # Picture My Blocks app
     settings/                    # User settings
     studio/                      # Studio panels, toolbars, modals, worktables
+    tracking/                    # Analytics and affiliate tracking components
     ui/                          # Shared UI primitives
   hooks/                         # Custom React hooks (canvas, drawing, auth, block builder)
   stores/                        # Zustand stores (10 total)
   lib/                           # Pure utility modules and engines
     *-engine.ts                  # Pure computation — zero DOM deps, fully testable
     *-utils.ts                   # Domain-specific utilities
-  db/schema/                     # Drizzle table definitions (10 tables + enums + index)
+  db/schema/                     # Drizzle table definitions (11 tables + enums + index)
   types/                         # Shared TypeScript type definitions
 ```
 
