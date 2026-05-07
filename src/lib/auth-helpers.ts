@@ -1,5 +1,8 @@
 import { getSession } from '@/lib/cognito-session';
-import { unauthorizedResponse } from '@/lib/api-responses';
+import {
+  unauthorizedResponse,
+  notFoundResponse,
+} from '@/lib/api-responses';
 
 export async function getRequiredSession() {
   const session = await getSession();
@@ -15,3 +18,5 @@ export function requireAdmin(role: string | null): Response | true {
   }
   return true;
 }
+
+export { unauthorizedResponse, notFoundResponse };

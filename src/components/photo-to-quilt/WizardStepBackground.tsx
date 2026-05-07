@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useState } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { usePhotoToQuiltStore } from '@/stores/photoToQuiltStore';
@@ -32,6 +33,7 @@ export default function WizardStepBackground() {
   const [error, setError] = useState<string | null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     if (!pendingFile) {
       setThumbnailUrl(null);

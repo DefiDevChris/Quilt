@@ -32,7 +32,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 function calculateDerivedRoles(user: AuthUser | null): { isPro: boolean; isAdmin: boolean } {
   return {
-    isPro: user?.role === 'pro' || user?.role === 'admin',
+    isPro: false,
     isAdmin: user?.role === 'admin',
   };
 }

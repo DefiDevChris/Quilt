@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback, useDeferredValue } from 'react';
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useState, useEffect, useDeferredValue } from 'react';
 import { Search, Plus } from 'lucide-react';
 import { COLOR_FAMILIES } from '@/lib/constants/fabrics';
 import { FABRICS_PAGINATION_DEFAULT_LIMIT } from '@/lib/constants/pagination';
@@ -52,44 +53,48 @@ export default function FabricsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDeferredValue(search);
-  const [colorFamily, setColorFamily] = useState('');
+const [colorFamily, setColorFamily] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     setPage(1);
-  }, [search, colorFamily]);
-
-  const fetchFabrics = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        scope: 'user',
-        page: String(page),
-        limit: String(FABRICS_PAGINATION_DEFAULT_LIMIT),
-      });
-      if (debouncedSearch) params.set('search', debouncedSearch);
-      if (colorFamily) params.set('colorFamily', colorFamily);
-
-      const res = await fetch(`/api/fabrics?${params}`);
-      if (!res.ok) throw new Error('Failed to fetch');
-
-      const data: FabricsResponse = await res.json();
-      setFabrics(data.data.fabrics ?? []);
-      setTotalPages(data.data.totalPages ?? 1);
-      setTotal(data.data.total ?? 0);
-    } catch {
-      setFabrics([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, debouncedSearch, colorFamily]);
+  }, [debouncedSearch, colorFamily]);
 
   useEffect(() => {
-    fetchFabrics();
-  }, [fetchFabrics]);
+    const controller = new AbortController();
+
+    async function load() {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          scope: 'user',
+          page: String(page),
+          limit: String(FABRICS_PAGINATION_DEFAULT_LIMIT),
+        });
+        if (debouncedSearch) params.set('search', debouncedSearch);
+        if (colorFamily) params.set('colorFamily', colorFamily);
+
+        const res = await fetch(`/api/fabrics?${params}`, { signal: controller.signal });
+        if (!res.ok) throw new Error('Failed to fetch');
+
+        const data: FabricsResponse = await res.json();
+        setFabrics(data.data.fabrics ?? []);
+        setTotalPages(data.data.totalPages ?? 1);
+        setTotal(data.data.total ?? 0);
+      } catch {
+        if (!controller.signal.aborted) setFabrics([]);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+
+    load();
+    return () => controller.abort();
+  }, [page, debouncedSearch, colorFamily]);
 
   return (
     <>

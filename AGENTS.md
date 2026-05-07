@@ -106,8 +106,8 @@ Use `rounded-full` (buttons/CTAs/tabs), `rounded-lg` (cards/inputs/dialogs), `sh
 
 ## Database
 
-- Schema in `src/db/schema/index.ts` (re-exports 10 table files + enums)
-- Tables: `users`, `projects`, `blocks`, `fabrics`, `userFabrics`, `layoutTemplates`, `printlists`, `retailers`, `ingestJobs`, `affiliateClicks`
+- Schema in `src/db/schema/index.ts` (re-exports 9 table files + enums)
+- Tables: `users`, `projects`, `blocks`, `fabrics`, `userFabrics`, `layoutTemplates`, `retailers`, `ingestJobs`, `affiliateClicks`
 - Config: `drizzle.config.ts` reads `DATABASE_URL` from env
 - Migrations output: `src/db/migrations/`
 - Local: PostgreSQL 16 in Docker, user=`quiltcorgi`/pass=`localdev`/db=`quiltcorgi`

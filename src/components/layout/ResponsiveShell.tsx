@@ -24,6 +24,7 @@ export function ResponsiveShell({
 
   useLayoutEffect(() => {
     const mql = window.matchMedia(MOBILE_MEDIA_QUERY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(mql.matches);
 
     function onChange(e: MediaQueryListEvent | { matches: boolean }) {

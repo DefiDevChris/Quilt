@@ -176,23 +176,24 @@ export default function WizardStepCanvas() {
   );
 
   useEffect(() => {
-    if (result) {
-      renderCanvas(result.cells, result.palette);
+    const r = usePhotoToQuiltStore.getState().result;
+    if (r) {
+      renderCanvas(r.cells, r.palette);
       setResult({
-        ...result,
+        ...r,
         svgMarkup: buildSvg(
-          result.cells,
-          result.cols,
-          result.rows,
-          result.blockSize,
-          result.blockCols,
-          result.blockRows,
-          result.palette,
+          r.cells,
+          r.cols,
+          r.rows,
+          r.blockSize,
+          r.blockCols,
+          r.blockRows,
+          r.palette,
           showGrid,
         ),
       });
     }
-  }, [showGrid, showBlockGrid, renderCanvas, result, setResult]);
+  }, [showGrid, showBlockGrid, renderCanvas, setResult]);
 
   const generatePattern = useCallback(() => {
     if (!image || !mask) return;

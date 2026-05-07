@@ -19,8 +19,8 @@ import {
   subdivideSegment,
   hitTestSegment,
   findSegmentAtPoint,
+  type Point,
 } from '@/lib/easydraw-engine';
-import type { Point } from '@/lib/easydraw-engine';
 
 describe('easydraw-engine', () => {
   describe('createSegment', () => {

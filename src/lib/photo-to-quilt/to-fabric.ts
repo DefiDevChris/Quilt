@@ -1,7 +1,5 @@
 import { PIXELS_PER_INCH } from '@/lib/constants/canvas';
 
-// FP rounding helpers to eliminate drift when snapping to pixels
-const PX_EPSILON = 0.01;
 function snapPx(value: number): number {
   return Math.round(value);
 }

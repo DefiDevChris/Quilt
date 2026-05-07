@@ -12,6 +12,16 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import { CANVAS } from '@/lib/design-system';
 import type { Project } from '@/types/project';
 
+export function resolveSubTargetPatch(
+  e: { target?: unknown; subTargets?: unknown[] }
+): unknown | null {
+  if (!e.target || !e.subTargets || e.subTargets.length === 0) return null;
+  const target = e.target as Record<string, unknown>;
+  if (!target.__isBlockGroup) return null;
+  const sub = e.subTargets[0] as Record<string, unknown>;
+  return sub.__pieceRole === 'patch' ? sub : null;
+}
+
 export function useCanvasInit(
   fabricCanvasRef: RefObject<HTMLCanvasElement | null>,
   gridCanvasRef: RefObject<HTMLCanvasElement | null>,
@@ -270,25 +280,7 @@ export function useCanvasInit(
       // When a user clicks inside a block group, we identify which patch
       // was hit via Fabric's subTargets array and store it for the UI.
       const onMouseDown = (e: { target?: unknown; subTargets?: unknown[] }) => {
-        if (!e.target || !e.subTargets || e.subTargets.length === 0) {
-          // Clicked outside a group or on a non-group object — clear patch
-          useCanvasStore.getState().setSelectedPatch(null);
-          return;
-        }
-
-        const targetMeta = e.target as Record<string, unknown>;
-        if (!targetMeta.__isBlockGroup) {
-          // Clicked a non-block object — clear patch
-          useCanvasStore.getState().setSelectedPatch(null);
-          return;
-        }
-
-        const subTarget = e.subTargets[0] as Record<string, unknown>;
-        if (subTarget.__pieceRole === 'patch') {
-          useCanvasStore.getState().setSelectedPatch(subTarget);
-        } else {
-          useCanvasStore.getState().setSelectedPatch(null);
-        }
+        useCanvasStore.getState().setSelectedPatch(resolveSubTargetPatch(e));
       };
 
       // Patch hover highlighting — shows which piece the cursor is over
@@ -420,6 +412,8 @@ export function useCanvasInit(
         } catch (err) {
           console.error('Failed to load canvas state from JSON:', err);
         }
+
+        (canvas as unknown as { subTargetCheck: boolean }).subTargetCheck = true;
       }
       canvas.renderAll();
 

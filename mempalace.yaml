@@ -74,7 +74,7 @@ rooms:
       - interfaces
 
   - name: db
-    description: Drizzle ORM + PostgreSQL. 10 tables (users, projects, blocks, fabrics, userFabrics, layoutTemplates, printlists, retailers, ingestJobs, affiliateClicks) + enums.ts + index definitions. 12 schema files total.
+    description: Drizzle ORM + PostgreSQL. 9 tables (users, projects, blocks, fabrics, userFabrics, layoutTemplates, retailers, ingestJobs, affiliateClicks) + enums.ts + index definitions. 11 schema files total.
     keywords:
       - db
       - database

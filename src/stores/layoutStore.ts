@@ -164,6 +164,9 @@ export const useLayoutStore = create<LayoutStoreState>((set, get) => {
     applyLayoutAndLock: () =>
       set({ previewMode: false, hasAppliedLayout: true, layoutLocked: true }),
 
+    applyFreeformAndLock: () =>
+      set({ previewMode: false, layoutLocked: true }),
+
     clearLayout: () => {
       if (get().layoutLocked) return;
       set({ ...INITIAL_STATE });

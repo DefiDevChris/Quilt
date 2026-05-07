@@ -1,5 +1,6 @@
 'use client';
 
+import { useId } from 'react';
 import Link from 'next/link';
 import {
   MousePointer,
@@ -19,8 +20,137 @@ import {
 } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 
+/* ── BlockPattern component (moved outside to avoid "Cannot create components during render") ── */
+function BlockPattern({ name, size = 40, outline = false, uid }: { name: string; size?: string | number; outline?: boolean; uid: string }) {
+  const primary = '/fabrics/10227-E.jpg';
+  const secondary = '/fabrics/10429-Y.jpg';
+  const bg = '/fabrics/10227-L1.jpg';
+  const dark = '/fabrics/10227-E4.jpg';
+
+  const pat = (id: string, src: string) => (
+    <pattern id={`${id}-${uid}`} patternUnits="userSpaceOnUse" width="40" height="40">
+      <image href={src} width="40" height="40" preserveAspectRatio="xMidYMid slice" />
+    </pattern>
+  );
+
+  const olFill = 'var(--color-secondary)';
+  const olFillOp = '0.15';
+  const olStroke = 'var(--color-text)';
+  const olStrokeW = '0.8';
+  const olJoin = 'round' as const;
+
+  switch (name) {
+    case 'Four Patch':
+      return (
+        <svg width={size} height={size} viewBox="0 0 40 40">
+          <defs>
+            {pat('fp-p', primary)}
+            {pat('fp-s', secondary)}
+          </defs>
+          <rect x="0" y="0" width="20" height="20" fill={outline ? olFill : `url(#fp-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="20" y="0" width="20" height="20" fill={outline ? olFill : `url(#fp-s-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="0" y="20" width="20" height="20" fill={outline ? olFill : `url(#fp-s-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="20" y="20" width="20" height="20" fill={outline ? olFill : `url(#fp-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+        </svg>
+      );
+    case 'Nine Patch':
+      return (
+        <svg width={size} height={size} viewBox="0 0 40 40">
+          <defs>
+            {pat('np-p', primary)}
+            {pat('np-s', secondary)}
+          </defs>
+          {[
+            ['np-p', 'np-s', 'np-p'],
+            ['np-s', 'np-p', 'np-s'],
+            ['np-p', 'np-s', 'np-p'],
+          ].flatMap((row, ri) =>
+            row.map((pid, ci) => (
+              <rect key={`${ri}-${ci}`} x={ci * 13.33} y={ri * 13.33} width="13.34" height="13.34" fill={outline ? olFill : `url(#${pid}-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+            )),
+          )}
+        </svg>
+      );
+    case 'Half Square':
+      return (
+        <svg width={size} height={size} viewBox="0 0 40 40">
+          <defs>
+            {pat('hs-p', primary)}
+            {pat('hs-s', secondary)}
+          </defs>
+          <polygon points="0,0 40,0 0,40" fill={outline ? olFill : `url(#hs-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="40,0 40,40 0,40" fill={outline ? olFill : `url(#hs-s-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+        </svg>
+      );
+    case 'Flying Geese':
+      return (
+        <svg width={size} height={size} viewBox="0 0 40 40">
+          <defs>
+            {pat('fg-bg', bg)}
+            {pat('fg-p', primary)}
+          </defs>
+          <polygon points="0,0 40,0 40,20" fill={outline ? olFill : `url(#fg-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="0,40 40,40 40,20" fill={outline ? olFill : `url(#fg-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="0,0 40,20 0,40" fill={outline ? olFill : `url(#fg-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+        </svg>
+      );
+    case 'Log Cabin':
+      return (
+        <svg width={size} height={size} viewBox="0 0 40 40">
+          <defs>
+            {pat('lc-p', primary)}
+            {pat('lc-light', bg)}
+            {pat('lc-dark', dark)}
+          </defs>
+          <rect x="16" y="16" width="8" height="8" fill={outline ? olFill : `url(#lc-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="16" y="8" width="8" height="8" fill={outline ? olFill : `url(#lc-light-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="24" y="8" width="8" height="16" fill={outline ? olFill : `url(#lc-light-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="8" y="24" width="24" height="8" fill={outline ? olFill : `url(#lc-dark-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="8" y="8" width="8" height="24" fill={outline ? olFill : `url(#lc-dark-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="8" y="0" width="24" height="8" fill={outline ? olFill : `url(#lc-light-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="32" y="0" width="8" height="32" fill={outline ? olFill : `url(#lc-light-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="0" y="32" width="32" height="8" fill={outline ? olFill : `url(#lc-dark-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="0" y="0" width="8" height="32" fill={outline ? olFill : `url(#lc-dark-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+        </svg>
+      );
+    case 'Ohio Star':
+      return (
+        <svg width={size} height={size} viewBox="0 0 40 40">
+          <defs>
+            {pat('os-p', primary)}
+            {pat('os-bg', bg)}
+          </defs>
+          <rect x="13.33" y="13.33" width="13.34" height="13.34" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="13.33" y="0" width="13.34" height="13.33" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="26.67" y="13.33" width="13.33" height="13.34" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="13.33" y="26.67" width="13.34" height="13.33" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <rect x="0" y="13.33" width="13.33" height="13.34" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="6.67,6.67 0,0 13.33,0" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="6.67,6.67 13.33,0 13.33,13.33" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="6.67,6.67 13.33,13.33 0,13.33" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="6.67,6.67 0,13.33 0,0" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="33.33,6.67 26.67,0 40,0" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="33.33,6.67 40,0 40,13.33" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="33.33,6.67 40,13.33 26.67,13.33" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="33.33,6.67 26.67,13.33 26.67,0" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="6.67,33.33 0,26.67 13.33,26.67" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="6.67,33.33 13.33,26.67 13.33,40" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="6.67,33.33 13.33,40 0,40" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="6.67,33.33 0,40 0,26.67" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="33.33,33.33 26.67,26.67 40,26.67" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="33.33,33.33 40,26.67 40,40" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="33.33,33.33 40,40 26.67,40" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+          <polygon points="33.33,33.33 26.67,40 26.67,26.67" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
+        </svg>
+      );
+    default:
+      return <div style={{ width: size, height: size, backgroundColor: 'var(--color-primary)', opacity: 0.35 }} />;
+  }
+}
+
 /* ── Inline UI mockup of the Design Studio ─────────────────────────────── */
 function StudioMockup() {
+  const patternId = useId();
   const toolbarGroups = [
     {
       items: [
@@ -45,134 +175,6 @@ function StudioMockup() {
   ];
 
   const blocks = ['Four Patch', 'Nine Patch', 'Half Square', 'Flying Geese', 'Log Cabin', 'Ohio Star'];
-
-  function BlockPattern({ name, size = 40, outline = false }: { name: string; size?: string | number; outline?: boolean }) {
-    const uid = Math.random().toString(36).slice(2, 9);
-    const primary = '/fabrics/10227-E.jpg';
-    const secondary = '/fabrics/10429-Y.jpg';
-    const bg = '/fabrics/10227-L1.jpg';
-    const dark = '/fabrics/10227-E4.jpg';
-
-    const pat = (id: string, src: string) => (
-      <pattern id={`${id}-${uid}`} patternUnits="userSpaceOnUse" width="40" height="40">
-        <image href={src} width="40" height="40" preserveAspectRatio="xMidYMid slice" />
-      </pattern>
-    );
-
-    const olFill = 'var(--color-secondary)';
-    const olFillOp = '0.15';
-    const olStroke = 'var(--color-text)';
-    const olStrokeW = '0.8';
-    const olJoin = 'round' as const;
-
-    switch (name) {
-      case 'Four Patch':
-        return (
-          <svg width={size} height={size} viewBox="0 0 40 40">
-            <defs>
-              {pat('fp-p', primary)}
-              {pat('fp-s', secondary)}
-            </defs>
-            <rect x="0" y="0" width="20" height="20" fill={outline ? olFill : `url(#fp-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="20" y="0" width="20" height="20" fill={outline ? olFill : `url(#fp-s-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="0" y="20" width="20" height="20" fill={outline ? olFill : `url(#fp-s-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="20" y="20" width="20" height="20" fill={outline ? olFill : `url(#fp-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-          </svg>
-        );
-      case 'Nine Patch':
-        return (
-          <svg width={size} height={size} viewBox="0 0 40 40">
-            <defs>
-              {pat('np-p', primary)}
-              {pat('np-s', secondary)}
-            </defs>
-            {[
-              ['np-p', 'np-s', 'np-p'],
-              ['np-s', 'np-p', 'np-s'],
-              ['np-p', 'np-s', 'np-p'],
-            ].flatMap((row, ri) =>
-              row.map((pid, ci) => (
-                <rect key={`${ri}-${ci}`} x={ci * 13.33} y={ri * 13.33} width="13.34" height="13.34" fill={outline ? olFill : `url(#${pid}-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-              )),
-            )}
-          </svg>
-        );
-      case 'Half Square':
-        return (
-          <svg width={size} height={size} viewBox="0 0 40 40">
-            <defs>
-              {pat('hs-p', primary)}
-              {pat('hs-s', secondary)}
-            </defs>
-            <polygon points="0,0 40,0 0,40" fill={outline ? olFill : `url(#hs-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="40,0 40,40 0,40" fill={outline ? olFill : `url(#hs-s-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-          </svg>
-        );
-      case 'Flying Geese':
-        return (
-          <svg width={size} height={size} viewBox="0 0 40 40">
-            <defs>
-              {pat('fg-bg', bg)}
-              {pat('fg-p', primary)}
-            </defs>
-            <polygon points="0,0 40,0 40,20" fill={outline ? olFill : `url(#fg-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="0,40 40,40 40,20" fill={outline ? olFill : `url(#fg-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="0,0 40,20 0,40" fill={outline ? olFill : `url(#fg-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-          </svg>
-        );
-      case 'Log Cabin':
-        return (
-          <svg width={size} height={size} viewBox="0 0 40 40">
-            <defs>
-              {pat('lc-p', primary)}
-              {pat('lc-light', bg)}
-              {pat('lc-dark', dark)}
-            </defs>
-            <rect x="16" y="16" width="8" height="8" fill={outline ? olFill : `url(#lc-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="16" y="8" width="8" height="8" fill={outline ? olFill : `url(#lc-light-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="24" y="8" width="8" height="16" fill={outline ? olFill : `url(#lc-light-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="8" y="24" width="24" height="8" fill={outline ? olFill : `url(#lc-dark-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="8" y="8" width="8" height="24" fill={outline ? olFill : `url(#lc-dark-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="8" y="0" width="24" height="8" fill={outline ? olFill : `url(#lc-light-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="32" y="0" width="8" height="32" fill={outline ? olFill : `url(#lc-light-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="0" y="32" width="32" height="8" fill={outline ? olFill : `url(#lc-dark-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="0" y="0" width="8" height="32" fill={outline ? olFill : `url(#lc-dark-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-          </svg>
-        );
-      case 'Ohio Star':
-        return (
-          <svg width={size} height={size} viewBox="0 0 40 40">
-            <defs>
-              {pat('os-p', primary)}
-              {pat('os-bg', bg)}
-            </defs>
-            <rect x="13.33" y="13.33" width="13.34" height="13.34" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="13.33" y="0" width="13.34" height="13.33" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="26.67" y="13.33" width="13.33" height="13.34" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="13.33" y="26.67" width="13.34" height="13.33" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <rect x="0" y="13.33" width="13.33" height="13.34" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="6.67,6.67 0,0 13.33,0" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="6.67,6.67 13.33,0 13.33,13.33" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="6.67,6.67 13.33,13.33 0,13.33" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="6.67,6.67 0,13.33 0,0" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="33.33,6.67 26.67,0 40,0" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="33.33,6.67 40,0 40,13.33" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="33.33,6.67 40,13.33 26.67,13.33" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="33.33,6.67 26.67,13.33 26.67,0" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="6.67,33.33 0,26.67 13.33,26.67" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="6.67,33.33 13.33,26.67 13.33,40" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="6.67,33.33 13.33,40 0,40" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="6.67,33.33 0,40 0,26.67" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="33.33,33.33 26.67,26.67 40,26.67" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="33.33,33.33 40,26.67 40,40" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="33.33,33.33 40,40 26.67,40" fill={outline ? olFill : `url(#os-bg-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-            <polygon points="33.33,33.33 26.67,40 26.67,26.67" fill={outline ? olFill : `url(#os-p-${uid})`} fillOpacity={outline ? olFillOp : undefined} stroke={outline ? olStroke : undefined} strokeWidth={outline ? olStrokeW : undefined} strokeLinejoin={outline ? olJoin : undefined} />
-          </svg>
-        );
-      default:
-        return <div style={{ width: size, height: size, backgroundColor: 'var(--color-primary)', opacity: 0.35 }} />;
-    }
-  }
 
   return (
     <div className="rounded-lg overflow-hidden shadow-elevated border border-[var(--color-border)] bg-[var(--color-bg)] flex flex-col">
@@ -256,11 +258,11 @@ function StudioMockup() {
                 <div className="absolute inset-0 grid grid-cols-3 grid-rows-4 gap-2">
                   {/* Row 1 */}
                   <div className="relative overflow-hidden rounded-[2px]">
-                    <BlockPattern name="Four Patch" size="100%" />
+                    <BlockPattern name="Four Patch" size="100%" uid={patternId} />
                   </div>
                   <div className="border-2 border-dashed border-[var(--color-border)]/40 rounded-[2px]" />
                   <div className="relative overflow-hidden rounded-[2px]">
-                    <BlockPattern name="Ohio Star" size="100%" />
+                    <BlockPattern name="Ohio Star" size="100%" uid={patternId} />
                   </div>
                   {/* Row 2 */}
                   <div className="border-2 border-dashed border-[var(--color-border)]/40 rounded-[2px]" />
@@ -294,7 +296,7 @@ function StudioMockup() {
             {blocks.map((name) => (
               <div key={name} className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-[var(--color-surface)] transition-colors duration-150 cursor-default">
                 <div className="w-10 h-10 rounded-sm border border-[var(--color-border)] shrink-0 overflow-hidden">
-                  <BlockPattern name={name} size="100%" outline />
+                  <BlockPattern name={name} size="100%" outline uid={patternId} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-[13px] font-medium text-[var(--color-text)] block truncate">{name}</span>

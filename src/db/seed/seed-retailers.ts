@@ -24,12 +24,12 @@ async function seedRetailers() {
         target: retailers.slug,
         set: {
           name: sql`excluded.name`,
-          websiteUrl: sql`excluded.website_url`,
+          websiteUrl: sql`excluded."websiteUrl"`,
           network: sql`excluded.network`,
-          networkMerchantId: sql`excluded.network_merchant_id`,
-          feedUrl: sql`excluded.feed_url`,
-          logoUrl: sql`excluded.logo_url`,
-          isActive: sql`excluded.is_active`,
+          networkMerchantId: sql`excluded."networkMerchantId"`,
+          feedUrl: sql`excluded."feedUrl"`,
+          logoUrl: sql`excluded."logoUrl"`,
+          isActive: sql`excluded."isActive"`,
           updatedAt: sql`now()`,
         },
       });

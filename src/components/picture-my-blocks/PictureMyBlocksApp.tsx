@@ -26,19 +26,19 @@ export function PictureMyBlocksApp() {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const { toast } = useToast();
   const canvasRef = useRef<HTMLDivElement>(null);
-const [canvasScale, setCanvasScale] = useState(1);
-	const [cells, setCells] = useState<Array<{ block: UploadedBlock | null }>>([]);
+  const [canvasScale, setCanvasScale] = useState(1);
+  const [cells, setCells] = useState<Array<{ block: UploadedBlock | null }>>([]);
 
-	// Calculate total cells based on across and long
-	const totalCells = across * long;
+  // Calculate total cells based on across and long
+  const totalCells = across * long;
 
-	// Initialize cells array
-	useEffect(() => {
-		// eslint-disable-next-line react-hooks/set-state-in-effect
-		setCells(Array.from({ length: totalCells }, () => ({ block: null })));
-	}, [totalCells]);
+  // Initialize cells array
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCells(Array.from({ length: totalCells }, () => ({ block: null })));
+  }, [totalCells]);
 
-	// Calculate scale to fit quilt on canvas without vertical scrolling
+  // Calculate scale to fit quilt on canvas without vertical scrolling
   useEffect(() => {
     const updateScale = () => {
       if (!canvasRef.current) return;
@@ -341,10 +341,6 @@ const [canvasScale, setCanvasScale] = useState(1);
             <span className="text-xs ml-1" style={{ color: COLORS.textDim }}>Sash″</span>
           </div>
         </div>
-        <div className="flex-1 overflow-hidden flex flex-col">
-          <BlockLibrary onBlockDragStart={handleBlockDragStart} />
-        </div>
-      </aside>
 
         <div className="w-20" /> {/* Spacer for balance */}
       </header>

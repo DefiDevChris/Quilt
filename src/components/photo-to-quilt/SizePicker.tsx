@@ -55,7 +55,7 @@ export default function SizePicker() {
               {s.label ?? formatSize(s)}
             </span>
             <span className="text-[0.72rem]">
-              {formatFraction(s.pieceSize, '-')}" · {s.blockCols}×{s.blockRows} blocks
+              {formatFraction(s.pieceSize, '-')}&quot; · {s.blockCols}×{s.blockRows} blocks
             </span>
           </button>
         );

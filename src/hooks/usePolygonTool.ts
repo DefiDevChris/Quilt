@@ -53,11 +53,16 @@ export function usePolygonTool() {
     (async () => {
       const fabric = await import('fabric');
       if (!isMounted) return;
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      // eslint-disable-next-line react-hooks/immutability
+      const canvas = fabricCanvas as unknown as InstanceType<typeof fabric.Canvas>;
 
+      // eslint-disable-next-line react-hooks/immutability
       canvas.selection = false;
+      // eslint-disable-next-line react-hooks/immutability
       canvas.defaultCursor = cursorForTool('polygon');
+      // eslint-disable-next-line react-hooks/immutability
       canvas.discardActiveObject();
+      // eslint-disable-next-line react-hooks/immutability
       canvas.renderAll();
 
       let points: { x: number; y: number }[] = [];

@@ -250,19 +250,6 @@ export const adminCreateBlockSchema = z.object({
 
 export const adminUpdateBlockSchema = adminCreateBlockSchema.omit({ isDefault: true }).partial();
 
-const printlistItemSchema = z.object({
-  fabricId: z.string().nullable().optional(),
-  hex: z.string(),
-  name: z.string(),
-  cutInstructions: z.array(z.string()),
-  yardsRequired: z.number(),
-});
-
-export const printlistSchema = z.object({
-  items: z.array(printlistItemSchema),
-  paperSize: z.enum(['letter', 'a4']).default('letter'),
-});
-
 export const adminCreateFabricSchema = z.object({
   name: z.string().min(1).max(255),
   imageUrl: z.string().url(),

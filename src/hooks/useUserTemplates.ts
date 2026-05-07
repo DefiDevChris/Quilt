@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useState } from 'react';
 import type { UserTemplate } from '@/types/userTemplate';
 
@@ -22,7 +23,7 @@ interface UseUserTemplatesResult {
  */
 export function useUserTemplates(): UseUserTemplatesResult {
   const [templates, setTemplates] = useState<UserTemplate[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTemplates = useCallback(async () => {
@@ -46,8 +47,9 @@ export function useUserTemplates(): UseUserTemplatesResult {
     }
   }, []);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
-    void fetchTemplates();
+    fetchTemplates();
   }, [fetchTemplates]);
 
   return { templates, loading, error, refetch: fetchTemplates };

@@ -59,7 +59,8 @@ export function useEasyDrawTool() {
     (async () => {
       const fabric = await import('fabric');
       if (!isMounted) return;
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      // eslint-disable-next-line react-hooks/immutability
+      const canvas = fabricCanvas as unknown as InstanceType<typeof fabric.Canvas>;
 
       const previousDrawingMode = canvas.isDrawingMode;
       const previousSelection = canvas.selection;

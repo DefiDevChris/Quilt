@@ -7,9 +7,8 @@ import { useLayoutStore } from '@/stores/layoutStore';
 import { snapToCell, snapToGridCorner } from '@/lib/snap-utils';
 import type { Canvas as FabricCanvas } from 'fabric';
 import { showDropHighlight, clearDropHighlight } from '@/lib/drop-highlight';
-import { computeBlockDropScale } from '@/lib/canvas-utils';
+import { computeBlockDropScale, getGridGranularityMultiplier } from '@/lib/canvas-utils';
 import { findFenceAreaAtPoint } from '@/lib/fence-engine';
-import { getGridGranularityMultiplier } from '@/lib/canvas-utils';
 import { getComputedLayoutAreas } from '@/lib/layout-areas';
 import { CANVAS, DEFAULT_CANVAS } from '@/lib/design-system';
 

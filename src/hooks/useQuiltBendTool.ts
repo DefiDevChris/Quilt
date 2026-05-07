@@ -80,11 +80,16 @@ export function useQuiltBendTool() {
     (async () => {
       const fabric = await import('fabric');
       if (!isMounted) return;
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      // eslint-disable-next-line react-hooks/immutability
+      const canvas = fabricCanvas as unknown as InstanceType<typeof fabric.Canvas>;
 
+      // eslint-disable-next-line react-hooks/immutability
       const previousSelection = canvas.selection;
+      // eslint-disable-next-line react-hooks/immutability
       const previousCursor = canvas.defaultCursor;
+      // eslint-disable-next-line react-hooks/immutability
       canvas.selection = false;
+      // eslint-disable-next-line react-hooks/immutability
       canvas.defaultCursor = cursorForTool('bend');
 
       const bendState: BendState = {

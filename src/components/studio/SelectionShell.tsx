@@ -287,62 +287,6 @@ export function SelectionShell({ mode }: SelectionShellProps) {
     ease: [0.32, 0.72, 0, 1] as const,
   };
 
-  // Template: same as layout but pulls dimensions from the template's
-  // pre-baked layoutConfig. Block placement + fabric assignment are
-  // applied post-commit by the template hydration hook so the canvas
-  // is fully initialized when stamping.
-  //
-  // Handles both library templates (QUILT_TEMPLATES) and user-saved
-  // templates fetched from /api/templates. User templates carry their
-  // layoutConfig + canvasData inside `templateData`.
-  const handleTemplateCommit = useCallback(() => {
-    const store = useLayoutStore.getState();
-    const ps = useProjectStore.getState();
-
-    if (selectedUserTemplateId) {
-      const userTemplate = userTemplatesQuery.templates.find(
-        (t) => t.id === selectedUserTemplateId,
-      );
-      if (!userTemplate) return;
-      const td = userTemplate.templateData;
-      const width = td.canvasWidth ?? 50;
-      const height = td.canvasHeight ?? 65;
-
-      store.applyLayoutAndLock();
-      ps.setCanvasDimensions(width, height);
-      // User templates don't go through useTemplateHydration (they have
-      // their own canvasData snapshot). Loading that snapshot is a TODO
-      // tracked alongside the system-template hydration TODOs in
-      // useTemplateHydration.
-      const canvas = getCanvas();
-      if (canvas) {
-        requestAnimationFrame(() => {
-          useCanvasStore.getState().centerAndFitViewport(canvas, width, height);
-        });
-      }
-      return;
-    }
-
-    if (!selectedTemplateId) return;
-    const template = QUILT_TEMPLATES.find((t) => t.id === selectedTemplateId);
-    if (!template) return;
-
-    store.applyLayoutAndLock();
-    ps.setCanvasDimensions(template.canvasWidth, template.canvasHeight);
-    // Stash the template id so the post-mount hydration hook knows what
-    // to stamp once the canvas is ready.
-    ps.setPendingTemplateId(template.id);
-
-    const canvas = getCanvas();
-    if (canvas) {
-      requestAnimationFrame(() => {
-        useCanvasStore
-          .getState()
-          .centerAndFitViewport(canvas, template.canvasWidth, template.canvasHeight);
-      });
-    }
-  }, [selectedTemplateId, selectedUserTemplateId, userTemplatesQuery.templates, getCanvas]);
-
   // Freeform: just sets the canvas dimensions and locks. No fence is drawn.
   const handleFreeformCommit = useCallback(() => {
     const ps = useProjectStore.getState();

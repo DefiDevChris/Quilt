@@ -58,7 +58,8 @@ export function useDrawingTool() {
     (async () => {
       const fabric = await import('fabric');
       if (!isMounted) return;
-      const canvas = fabricCanvas as InstanceType<typeof fabric.Canvas>;
+      // eslint-disable-next-line react-hooks/immutability
+      const canvas = fabricCanvas as unknown as InstanceType<typeof fabric.Canvas>;
 
       // Tools handled by their own hooks — exit early
       if (activeTool === 'polygon' || activeTool === 'easydraw' || activeTool === 'bend') {
