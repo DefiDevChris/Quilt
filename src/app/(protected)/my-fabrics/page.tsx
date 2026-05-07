@@ -246,7 +246,31 @@ const [colorFamily, setColorFamily] = useState('');
       <FabricUploadDialog
         isOpen={uploadDialogOpen}
         onClose={() => setUploadDialogOpen(false)}
-        onUploaded={fetchFabrics}
+        onUploaded={() => {
+          const controller = new AbortController();
+          async function load() {
+            setLoading(true);
+            try {
+              const params = new URLSearchParams({
+                scope: 'user',
+                page: '1',
+                limit: String(FABRICS_PAGINATION_DEFAULT_LIMIT),
+              });
+              const res = await fetch(`/api/fabrics?${params}`, { signal: controller.signal });
+              if (!res.ok) throw new Error('Failed to fetch');
+              const data: FabricsResponse = await res.json();
+              setFabrics(data.data.fabrics ?? []);
+              setTotalPages(data.data.totalPages ?? 1);
+              setTotal(data.data.total ?? 0);
+            } catch {
+              setFabrics([]);
+            } finally {
+              setLoading(false);
+              setPage(1);
+            }
+          }
+          load();
+        }}
       />
     </>
   );
