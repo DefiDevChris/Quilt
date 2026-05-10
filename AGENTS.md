@@ -123,12 +123,6 @@ Use `rounded-full` (buttons/CTAs/tabs), `rounded-lg` (cards/inputs/dialogs), `sh
 
 Types: `feat` `fix` `refactor` `style` `docs` `chore`
 
-## Atlassian Rovo MCP
-
-When connected to atlassian-rovo-mcp:
-- **MUST** use Jira project key = QUILT
-- **MUST** use cloudId = "https://quiltcorgi.atlassian.net" (do NOT call getAccessibleAtlassianResources)
-- **MUST** use `maxResults: 10` or `limit: 10` for ALL Jira JQL and Confluence CQL search operations
 
 ## PR checklist (before every PR)
 
